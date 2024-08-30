@@ -1,0 +1,9 @@
+﻿<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- <PackageVersion Include="..." Version="..." /> -->
+    <!-- <GlobalPackageReference Include="..." Version="..." /> -->
+  </ItemGroup>
+</Project>
