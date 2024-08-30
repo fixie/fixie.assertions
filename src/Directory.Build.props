@@ -16,9 +16,18 @@
         training developers to stop paying attention to all warnings. It is
         better to silence trivial warnings entirely.
 
+        Some warnings are worth being notified about, but treating them as
+        errors is annoying in the middle of active development. These are code
+        review topics rather than things that should interrupt the developer's
+        intermediate work.
+
+        CS0162: Unreachable code detected
+        CS0612: '...' is obsolete
+        CS0618: '...' is obsolete: "..."
         CS1591: Missing XML comment for publicly visible type or member '...'
     -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1591</NoWarn>
+    <WarningsNotAsErrors>162,612,618</WarningsNotAsErrors>
   </PropertyGroup>
 </Project>
