@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fixie.Assertions", "Fixie.Assertions\Fixie.Assertions.csproj", "{1A7D244C-5520-4571-9E62-279CC2D15CF3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fixie.Assertions.Tests", "Fixie.Assertions.Tests\Fixie.Assertions.Tests.csproj", "{945A0867-74F3-4C3C-AA0A-C3135E3A5834}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{16725AF9-4D40-4583-B0C1-A6BC3D9C1D26}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1A7D244C-5520-4571-9E62-279CC2D15CF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A7D244C-5520-4571-9E62-279CC2D15CF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A7D244C-5520-4571-9E62-279CC2D15CF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A7D244C-5520-4571-9E62-279CC2D15CF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{945A0867-74F3-4C3C-AA0A-C3135E3A5834}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{945A0867-74F3-4C3C-AA0A-C3135E3A5834}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{945A0867-74F3-4C3C-AA0A-C3135E3A5834}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{945A0867-74F3-4C3C-AA0A-C3135E3A5834}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

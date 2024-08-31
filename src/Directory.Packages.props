@@ -1,0 +1,9 @@
+﻿<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Fixie.TestAdapter" Version="3.4.0" />
+    <GlobalPackageReference Include="MinVer" Version="5.0.0" />
+  </ItemGroup>
+</Project>
