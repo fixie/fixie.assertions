@@ -17,4 +17,10 @@ step { dotnet fixie *.Tests -c Release --no-build }
 
 if ($pack) {
     step { dotnet pack src/Fixie.Assertions -o packages -c Release --no-build --nologo }
+
+    step { dotnet tool install dotnet-validate --version 0.0.1-preview.304  }
+    $packages = get-childitem packages/*.nupkg
+    foreach ($package in $packages) {
+        dotnet validate package local $package
+    }
 }
