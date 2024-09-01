@@ -7,6 +7,11 @@
 
   <PropertyGroup>
     <!-- Packaging -->
+    <Authors>Fixie, Patrick Lioi</Authors>
+    <Copyright>Copyright (c) 2024 Patrick Lioi</Copyright>
+    <Description>Ergonomic Assertions for .NET</Description>
+    <PackageProjectUrl>https://fixie.github.io</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/fixie/fixie.assertions</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
