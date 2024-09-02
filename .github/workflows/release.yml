@@ -22,4 +22,4 @@ jobs:
       env:
         DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: true
         TERM: xterm
-      run: pwsh ./build.ps1
+      run: pwsh ./build.ps1 --pack
