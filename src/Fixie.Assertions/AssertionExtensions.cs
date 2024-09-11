@@ -54,7 +54,7 @@ public static class AssertionExtensions
     public static void ShouldNotBeNull([NotNull] this object? actual, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
         if (actual == null)
-            throw AssertException.ForMessage(expression, "not null", "null", $"{expression} should not be null but was null");
+            throw new AssertException(expression, "not null", "null", $"{expression} should not be null but was null");
     }
 
     public static void ShouldBe<T>(this IEnumerable<T> actual, T[] expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
@@ -118,7 +118,7 @@ public static class AssertionExtensions
     {
         var expectedType = typeof(TException).FullName!;
 
-        throw AssertException.ForMessage(expression, expectedType, "no exception was thrown",
+        throw new AssertException(expression, expectedType, "no exception was thrown",
             $"{expression} should have thrown {expectedType} but did not");
     }
 

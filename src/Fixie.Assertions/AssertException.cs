@@ -35,11 +35,6 @@ public class AssertException : Exception
         return new AssertException(expression, SerializeByType(expected), SerializeByType(actual));
     }
 
-    public static AssertException ForMessage(string? expression, string expected, string actual, string message)
-    {
-        return new AssertException(expression, expected, actual, message);
-    }
-
     public static AssertException ForLists<T>(string? expression, T[] expected, T[] actual)
     {
         return new AssertException(expression, SerializeList(expected), SerializeList(actual));
