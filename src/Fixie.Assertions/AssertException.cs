@@ -40,6 +40,11 @@ public class AssertException : Exception
         return new AssertException(expression, expected, actual, message);
     }
 
+    public static AssertException ForLists<T>(string? expression, T[] expected, T[] actual)
+    {
+        return new AssertException(expression, SerializeList(expected), SerializeList(actual));
+    }
+
     public override string Message => message;
 
     static string MultilineMessage(string? expression, string expected, string actual)
@@ -144,6 +149,13 @@ public class AssertException : Exception
             _ when (char.IsControl(x) || char.IsWhiteSpace(x)) => $"\\u{(int)x:X4}",
             _ => x.ToString()
         };
+
+    static string SerializeList<T>(T[] items)
+    {
+        var formattedItems = string.Join("," + NewLine, items.Select(arg => "    " + SerializeByType(arg)));
+
+        return $"[{NewLine}{formattedItems}{NewLine}]";
+    }
 
     static string SerializeByType<T>(T any)
     {
