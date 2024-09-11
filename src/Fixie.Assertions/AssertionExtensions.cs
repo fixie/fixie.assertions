@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace Fixie.Assertions;
 
@@ -119,5 +120,31 @@ public static class AssertionExtensions
 
         throw AssertException.ForMessage(expression, expectedType, "no exception was thrown",
             $"{expression} should have thrown {expectedType} but did not");
+    }
+
+    public static void Should<T>(this T actual, Func<T, bool> expectation, [CallerArgumentExpression(nameof(actual))] string? expression = default!, [CallerArgumentExpression(nameof(expectation))] string? expectationBody = default!)
+    {
+        if (!expectation(actual))
+        {
+            expectationBody.ShouldNotBeNull();
+            expectationBody = DropTrivialLambdaPrefix(expectationBody);
+
+            throw AssertException.ForPredicate(expression, expectationBody, actual);
+        }
+    }
+
+    static string DropTrivialLambdaPrefix(string expectationBody)
+    {
+        var identifierMatch = Regex.Matches(expectationBody, @"^(\w+)");
+
+        if (identifierMatch.Count == 1)
+        {
+            var identifier = identifierMatch[0].Groups[1].Value;
+
+            expectationBody = Regex.Replace(expectationBody,
+                "^" + Regex.Escape(identifier) + @"\s*=>\s*" + Regex.Escape(identifier) + @"\s+", "");
+        }
+
+        return expectationBody;
     }
 }

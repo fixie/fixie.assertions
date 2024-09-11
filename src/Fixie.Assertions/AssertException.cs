@@ -45,6 +45,11 @@ public class AssertException : Exception
         return new AssertException(expression, SerializeList(expected), SerializeList(actual));
     }
 
+    public static AssertException ForPredicate<T>(string? expression, string expectation, T actual)
+    {
+        return new AssertException(expression, expectation, SerializeByType(actual));
+    }
+
     public static Exception ForException<TException>(string? expression, string expectedMessage, string actualMessage) where TException : Exception
     {
         return new AssertException(expression, expectedMessage, actualMessage,
