@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Fixie.Assertions;
@@ -65,5 +66,58 @@ public static class AssertionExtensions
         foreach (var (actualItem, expectedItem) in actualArray.Zip(expected))
             if (!Equals(actualItem, expectedItem))
                 throw AssertException.ForLists(expression, expected, actualArray);
+    }
+
+    public static TException ShouldThrow<TException>(this Action shouldThrow, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrow))] string? expression = null) where TException : Exception
+    {
+        try
+        {
+            shouldThrow();
+        }
+        catch (Exception actual)
+        {
+            return ShouldBeException<TException>(expectedMessage, expression, actual);
+        }
+
+        ShouldHaveThrown<TException>(expression);
+
+        throw new UnreachableException();
+    }
+
+    public static async Task<TException> ShouldThrow<TException>(this Func<Task> shouldThrowAsync, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrowAsync))] string? expression = null) where TException : Exception
+    {
+        try
+        {
+            await shouldThrowAsync();
+        }
+        catch (Exception actual)
+        {
+            return ShouldBeException<TException>(expectedMessage, expression, actual);
+        }
+
+        ShouldHaveThrown<TException>(expression);
+        
+        throw new UnreachableException();
+    }
+
+    static TException ShouldBeException<TException>(string expectedMessage, string? expression, Exception actual) where TException : Exception
+    {
+        if (actual is TException typed)
+        {
+            if (actual.Message != expectedMessage)
+                throw AssertException.ForException<TException>(expression, expectedMessage, actual.Message);
+
+            return typed;
+        }
+
+        throw AssertException.ForException(expression, typeof(TException), expectedMessage, actual.GetType(), actual.Message);
+    }
+
+    static void ShouldHaveThrown<TException>(string? expression) where TException : Exception
+    {
+        var expectedType = typeof(TException).FullName!;
+
+        throw AssertException.ForMessage(expression, expectedType, "no exception was thrown",
+            $"{expression} should have thrown {expectedType} but did not");
     }
 }

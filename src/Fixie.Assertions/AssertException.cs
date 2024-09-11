@@ -45,6 +45,34 @@ public class AssertException : Exception
         return new AssertException(expression, SerializeList(expected), SerializeList(actual));
     }
 
+    public static Exception ForException<TException>(string? expression, string expectedMessage, string actualMessage) where TException : Exception
+    {
+        return new AssertException(expression, expectedMessage, actualMessage,
+            $"""
+             {expression} should have thrown {typeof(TException).FullName} with message
+             
+             {Indent(Serialize(expectedMessage))}
+             
+             but instead the message was
+             
+             {Indent(Serialize(actualMessage))}
+             """);
+    }
+
+    public static Exception ForException(string? expression, Type expectedType, string expectedMessage, Type actualType, string actualMessage)
+    {
+        return new AssertException(expression, expectedMessage, actualMessage,
+            $"""
+             {expression} should have thrown {expectedType.FullName} with message
+
+             {Indent(Serialize(expectedMessage))}
+
+             but instead it threw {actualType.FullName} with message
+
+             {Indent(Serialize(actualMessage))}
+             """);
+    }
+
     public override string Message => message;
 
     static string MultilineMessage(string? expression, string expected, string actual)
