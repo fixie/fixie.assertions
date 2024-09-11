@@ -1,21 +1,28 @@
-﻿namespace Fixie.Assertions;
+﻿using static System.Environment;
+
+namespace Fixie.Assertions;
 
 public class AssertException : Exception
 {
     public string? Expression { get; }
     public string Expected { get; }
     public string Actual { get; }
+    public bool HasMultilineRepresentation { get; }
     readonly string message;
 
     public AssertException(string? expression, string expected, string actual, string? message = null)
     {
+        HasMultilineRepresentation = IsMultiline(expected) || IsMultiline(actual);
+
         Expression = expression;
         Expected = expected;
         Actual = actual;
 
         if (message == null)
         {
-            this.message = ScalarMessage(Expression, Expected, Actual);
+            this.message = HasMultilineRepresentation
+                ? MultilineMessage(Expression, Expected, Actual)
+                : ScalarMessage(Expression, Expected, Actual);
         }
         else
         {
@@ -35,9 +42,25 @@ public class AssertException : Exception
 
     public override string Message => message;
 
+    static string MultilineMessage(string? expression, string expected, string actual)
+    {
+        return $"{expression} should be{NewLine}{Indent(expected)}{NewLine}{NewLine}" +
+               $"but was{NewLine}{Indent(actual)}";
+    }
+
     static string ScalarMessage(string? expression, string expected, string actual)
     {
         return $"{expression} should be {expected} but was {actual}";
+    }
+
+    static string Indent(string multiline) =>
+        string.Join(NewLine, multiline.Split(NewLine).Select(x => $"    {x}"));
+
+    static bool IsMultiline(string value)
+    {
+        var lines = value.Split(NewLine);
+
+        return lines.Length > 1 && lines.All(line => !line.Contains("\r") && !line.Contains("\n"));
     }
 
     static string Serialize(bool x) => x ? "true" : "false";
@@ -67,12 +90,73 @@ public class AssertException : Exception
             _ => x.ToString()
         }})";
 
+    static string Serialize(char x) => $"'{Escape(x)}'";
+
+    static string Serialize(string x)
+    {
+        if (IsMultiline(x))
+        {
+            var terminal = RawStringTerminal(x);
+
+            return $"{terminal}{NewLine}{x}{NewLine}{terminal}";
+        }
+        
+        return $"\"{string.Join("", x.Select(Escape))}\"";
+    }
+
+    static string RawStringTerminal(string x)
+    {
+        var longestDoubleQuoteSequence = 0;
+        var currentDoubleQuoteSequence = 0;
+
+        foreach (var c in x)
+        {
+            if (c != '\"')
+            {
+                currentDoubleQuoteSequence = 0;
+                continue;
+            }
+
+            currentDoubleQuoteSequence++;
+            if (currentDoubleQuoteSequence > longestDoubleQuoteSequence)
+                longestDoubleQuoteSequence = currentDoubleQuoteSequence;
+        }
+
+        return new string('\"', longestDoubleQuoteSequence < 3 ? 3 : longestDoubleQuoteSequence + 1);
+    }
+
+    static string Escape(char x) =>
+        x switch
+        {
+            '\0' => @"\0",
+            '\a' => @"\a",
+            '\b' => @"\b",
+            '\t' => @"\t",
+            '\n' => @"\n",
+            '\v' => @"\v",
+            '\f' => @"\f",
+            '\r' => @"\r",
+            //'\e' => @"\e", TODO: Applicable in C# 13
+            ' ' => " ",
+            '"' => @"\""",
+            '\'' => @"\'",
+            '\\' => @"\\",
+            _ when (char.IsControl(x) || char.IsWhiteSpace(x)) => $"\\u{(int)x:X4}",
+            _ => x.ToString()
+        };
+
     static string SerializeByType<T>(T any)
     {
         if (any == null) return "null";
 
         if (typeof(T) == typeof(bool))
             return Serialize((bool)(object)any);
+
+        if (typeof(T) == typeof(char))
+            return Serialize((char)(object)any);
+
+        if (typeof(T) == typeof(string))
+            return Serialize((string)(object)any);
 
         if (typeof(T) == typeof(Type))
             return Serialize((Type)(object)any);
