@@ -103,7 +103,7 @@ public class AssertException : Exception
 
     static string Serialize(bool x) => x ? "true" : "false";
 
-    static string Serialize(object x) => x.ToString()!;
+    static string Serialize(object x) => x.ToString() ?? x.GetType().ToString();
 
     static string Serialize(Type x) =>
         $"typeof({x switch

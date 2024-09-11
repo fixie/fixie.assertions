@@ -12,9 +12,11 @@ class GeneralAssertionTests
     {
         var objectA = new SampleA();
         var objectB = new SampleB();
+        object nonNullObjectWithNullToString = new SampleNullToString();
 
         objectA.ShouldBe(objectA);
         objectB.ShouldBe(objectB);
+        nonNullObjectWithNullToString.ShouldBe(nonNullObjectWithNullToString);
 
         Contradiction(objectB, x => x.ShouldBe((object?)null),
             $"x should be null but was {FullName<SampleB>()}");
@@ -22,6 +24,8 @@ class GeneralAssertionTests
             $"x should be {FullName<SampleA>()} but was {FullName<SampleB>()}");
         Contradiction(objectA, x => x.ShouldBe(objectB),
             $"x should be {FullName<SampleB>()} but was {FullName<SampleA>()}");
+        Contradiction(nonNullObjectWithNullToString, x => x.ShouldBe(objectB),
+            $"x should be {FullName<SampleB>()} but was {FullName<SampleNullToString>()}");
     }
 
     public void ShouldAssertNulls()
@@ -243,5 +247,10 @@ class GeneralAssertionTests
     class Sample(string name)
     {
         public override string ToString() => $"Sample {name}";
+    }
+
+    class SampleNullToString
+    {
+        public override string? ToString() => null;
     }
 }
