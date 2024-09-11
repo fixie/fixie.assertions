@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using static System.Environment;
 
-namespace Fixie.Assertions.Tests;
+namespace Tests;
 
 static class Utility
 {

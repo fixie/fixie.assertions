@@ -1,1 +1,2 @@
-﻿global using static Fixie.Assertions.Tests.Utility;
+﻿global using Fixie.Assertions;
+global using static Tests.Utility;

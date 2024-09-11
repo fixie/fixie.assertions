@@ -1,4 +1,4 @@
-﻿namespace Fixie.Assertions.Tests;
+﻿namespace Tests;
 
 class ExceptionAssertionTests
 {

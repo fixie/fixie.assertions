@@ -1,4 +1,4 @@
-﻿namespace Fixie.Assertions.Tests;
+﻿namespace Tests;
 
 class GeneralAssertionTests
 {
@@ -48,7 +48,7 @@ class GeneralAssertionTests
     {
         typeof(int).ShouldBe(typeof(int));
         typeof(char).ShouldBe(typeof(char));
-        Contradiction(typeof(Utility), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(Fixie.Assertions.Tests.Utility)");
+        Contradiction(typeof(Utility), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(Tests.Utility)");
         Contradiction(typeof(bool), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(bool)");
         Contradiction(typeof(sbyte), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(sbyte)");
         Contradiction(typeof(byte), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(byte)");
