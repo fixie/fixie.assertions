@@ -30,6 +30,8 @@ public class AssertException : Exception
 
     static string Serialize(bool x) => x ? "true" : "false";
 
+    static string Serialize(object x) => x.ToString()!;
+
     static string SerializeByType<T>(T any)
     {
         if (any == null)
@@ -38,6 +40,6 @@ public class AssertException : Exception
         if (typeof(T) == typeof(bool))
             return Serialize((bool)(object)any);
 
-        throw new NotSupportedException("Cannot yet serialize objects of type " + typeof(T).FullName);
+        return Serialize(any);
     }
 }

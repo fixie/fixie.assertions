@@ -9,4 +9,10 @@ public static class AssertionExtensions
         if (actual != expected)
             throw AssertException.ForValues(expression, expected, actual);
     }
+
+    public static void ShouldBe<T>(this IEquatable<T> actual, IEquatable<T> expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
+    {
+        if (!actual.Equals(expected))
+            throw AssertException.ForValues(expression, expected, actual);
+    }
 }
