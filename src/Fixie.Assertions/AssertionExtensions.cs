@@ -17,6 +17,20 @@ public static class AssertionExtensions
             throw AssertException.ForValues(expression, expected, actual);
     }
 
+    public static void ShouldBe(this Type actual, Type expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
+    {
+        if (actual != expected)
+            throw AssertException.ForValues(expression, expected, actual);
+    }
+
+    public static T ShouldBe<T>(this object? actual, [CallerArgumentExpression(nameof(actual))] string? expression = null)
+    {
+        if (actual is T typed)
+            return typed;
+
+        throw AssertException.ForValues(expression, typeof(T), actual?.GetType());
+    }
+
     public static void ShouldBe(this object? actual, object? expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
         if (!Equals(actual, expected))
