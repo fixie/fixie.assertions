@@ -7,18 +7,30 @@ public class AssertException : Exception
     public string Actual { get; }
     readonly string message;
 
-    public AssertException(string? expression, string expected, string actual)
+    public AssertException(string? expression, string expected, string actual, string? message = null)
     {
         Expression = expression;
         Expected = expected;
         Actual = actual;
 
-        message = ScalarMessage(Expression, Expected, Actual);
+        if (message == null)
+        {
+            this.message = ScalarMessage(Expression, Expected, Actual);
+        }
+        else
+        {
+            this.message = message;
+        }
     }
 
     public static AssertException ForValues<T>(string? expression, T expected, T actual)
     {
         return new AssertException(expression, SerializeByType(expected), SerializeByType(actual));
+    }
+
+    public static AssertException ForMessage(string? expression, string expected, string actual, string message)
+    {
+        return new AssertException(expression, expected, actual, message);
     }
 
     public override string Message => message;
@@ -34,8 +46,7 @@ public class AssertException : Exception
 
     static string SerializeByType<T>(T any)
     {
-        if (any == null)
-            throw new NotSupportedException("Cannot yet serialize nulls.");
+        if (any == null) return "null";
 
         if (typeof(T) == typeof(bool))
             return Serialize((bool)(object)any);
