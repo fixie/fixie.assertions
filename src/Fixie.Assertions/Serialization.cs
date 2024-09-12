@@ -104,7 +104,7 @@ static class Serialization
             _ => x.ToString()
         }})";
 
-    public static string SerializeList<T>(T[] items)
+    public static string Serialize<T>(T[] items)
     {
         var formattedItems = string.Join("," + NewLine, items.Select(arg => "    " + Serialize(arg)));
 

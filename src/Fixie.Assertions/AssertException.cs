@@ -39,7 +39,7 @@ public class AssertException : Exception
 
     public static AssertException ForLists<T>(string? expression, T[] expected, T[] actual)
     {
-        return new AssertException(expression, SerializeList(expected), SerializeList(actual));
+        return new AssertException(expression, Serialize(expected), Serialize(actual));
     }
 
     public static AssertException ForPredicate<T>(string? expression, string expectation, T actual)
