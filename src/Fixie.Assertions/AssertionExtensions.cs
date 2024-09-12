@@ -9,18 +9,6 @@ namespace Fixie.Assertions;
 
 public static class AssertionExtensions
 {
-    public static void ShouldBe(this bool actual, bool expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
-    {
-        if (actual != expected)
-            throw EqualityFailure(expression, expected, actual);
-    }
-
-    public static void ShouldBe(this char actual, char expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
-    {
-        if (actual != expected)
-            throw EqualityFailure(expression, expected, actual);
-    }
-
     public static void ShouldBe(this string? actual, string? expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
         if (actual != expected)
@@ -30,12 +18,6 @@ public static class AssertionExtensions
     public static void ShouldBe<T>(this IEquatable<T> actual, IEquatable<T> expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
         if (!actual.Equals(expected))
-            throw EqualityFailure(expression, expected, actual);
-    }
-
-    public static void ShouldBe(this Type actual, Type expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
-    {
-        if (actual != expected)
             throw EqualityFailure(expression, expected, actual);
     }
 
