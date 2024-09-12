@@ -34,7 +34,7 @@ static class Serialization
 
     static string Serialize(char x) => $"'{Escape(x)}'";
 
-    public static string Serialize(string x)
+    static string Serialize(string x)
     {
         if (IsMultiline(x))
         {

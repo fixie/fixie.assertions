@@ -53,11 +53,11 @@ public class AssertException : Exception
             $"""
              {expression} should have thrown {typeof(TException).FullName} with message
              
-             {Indent(Serialize(expectedMessage))}
+             {Indent(SerializeByType(expectedMessage))}
              
              but instead the message was
              
-             {Indent(Serialize(actualMessage))}
+             {Indent(SerializeByType(actualMessage))}
              """);
     }
 
@@ -67,11 +67,11 @@ public class AssertException : Exception
             $"""
              {expression} should have thrown {expectedType.FullName} with message
 
-             {Indent(Serialize(expectedMessage))}
+             {Indent(SerializeByType(expectedMessage))}
 
              but instead it threw {actualType.FullName} with message
 
-             {Indent(Serialize(actualMessage))}
+             {Indent(SerializeByType(actualMessage))}
              """);
     }
 
