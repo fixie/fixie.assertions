@@ -24,6 +24,13 @@ static class Serialization
         return any.ToString() ?? any.GetType().ToString();
     }
 
+    public static string Serialize<T>(T[] items)
+    {
+        var formattedItems = string.Join("," + NewLine, items.Select(arg => "    " + Serialize(arg)));
+
+        return $"[{NewLine}{formattedItems}{NewLine}]";
+    }
+
     static string Serialize(bool x) => x ? "true" : "false";
 
     static string Serialize(char x) => $"'{Escape(x)}'";
@@ -103,11 +110,4 @@ static class Serialization
             _ when x == typeof(object) => "object",
             _ => x.ToString()
         }})";
-
-    public static string Serialize<T>(T[] items)
-    {
-        var formattedItems = string.Join("," + NewLine, items.Select(arg => "    " + Serialize(arg)));
-
-        return $"[{NewLine}{formattedItems}{NewLine}]";
-    }
 }
