@@ -95,9 +95,24 @@ class GeneralAssertionTests
 
     public void ShouldAssertLists()
     {
-        new int[]{}.ShouldBe([]);
+        Contradiction((object)new int[]{}, x => x.ShouldBe((int[])[]),
+            """
+            x should be
+                [
+                
+                ]
+            
+            but was
+                [
+                
+                ]
 
-        Contradiction(new[] { 0 }, x => x.ShouldBe([]),
+            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+            """);
+
+        new int[]{}.ShouldMatch([]);
+
+        Contradiction(new[] { 0 }, x => x.ShouldMatch([]),
             """
             x should be
                 [
@@ -110,7 +125,7 @@ class GeneralAssertionTests
                 ]
             """);
 
-        Contradiction(new int[] { }, x => x.ShouldBe([0]),
+        Contradiction(new int[] { }, x => x.ShouldMatch([0]),
             """
             x should be
                 [
@@ -123,9 +138,9 @@ class GeneralAssertionTests
                 ]
             """);
 
-        new[] { false, true, false }.ShouldBe([false, true, false]);
+        new[] { false, true, false }.ShouldMatch([false, true, false]);
 
-        Contradiction(new[] { false, true, false }, x => x.ShouldBe([false, true]),
+        Contradiction(new[] { false, true, false }, x => x.ShouldMatch([false, true]),
             """
             x should be
                 [
@@ -141,9 +156,9 @@ class GeneralAssertionTests
                 ]
             """);
         
-        new[] { 'A', 'B', 'C' }.ShouldBe(['A', 'B', 'C']);
+        new[] { 'A', 'B', 'C' }.ShouldMatch(['A', 'B', 'C']);
         
-        Contradiction(new[] { 'A', 'B', 'C' }, x => x.ShouldBe(['A', 'C']),
+        Contradiction(new[] { 'A', 'B', 'C' }, x => x.ShouldMatch(['A', 'C']),
             """
             x should be
                 [
@@ -159,9 +174,9 @@ class GeneralAssertionTests
                 ]
             """);
 
-        new[] { "A", "B", "C" }.ShouldBe(["A", "B", "C"]);
+        new[] { "A", "B", "C" }.ShouldMatch(["A", "B", "C"]);
 
-        Contradiction(new[] { "A", "B", "C" }, x => x.ShouldBe(["A", "C"]),
+        Contradiction(new[] { "A", "B", "C" }, x => x.ShouldMatch(["A", "C"]),
             """
             x should be
                 [
@@ -177,9 +192,9 @@ class GeneralAssertionTests
                 ]
             """);
 
-        new[] { typeof(int), typeof(bool) }.ShouldBe([typeof(int), typeof(bool)]);
+        new[] { typeof(int), typeof(bool) }.ShouldMatch([typeof(int), typeof(bool)]);
 
-        Contradiction(new[] { typeof(int), typeof(bool) }, x => x.ShouldBe([typeof(bool), typeof(int)]),
+        Contradiction(new[] { typeof(int), typeof(bool) }, x => x.ShouldMatch([typeof(bool), typeof(int)]),
             """
             x should be
                 [
@@ -197,9 +212,9 @@ class GeneralAssertionTests
         var sampleA = new Sample("A");
         var sampleB = new Sample("B");
 
-        new[] { sampleA, sampleB }.ShouldBe([sampleA, sampleB]);
+        new[] { sampleA, sampleB }.ShouldMatch([sampleA, sampleB]);
 
-        Contradiction(new[] { sampleA, sampleB }, x => x.ShouldBe([sampleB, sampleA]),
+        Contradiction(new[] { sampleA, sampleB }, x => x.ShouldMatch([sampleB, sampleA]),
             """
             x should be
                 [

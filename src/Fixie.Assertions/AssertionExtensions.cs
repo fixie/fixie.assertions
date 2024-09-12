@@ -59,7 +59,7 @@ public static class AssertionExtensions
             throw new AssertException(expression, "not null", "null", $"{expression} should not be null but was null");
     }
 
-    public static void ShouldBe<T>(this IEnumerable<T> actual, T[] expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
+    public static void ShouldMatch<T>(this IEnumerable<T> actual, T[] expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
         var actualArray = actual.ToArray();
 

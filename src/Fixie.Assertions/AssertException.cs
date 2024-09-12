@@ -25,6 +25,9 @@ public class AssertException : Exception
             this.message = HasMultilineRepresentation
                 ? MultilineMessage(Expression, Expected, Actual)
                 : ScalarMessage(Expression, Expected, Actual);
+
+            if (Expected == Actual)
+                this.message = this.message + $"{NewLine}{NewLine}These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?";
         }
         else
         {
