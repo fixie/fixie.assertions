@@ -9,7 +9,8 @@ namespace Fixie.Assertions;
 
 public static class AssertionExtensions
 {
-    public static void ShouldBe(this string? actual, string? expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
+    public static void ShouldBe<T>(this T? actual, T? expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
+        where T : class
     {
         if (actual != expected)
             throw EqualityFailure(expression, expected, actual);
@@ -27,13 +28,6 @@ public static class AssertionExtensions
             return typed;
 
         throw EqualityFailure(expression, typeof(T), actual?.GetType());
-    }
-
-    public static void ShouldBe<T>(this T? actual, T? expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
-        where T : class
-    {
-        if (actual != expected)
-            throw EqualityFailure(expression, expected, actual);
     }
 
     public static void ShouldNotBeNull([NotNull] this object? actual, [CallerArgumentExpression(nameof(actual))] string? expression = null)
