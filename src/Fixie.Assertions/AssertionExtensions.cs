@@ -62,11 +62,11 @@ public static class AssertionExtensions
         var actualArray = actual.ToArray();
 
         if (actualArray.Length != expected.Length)
-            throw AssertException.ForLists(expression, expected, actualArray);
+            throw AssertException.ForValues(expression, expected, actualArray);
 
         foreach (var (actualItem, expectedItem) in actualArray.Zip(expected))
             if (!Equals(actualItem, expectedItem))
-                throw AssertException.ForLists(expression, expected, actualArray);
+                throw AssertException.ForValues(expression, expected, actualArray);
     }
 
     public static TException ShouldThrow<TException>(this Action shouldThrow, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrow))] string? expression = null) where TException : Exception

@@ -5,28 +5,33 @@ namespace Fixie.Assertions;
 
 static class Serialization
 {
-    public static string Serialize<T>(T any)
+    public static string Serialize(object? any)
     {
         if (any == null) return "null";
 
-        if (typeof(T) == typeof(bool))
-            return Serialize((bool)(object)any);
+        var type = any.GetType();
 
-        if (typeof(T) == typeof(char))
-            return Serialize((char)(object)any);
+        if (type == typeof(bool))
+            return Serialize((bool)any);
 
-        if (typeof(T) == typeof(string))
-            return Serialize((string)(object)any);
+        if (type == typeof(char))
+            return Serialize((char)any);
 
-        if (typeof(T) == typeof(Type))
-            return Serialize((Type)(object)any);
+        if (type == typeof(string))
+            return Serialize((string)any);
+
+        if (type.IsArray)
+            return Serialize((Array)any);
+
+        if (type == typeof(Type) || type.IsSubclassOf(typeof(Type)))
+            return Serialize((Type)any);
 
         return any.ToString() ?? any.GetType().ToString();
     }
 
-    public static string Serialize<T>(T[] items)
+    static string Serialize(Array items)
     {
-        var formattedItems = string.Join("," + NewLine, items.Select(arg => "    " + Serialize(arg)));
+        var formattedItems = string.Join("," + NewLine, items.Cast<object>().Select(arg => "    " + Serialize(arg)));
 
         return $"[{NewLine}{formattedItems}{NewLine}]";
     }
