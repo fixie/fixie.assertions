@@ -87,12 +87,12 @@ static class Serialization
 
     public static string SerializeList<T>(T[] items)
     {
-        var formattedItems = string.Join("," + NewLine, items.Select(arg => "    " + SerializeByType(arg)));
+        var formattedItems = string.Join("," + NewLine, items.Select(arg => "    " + Serialize(arg)));
 
         return $"[{NewLine}{formattedItems}{NewLine}]";
     }
 
-    public static string SerializeByType<T>(T any)
+    public static string Serialize<T>(T any)
     {
         if (any == null) return "null";
 

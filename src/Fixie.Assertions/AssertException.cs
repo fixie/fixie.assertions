@@ -34,7 +34,7 @@ public class AssertException : Exception
 
     public static AssertException ForValues<T>(string? expression, T expected, T actual)
     {
-        return new AssertException(expression, SerializeByType(expected), SerializeByType(actual));
+        return new AssertException(expression, Serialize(expected), Serialize(actual));
     }
 
     public static AssertException ForLists<T>(string? expression, T[] expected, T[] actual)
@@ -44,7 +44,7 @@ public class AssertException : Exception
 
     public static AssertException ForPredicate<T>(string? expression, string expectation, T actual)
     {
-        return new AssertException(expression, expectation, SerializeByType(actual));
+        return new AssertException(expression, expectation, Serialize(actual));
     }
 
     public static Exception ForException<TException>(string? expression, string expectedMessage, string actualMessage) where TException : Exception
@@ -53,11 +53,11 @@ public class AssertException : Exception
             $"""
              {expression} should have thrown {typeof(TException).FullName} with message
              
-             {Indent(SerializeByType(expectedMessage))}
+             {Indent(Serialize(expectedMessage))}
              
              but instead the message was
              
-             {Indent(SerializeByType(actualMessage))}
+             {Indent(Serialize(actualMessage))}
              """);
     }
 
@@ -67,11 +67,11 @@ public class AssertException : Exception
             $"""
              {expression} should have thrown {expectedType.FullName} with message
 
-             {Indent(SerializeByType(expectedMessage))}
+             {Indent(Serialize(expectedMessage))}
 
              but instead it threw {actualType.FullName} with message
 
-             {Indent(SerializeByType(actualMessage))}
+             {Indent(Serialize(actualMessage))}
              """);
     }
 
