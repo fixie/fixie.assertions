@@ -32,16 +32,6 @@ public class AssertException : Exception
         }
     }
 
-    public static AssertException ForValues<T>(string? expression, T expected, T actual)
-    {
-        return new AssertException(expression, Serialize(expected), Serialize(actual));
-    }
-
-    public static AssertException ForPredicate<T>(string? expression, string expectation, T actual)
-    {
-        return new AssertException(expression, expectation, Serialize(actual));
-    }
-
     public override string Message => message;
 
     static string MultilineMessage(string? expression, string expected, string actual)

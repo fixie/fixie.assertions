@@ -12,31 +12,31 @@ public static class AssertionExtensions
     public static void ShouldBe(this bool actual, bool expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
         if (actual != expected)
-            throw AssertException.ForValues(expression, expected, actual);
+            throw EqualityFailure(expression, expected, actual);
     }
 
     public static void ShouldBe(this char actual, char expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
         if (actual != expected)
-            throw AssertException.ForValues(expression, expected, actual);
+            throw EqualityFailure(expression, expected, actual);
     }
 
     public static void ShouldBe(this string? actual, string? expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
         if (actual != expected)
-            throw AssertException.ForValues(expression, expected, actual);
+            throw EqualityFailure(expression, expected, actual);
     }
 
     public static void ShouldBe<T>(this IEquatable<T> actual, IEquatable<T> expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
         if (!actual.Equals(expected))
-            throw AssertException.ForValues(expression, expected, actual);
+            throw EqualityFailure(expression, expected, actual);
     }
 
     public static void ShouldBe(this Type actual, Type expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
         if (actual != expected)
-            throw AssertException.ForValues(expression, expected, actual);
+            throw EqualityFailure(expression, expected, actual);
     }
 
     public static T ShouldBe<T>(this object? actual, [CallerArgumentExpression(nameof(actual))] string? expression = null)
@@ -44,13 +44,13 @@ public static class AssertionExtensions
         if (actual is T typed)
             return typed;
 
-        throw AssertException.ForValues(expression, typeof(T), actual?.GetType());
+        throw EqualityFailure(expression, typeof(T), actual?.GetType());
     }
 
     public static void ShouldBe(this object? actual, object? expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
         if (!Equals(actual, expected))
-            throw AssertException.ForValues(expression, expected, actual);
+            throw EqualityFailure(expression, expected, actual);
     }
 
     public static void ShouldNotBeNull([NotNull] this object? actual, [CallerArgumentExpression(nameof(actual))] string? expression = null)
@@ -64,11 +64,11 @@ public static class AssertionExtensions
         var actualArray = actual.ToArray();
 
         if (actualArray.Length != expected.Length)
-            throw AssertException.ForValues(expression, expected, actualArray);
+            throw EqualityFailure(expression, expected, actualArray);
 
         foreach (var (actualItem, expectedItem) in actualArray.Zip(expected))
             if (!Equals(actualItem, expectedItem))
-                throw AssertException.ForValues(expression, expected, actualArray);
+                throw EqualityFailure(expression, expected, actualArray);
     }
 
     public static TException ShouldThrow<TException>(this Action shouldThrow, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrow))] string? expression = null) where TException : Exception
@@ -152,7 +152,7 @@ public static class AssertionExtensions
             expectationBody.ShouldNotBeNull();
             expectationBody = DropTrivialLambdaPrefix(expectationBody);
 
-            throw AssertException.ForPredicate(expression, expectationBody, actual);
+            throw ExpectationFailure(expression, expectationBody, actual);
         }
     }
 
@@ -170,4 +170,10 @@ public static class AssertionExtensions
 
         return expectationBody;
     }
+
+    static AssertException EqualityFailure<T>(string? expression, T expected, T actual)
+        => new AssertException(expression, Serialize(expected), Serialize(actual));
+
+    static AssertException ExpectationFailure<T>(string? expression, string expectation, T actual)
+        => new AssertException(expression, expectation, Serialize(actual));
 }
