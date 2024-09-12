@@ -1,4 +1,5 @@
-﻿using static System.Environment;
+﻿using static Fixie.Assertions.StringUtilities;
+using static System.Environment;
 
 namespace Fixie.Assertions;
 
@@ -84,16 +85,6 @@ public class AssertException : Exception
     static string ScalarMessage(string? expression, string expected, string actual)
     {
         return $"{expression} should be {expected} but was {actual}";
-    }
-
-    static string Indent(string multiline) =>
-        string.Join(NewLine, multiline.Split(NewLine).Select(x => $"    {x}"));
-
-    static bool IsMultiline(string value)
-    {
-        var lines = value.Split(NewLine);
-
-        return lines.Length > 1 && lines.All(line => !line.Contains("\r") && !line.Contains("\n"));
     }
 
     static string Serialize(bool x) => x ? "true" : "false";
