@@ -7,8 +7,6 @@ static class Serialization
 {
     static string Serialize(bool x) => x ? "true" : "false";
 
-    static string Serialize(object x) => x.ToString() ?? x.GetType().ToString();
-
     static string Serialize(Type x) =>
         $"typeof({x switch
         {
@@ -110,6 +108,6 @@ static class Serialization
         if (typeof(T) == typeof(Type))
             return Serialize((Type)(object)any);
 
-        return Serialize(any);
+        return any.ToString() ?? any.GetType().ToString();
     }
 }
