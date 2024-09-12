@@ -2,6 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using static Fixie.Assertions.Serialization;
+using static Fixie.Assertions.StringUtilities;
 
 namespace Fixie.Assertions;
 
@@ -106,12 +108,33 @@ public static class AssertionExtensions
         if (actual is TException typed)
         {
             if (actual.Message != expectedMessage)
-                throw AssertException.ForException<TException>(expression, expectedMessage, actual.Message);
+                throw new AssertException(expression, expectedMessage, actual.Message,
+                        $"""
+                         {expression} should have thrown {typeof(TException).FullName} with message
+             
+                         {Indent(Serialize(expectedMessage))}
+             
+                         but instead the message was
+             
+                         {Indent(Serialize(actual.Message))}
+                         """);
 
             return typed;
         }
 
-        throw AssertException.ForException(expression, typeof(TException), expectedMessage, actual.GetType(), actual.Message);
+        var expectedType = typeof(TException);
+        var actualType = actual.GetType();
+
+        throw new AssertException(expression, expectedMessage, actual.Message,
+            $"""
+             {expression} should have thrown {expectedType.FullName} with message
+
+             {Indent(Serialize(expectedMessage))}
+
+             but instead it threw {actualType.FullName} with message
+
+             {Indent(Serialize(actual.Message))}
+             """);
     }
 
     static void ShouldHaveThrown<TException>(string? expression) where TException : Exception
