@@ -20,10 +20,14 @@ class GeneralAssertionTests
 
         Contradiction(objectB, x => x.ShouldBe((object?)null),
             $"x should be null but was {FullName<SampleB>()}");
-        Contradiction(objectB, x => x.ShouldBe(objectA),
+        Contradiction(objectB, x => x.ShouldBe((SampleB?)null),
+            $"x should be null but was {FullName<SampleB>()}");
+
+        Contradiction((object)objectB, x => x.ShouldBe((object)objectA),
             $"x should be {FullName<SampleA>()} but was {FullName<SampleB>()}");
-        Contradiction(objectA, x => x.ShouldBe(objectB),
+        Contradiction((object)objectA, x => x.ShouldBe((object)objectB),
             $"x should be {FullName<SampleB>()} but was {FullName<SampleA>()}");
+
         Contradiction(nonNullObjectWithNullToString, x => x.ShouldBe(objectB),
             $"x should be {FullName<SampleB>()} but was {FullName<SampleNullToString>()}");
     }

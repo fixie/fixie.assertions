@@ -29,9 +29,10 @@ public static class AssertionExtensions
         throw EqualityFailure(expression, typeof(T), actual?.GetType());
     }
 
-    public static void ShouldBe(this object? actual, object? expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
+    public static void ShouldBe<T>(this T? actual, T? expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
+        where T : class
     {
-        if (!Equals(actual, expected))
+        if (actual != expected)
             throw EqualityFailure(expression, expected, actual);
     }
 
