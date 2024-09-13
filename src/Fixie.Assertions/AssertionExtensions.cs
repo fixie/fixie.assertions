@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -19,6 +19,7 @@ public static class AssertionExtensions
 
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static void ShouldBe<T>(this IEquatable<T> actual, IEquatable<T> expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
+        where T : struct
     {
         if (!actual.Equals(expected))
             throw EqualityFailure(expression, expected, actual);
