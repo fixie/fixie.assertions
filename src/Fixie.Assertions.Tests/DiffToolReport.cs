@@ -5,7 +5,7 @@ namespace Tests;
 
 class DiffToolReport : IHandler<TestFailed>, IHandler<ExecutionCompleted>
 {
-        int failures;
+    int failures;
     Exception? singleFailure;
 
     public Task Handle(TestFailed message)
