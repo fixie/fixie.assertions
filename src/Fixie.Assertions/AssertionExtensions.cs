@@ -12,7 +12,7 @@ public static class AssertionExtensions
     public static void ShouldBe<T>(this T? actual, T? expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
         where T : class
     {
-        if (actual != expected)
+        if (!EqualityComparer<T>.Default.Equals(actual, expected))
             throw EqualityFailure(expression, expected, actual);
     }
 

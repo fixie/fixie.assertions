@@ -32,6 +32,15 @@ class GeneralAssertionTests
             $"x should be {FullName<SampleB>()} but was {FullName<SampleNullToString>()}");
     }
 
+    public void ShouldAssertReferenceTypesByTheirNaturalEqualityComparer()
+    {
+        var uniqueInstanceA = new string("abc");
+        var uniqueInstanceB = new string("abc");
+
+        ReferenceEquals(uniqueInstanceA, uniqueInstanceB).ShouldBe(false);
+        uniqueInstanceA.ShouldBe(uniqueInstanceB);
+    }
+
     public void ShouldAssertNulls()
     {
         object? nullObject = null;
