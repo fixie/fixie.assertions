@@ -149,8 +149,8 @@ public static class AssertionExtensions
     }
 
     static AssertException EqualityFailure<T>(string? expression, T expected, T actual)
-        => new AssertException(expression, Serialize(expected), Serialize(actual));
+        => new(expression, Serialize(expected), Serialize(actual));
 
     static AssertException ExpectationFailure<T>(string? expression, string expectation, T actual)
-        => new AssertException(expression, expectation, Serialize(actual));
+        => new(expression, expectation, Serialize(actual));
 }

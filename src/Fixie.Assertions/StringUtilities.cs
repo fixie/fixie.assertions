@@ -11,6 +11,6 @@ static class StringUtilities
     {
         var lines = value.Split(NewLine);
 
-        return lines.Length > 1 && lines.All(line => !line.Contains("\r") && !line.Contains("\n"));
+        return lines.Length > 1 && lines.All(line => !line.Contains('\r') && !line.Contains('\n'));
     }
 }

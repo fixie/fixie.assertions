@@ -1,5 +1,4 @@
-﻿using static Fixie.Assertions.Serialization;
-using static Fixie.Assertions.StringUtilities;
+﻿using static Fixie.Assertions.StringUtilities;
 using static System.Environment;
 
 namespace Fixie.Assertions;
@@ -38,13 +37,9 @@ public class AssertException : Exception
     public override string Message => message;
 
     static string MultilineMessage(string? expression, string expected, string actual)
-    {
-        return $"{expression} should be{NewLine}{Indent(expected)}{NewLine}{NewLine}" +
-               $"but was{NewLine}{Indent(actual)}";
-    }
+        => $"{expression} should be{NewLine}{Indent(expected)}{NewLine}{NewLine}" +
+           $"but was{NewLine}{Indent(actual)}";
 
     static string ScalarMessage(string? expression, string expected, string actual)
-    {
-        return $"{expression} should be {expected} but was {actual}";
-    }
+        => $"{expression} should be {expected} but was {actual}";
 }
