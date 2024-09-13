@@ -31,9 +31,10 @@
         CS0612: '...' is obsolete
         CS0618: '...' is obsolete: "..."
         CS1591: Missing XML comment for publicly visible type or member '...'
+        CS1573: Parameter '...' has no matching param tag in the XML comment for '...' (but other parameters do)
     -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>1591</NoWarn>
+    <NoWarn>1591,1573</NoWarn>
     <WarningsNotAsErrors>162,612,618</WarningsNotAsErrors>
   </PropertyGroup>
 </Project>

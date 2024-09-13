@@ -9,6 +9,7 @@ namespace Fixie.Assertions;
 
 public static class AssertionExtensions
 {
+    /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static void ShouldBe<T>(this T? actual, T? expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
         where T : class
     {
@@ -16,12 +17,14 @@ public static class AssertionExtensions
             throw EqualityFailure(expression, expected, actual);
     }
 
+    /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static void ShouldBe<T>(this IEquatable<T> actual, IEquatable<T> expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
         if (!actual.Equals(expected))
             throw EqualityFailure(expression, expected, actual);
     }
 
+    /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static T ShouldBe<T>(this object? actual, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
         if (actual is T typed)
@@ -30,12 +33,14 @@ public static class AssertionExtensions
         throw EqualityFailure(expression, typeof(T), actual?.GetType());
     }
 
+    /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static void ShouldNotBeNull([NotNull] this object? actual, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
         if (actual == null)
             throw new AssertException(expression, "not null", "null", $"{expression} should not be null but was null");
     }
 
+    /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static void ShouldMatch<T>(this IEnumerable<T> actual, T[] expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
         var actualArray = actual.ToArray();
@@ -48,6 +53,7 @@ public static class AssertionExtensions
                 throw EqualityFailure(expression, expected, actualArray);
     }
 
+    /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static TException ShouldThrow<TException>(this Action shouldThrow, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrow))] string? expression = null) where TException : Exception
     {
         try
@@ -64,6 +70,7 @@ public static class AssertionExtensions
         throw new UnreachableException();
     }
 
+    /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static async Task<TException> ShouldThrow<TException>(this Func<Task> shouldThrowAsync, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrowAsync))] string? expression = null) where TException : Exception
     {
         try
@@ -122,6 +129,7 @@ public static class AssertionExtensions
             $"{expression} should have thrown {expectedType} but did not");
     }
 
+    /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static void Should<T>(this T actual, Func<T, bool> expectation, [CallerArgumentExpression(nameof(actual))] string? expression = default!, [CallerArgumentExpression(nameof(expectation))] string? expectationBody = default!)
     {
         if (!expectation(actual))
