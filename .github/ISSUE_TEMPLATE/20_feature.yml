@@ -6,7 +6,7 @@ body:
     value: |
       ⚠ **Most feature requests will be closed with little or no explanation.**
       
-      Most assertion libraries tend to accrete 1000 `ShouldXyz` methods for every conceivable situation. This library refuses to "boil the ocean". Instead, this library provides a small set of simple and predictable assertions that is not expected to grow over time. It is instead meant to be augmented with the occasional custom assertion in your own code, perhaps writing those in terms of the built-in fundamental assertions.
+      Most assertion libraries tend to accrete 1000 `ShouldXyz` methods for every conceivable situation. This library refuses to "boil the ocean". Instead, this library provides a small set of simple and predictable assertions and is not expected to grow over time. It is instead meant to be augmented with the occasional custom assertion in your own code, perhaps writing those in terms of the built-in fundamental assertions.
       
       If the vision for this project makes it insufficient for your needs, we encourage you to reach for an alternative library with a larger scope.
 - type: checkboxes

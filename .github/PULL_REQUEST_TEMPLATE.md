@@ -1,0 +1,6 @@
+- [ ] I understand that an unanticipated Pull Request is very likley to be rejected, especially if it was not raised as an Issue first.
+- [ ] I understand that breaking changes are very likely to be rejected.
+- [ ] I have not mixed code style or whitespace changes in with substantive changes.
+- [ ] I have not made sweeping changes likely to create merge conflicts with other work in progress.
+- [ ] I am not making Target Framework changes, which are surely already part of this project's regular maintenance roadmap.
+- [ ] Where possible, my changes come with meaningful test coverage.
