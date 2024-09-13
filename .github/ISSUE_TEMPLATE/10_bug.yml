@@ -1,0 +1,24 @@
+name: 🐞 Bug Report
+body:
+- type: textarea
+  attributes:
+    label: Description
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Expected Behavior
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Actual Behavior
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Steps To Reproduce
+    description: |
+      Since this is an assertion library, it can be very helpful to include an example of a test that either fails when you expect it to pass, or passes when you expect it to fail.
+  validations:
+    required: false
