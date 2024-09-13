@@ -32,7 +32,6 @@ class StackTraceTests
         NormalizeLineNumbers(exception.StackTrace)
             .ShouldBe(
                 $"""
-                {At(typeof(AssertionExtensions), "ShouldBe[T](IEquatable`1 actual, IEquatable`1 expected, String expression)", ["..", "Fixie.Assertions", "AssertionExtensions.cs"])}
                 {At<StackTraceTests>("FailAssertion()")}
                 {At<StackTraceTests>("Catch(Action throwingAction)")}
                 """);
