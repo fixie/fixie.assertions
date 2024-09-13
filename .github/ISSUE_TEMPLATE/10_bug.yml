@@ -1,4 +1,5 @@
 name: 🐞 Bug Report
+description: An assertion is failing when I expect it to pass, or passing when I expect it to fail.
 body:
 - type: textarea
   attributes:
