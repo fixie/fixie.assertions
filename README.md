@@ -183,7 +183,7 @@ await divideByZero.ShouldThrow<DivideByZeroException>("Divided By Zero");
 
 ## Idiomatic `Should`
 
-Most assertion libraries tend to accrete 1000 `ShouldXyz` methods for every conceivable situation. This library refuse to boil the ocean. The `Should(expectation)` assertion reduces the need for things like `ShouldBeGreaterThan`, `ShouldBeGreaterThanOrEqualTo`, and similar nonidiomatic assertions. **Any pull requests that attempt to boil the ocean with non-idiomatic code will be closed.**
+Most assertion libraries tend to accrete 1000 `ShouldXyz` methods for every conceivable situation. This library refuses to boil the ocean. The `Should(expectation)` assertion reduces the need for things like `ShouldBeGreaterThan`, `ShouldBeGreaterThanOrEqualTo`, and similar nonidiomatic assertions.
 
 ```cs
 var value = 4;
@@ -208,8 +208,6 @@ value should be >= 4 but was 3
 The properties on `AssertException` are a natural fit for display in your diff tool. When a single test fails, the following custom Fixie report will display the Expected/Actual values in your diff tool.
 
 ```xml
-<!-- Within Example.Tests/Example.Tests.csproj -->
-
 <ItemGroup>
   <PackageReference Include="Fixie.TestAdapter" />
   <PackageReference Include="Fixie.Assertions" />
@@ -218,8 +216,6 @@ The properties on `AssertException` are a natural fit for display in your diff t
 ```
 
 ```cs
-// Example.Tests/TestProject.cs
-
 using Fixie;
 
 namespace Example.Tests;
@@ -235,8 +231,6 @@ class TestProject : ITestProject
 ```
 
 ```cs
-// Example.Tests/DiffToolReport.cs
-
 using Fixie.Reports;
 using Fixie.Assertions;
 using DiffEngine;
@@ -278,11 +272,7 @@ class DiffToolReport : IHandler<TestFailed>, IHandler<ExecutionCompleted>
 }
 ```
 
-Your diff tool launches on failure, drawing attention to the meaningful differences:
-
-<table>
-<tr>
-<td>
+Your diff tool launches on failure, drawing attention to the meaningful differences between the expected and actual values:
 
 ```diff
 [
@@ -293,21 +283,3 @@ Your diff tool launches on failure, drawing attention to the meaningful differen
 -    7.34
 ]
 ```
-
-</td>
-<td>
-<pre><code>
-┌────────────────┬────────────────┐
-│    Expected    │     Actual     │
-├────────────────┼────────────────┤
-│ [              │ [              │
-│   1.20,        │   1.20,        │
-│   5.99,        │   5.99,        │
-│   10.14<span style="color:red;font-weight:bold;">*,*</span>     │   10.14        │
-│   <span style="color:red;font-weight:bold;">*7.34*</span>       │ ]              │
-│ ]              │                │
-└────────────────┴────────────────┘
-</code></pre>
-</td>
-</tr>
-</table>
