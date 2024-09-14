@@ -68,4 +68,36 @@ class PrimitiveAssertionTests
         float.MaxValue.ShouldBe(float.MaxValue);
         Contradiction((float)3, x => x.ShouldBe((float)4), "x should be 4 but was 3");
     }
+
+    public void ShouldAssertNullableValueTypes()
+    {
+        bool? nullableBool = null;
+
+        nullableBool.ShouldBe(null);
+        Contradiction(nullableBool, x => x.ShouldBe(false), "x should be false but was null");
+        Contradiction(nullableBool, x => x.ShouldBe(true), "x should be true but was null");
+
+        nullableBool = false;
+
+        Contradiction(nullableBool, x => x.ShouldBe(null), "x should be null but was false");
+        nullableBool.ShouldBe(false);
+        Contradiction(nullableBool, x => x.ShouldBe(true), "x should be true but was false");
+
+        nullableBool = true;
+
+        Contradiction(nullableBool, x => x.ShouldBe(null), "x should be null but was true");
+        Contradiction(nullableBool, x => x.ShouldBe(false), "x should be false but was true");
+        nullableBool.ShouldBe(true);
+    }
+
+    public void ShouldAssertEnums()
+    {
+        StringSplitOptions.None.ShouldBe(StringSplitOptions.None);
+        StringSplitOptions.RemoveEmptyEntries.ShouldBe(StringSplitOptions.RemoveEmptyEntries);
+        StringSplitOptions.TrimEntries.ShouldBe(StringSplitOptions.TrimEntries);
+        ((StringSplitOptions)int.MaxValue).ShouldBe((StringSplitOptions)int.MaxValue);
+
+        Contradiction(StringSplitOptions.None, x => x.ShouldBe(StringSplitOptions.RemoveEmptyEntries), "x should be RemoveEmptyEntries but was None");
+        Contradiction((StringSplitOptions)int.MaxValue, x => x.ShouldBe((StringSplitOptions)int.MinValue), "x should be -2147483648 but was 2147483647");
+    }
 }

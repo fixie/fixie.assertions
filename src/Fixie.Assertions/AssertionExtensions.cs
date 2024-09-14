@@ -14,20 +14,8 @@ public static class AssertionExtensions
     /// </summary>
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static void ShouldBe<T>(this T? actual, T? expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
-        where T : class
     {
         if (!EqualityComparer<T>.Default.Equals(actual, expected))
-            throw EqualityFailure(expression, expected, actual);
-    }
-
-    /// <summary>
-    /// Assert that this value is equal to some expected value.
-    /// </summary>
-    /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
-    public static void ShouldBe<T>(this IEquatable<T> actual, IEquatable<T> expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
-        where T : struct
-    {
-        if (!actual.Equals(expected))
             throw EqualityFailure(expression, expected, actual);
     }
 
