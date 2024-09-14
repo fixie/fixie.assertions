@@ -106,6 +106,35 @@ class GeneralAssertionTests
         Contradiction((GeneralAssertionTests?)null, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was null");
     }
 
+    public void ShouldAssertStructs()
+    {
+        var guidA = Guid.NewGuid();
+        var guidB = Guid.NewGuid();
+
+        guidA.ShouldBe(guidA);
+        guidB.ShouldBe(guidB);
+        
+        Contradiction(guidA, x => x.ShouldBe(guidB), $"x should be {guidB} but was {guidA}");
+
+        var emptyA = new Empty();
+        var emptyB = new Empty();
+
+        emptyA.ShouldBe(emptyA);
+        emptyB.ShouldBe(emptyB);
+        emptyA.ShouldBe(emptyB);
+
+        var origin = new Point();
+        var positionA = new Point { x = 1, y = 2 };
+        var positionB = new Point { x = 1, y = 2 };
+
+        origin.ShouldBe(origin);
+        positionA.ShouldBe(positionA);
+        positionB.ShouldBe(positionB);
+        positionA.ShouldBe(positionB);
+        
+        Contradiction(origin, x => x.ShouldBe(positionA), $"x should be (1,2) but was (0,0)");
+    }
+
     public void ShouldAssertLists()
     {
         Contradiction((object)new int[]{}, x => x.ShouldBe((int[])[]),
@@ -271,6 +300,14 @@ class GeneralAssertionTests
 
     class SampleA;
     class SampleB;
+    struct Empty;
+    struct Point
+    {
+        public int x;
+        public int y;
+        
+        public override string ToString() => $"({x},{y})";
+    }
 
     class Sample(string name)
     {
