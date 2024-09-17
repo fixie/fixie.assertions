@@ -6,11 +6,11 @@ $packages = get-childitem packages/*.nupkg
 
 if ([string]::IsNullOrEmpty($env:PACKAGE_API_KEY)) {
     $severity = "::error::"
-    $exitCode = 1;
+    $exitCode = 1
 
     if ($ci) {
         $severity = "::warning::"
-        $exitCode = 0;
+        $exitCode = 0
     }
 
     Write-Host "$($severity)$($MyInvocation.MyCommand.Name): PACKAGE_API_KEY is empty or not set. No packages will be pushed."
