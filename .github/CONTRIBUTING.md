@@ -1,6 +1,6 @@
 ## Start With an Issue
 
-It's best to start the disscussion with an Issue. This way, we can come to agreement and set expectations before you commit time and effort to a change that might be rejected.
+It's best to start the discussion with an Issue. This way, we can come to agreement and set expectations before you commit time and effort to a change that might be rejected.
 
 
 ## Bug Fixes
@@ -21,7 +21,7 @@ Receiving a PR is a job. A job can be welcome and fulfilling, but a job with no 
 
 **An unanticipated PR that adds a new feature is very likely to be rejected.**
 
-The Fixie organization's driving design goal is to provide minimal APIs with flexible and idiomatic customization mechanisms *so that adding new features won't even be necessary*. If something feels like a missing feature, there is either a customization hook for that *or the real missing feature is the missing customization hook*.
+The Fixie organization's driving design goal is to provide minimal APIs with flexible and idiomatic customization mechanisms *so that adding new features won't even be necessary*. If something feels like a missing feature, the real missing feature may be some broader change to the customization mechanisms.
 
 Please start by opening an Issue to discuss the use case and the proposed change.
 
@@ -107,13 +107,13 @@ An *anticipated* PR for adding or removing a target framework must follow the gu
        Commit.
 
 3. Now that the new target framework has been well-placed throughout the solution, and the solution builds, run all tests and resolve test failures.
-
+   
    Since `Fixie.Assertions.Tests` is targeting all the supported frameworks, this test run will be the first chance to expose any *runtime* behavior variance introduced by the new target framework. Ensure the tests can pass meaningfully across the target framework support window.
    
    Resolve each kind of failure in a dedicated commit with a clear explanation.
 
 4. Run `pwsh ./build.ps1 --pack` to locally exercise the packaging steps and resolve any issues.
- 
+   
    Verify that all built package files have the same intended version number.
    
    Resolve each kind of failure in a dedicated commit with a clear explanation.
