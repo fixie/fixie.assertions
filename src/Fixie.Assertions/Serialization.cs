@@ -7,12 +7,12 @@ static class Serialization
 {
     public static string Serialize(object? any)
     {
-        if (any == null) return "null";
+        if (any == null) return CsonSerializer.Serialize(any);
 
         var type = any.GetType();
 
         if (type == typeof(bool))
-            return Serialize((bool)any);
+            return CsonSerializer.Serialize((bool)any);
 
         if (type == typeof(char))
             return Serialize((char)any);
@@ -35,8 +35,6 @@ static class Serialization
 
         return $"[{NewLine}{formattedItems}{NewLine}]";
     }
-
-    static string Serialize(bool x) => x ? "true" : "false";
 
     static string Serialize(char x) => $"'{Escape(x)}'";
 
