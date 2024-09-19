@@ -57,53 +57,41 @@ class GeneralAssertionTests
             "x should not be null but was null");
     }
 
-    public void ShouldAssertTypes()
+    public void ShouldAssertTypeEquality()
     {
         typeof(int).ShouldBe(typeof(int));
-        typeof(char).ShouldBe(typeof(char));
+        
         Contradiction(typeof(Utility), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(Tests.Utility)");
         Contradiction(typeof(bool), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(bool)");
-        Contradiction(typeof(sbyte), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(sbyte)");
-        Contradiction(typeof(byte), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(byte)");
-        Contradiction(typeof(short), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(short)");
-        Contradiction(typeof(ushort), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(ushort)");
-        Contradiction(typeof(int), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(int)");
-        Contradiction(typeof(uint), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(uint)");
-        Contradiction(typeof(long), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(long)");
-        Contradiction(typeof(ulong), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(ulong)");
-        Contradiction(typeof(nint), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(nint)");
-        Contradiction(typeof(nuint), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(nuint)");
-        Contradiction(typeof(decimal), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(decimal)");
-        Contradiction(typeof(double), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(double)");
-        Contradiction(typeof(float), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(float)");
-        Contradiction(typeof(char), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(char)");
-        Contradiction(typeof(string), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(string)");
+        
         Contradiction(typeof(object), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(object)");
+        Contradiction(typeof(GeneralAssertionTests), x => x.ShouldBe(typeof(object)), $"x should be typeof(object) but was typeof({FullName<GeneralAssertionTests>()})");
 
+        Contradiction((Type?)null, x => x.ShouldBe(typeof(object)), $"x should be typeof(object) but was null");
+        Contradiction((Type?)null, x => x.ShouldBe(typeof(Type)), $"x should be typeof(System.Type) but was null");
+        ((Type?)null).ShouldBe(null);
+    }
+
+    public void ShouldAssertValueHasType()
+    {
         1.ShouldBe<int>();
-        'A'.ShouldBe<char>();
-        Exception exception = new DivideByZeroException();
-        DivideByZeroException typedException = exception.ShouldBe<DivideByZeroException>();
+
         Contradiction(new SampleA(), x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof({FullName<SampleA>()})");
         Contradiction(true, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(bool)");
-        Contradiction((sbyte)1, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(sbyte)");
-        Contradiction((byte)1, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(byte)");
-        Contradiction((short)1, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(short)");
-        Contradiction((ushort)1, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(ushort)");
-        Contradiction((int)1, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(int)");
-        Contradiction((uint)1, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(uint)");
-        Contradiction((long)1, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(long)");
-        Contradiction((ulong)1, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(ulong)");
-        Contradiction((nint)1, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(nint)");
-        Contradiction((nuint)1, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(nuint)");
-        Contradiction((decimal)1, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(decimal)");
-        Contradiction((double)1, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(double)");
-        Contradiction((float)1, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(float)");
-        Contradiction((char)1, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(char)");
-        Contradiction("A", x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(string)");
+        
         Contradiction(new object(), x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(object)");
+        new GeneralAssertionTests().ShouldBe<object>();
+
+        // Just like with the `is` keyword, although expressions may have some known compile time type, null values do not have a type.
+        Contradiction((int?)null, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was null");
         Contradiction((Exception?)null, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was null");
         Contradiction((GeneralAssertionTests?)null, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was null");
+
+        Exception exception = new DivideByZeroException();
+        Exception exceptionAsAbstraction = exception.ShouldBe<Exception>();
+        exceptionAsAbstraction.ShouldBe(exception);
+        DivideByZeroException exceptionAsConcretion = exception.ShouldBe<DivideByZeroException>();
+        exceptionAsConcretion.ShouldBe(exception);
     }
 
     public void ShouldAssertStructs()
