@@ -15,7 +15,7 @@ static class Serialization
             return CsonSerializer.Serialize((bool)any);
 
         if (type == typeof(char))
-            return Serialize((char)any);
+            return CsonSerializer.Serialize((char)any);
 
         if (type == typeof(string))
             return Serialize((string)any);
@@ -35,8 +35,6 @@ static class Serialization
 
         return $"[{NewLine}{formattedItems}{NewLine}]";
     }
-
-    static string Serialize(char x) => $"'{Escape(x)}'";
 
     static string Serialize(string x)
     {

@@ -14,11 +14,21 @@ class CsonSerializer
             WriteIndented = true
         };
 
+        JsonSerializerOptions.Converters.Add(new CharacterLiteral());
         JsonSerializerOptions.Converters.Add(new TypeLiteral());
     }
 
     public static string Serialize<T>(T value)
         => JsonSerializer.Serialize(value, JsonSerializerOptions);
+
+    class CharacterLiteral : JsonConverter<char>
+    {
+        public override char Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            => throw new NotImplementedException();
+
+        public override void Write(Utf8JsonWriter writer, char value, JsonSerializerOptions options)
+            => writer.WriteRawValue(Serialize(value), skipInputValidation: true);
+    }
 
     class TypeLiteral : JsonConverter<Type>
     {
@@ -28,6 +38,28 @@ class CsonSerializer
         public override void Write(Utf8JsonWriter writer, Type value, JsonSerializerOptions options)
             => writer.WriteRawValue(Serialize(value), skipInputValidation: true);
     }
+
+    static string Serialize(char x) => $"'{Escape(x)}'";
+
+    static string Escape(char x) =>
+        x switch
+        {
+            '\0' => @"\0",
+            '\a' => @"\a",
+            '\b' => @"\b",
+            '\t' => @"\t",
+            '\n' => @"\n",
+            '\v' => @"\v",
+            '\f' => @"\f",
+            '\r' => @"\r",
+            //'\e' => @"\e", TODO: Applicable in C# 13
+            ' ' => " ",
+            '"' => @"\""",
+            '\'' => @"\'",
+            '\\' => @"\\",
+            _ when (char.IsControl(x) || char.IsWhiteSpace(x)) => $"\\u{(int)x:X4}",
+            _ => x.ToString()
+        };
 
     static string Serialize(Type x) =>
         $"typeof({x switch

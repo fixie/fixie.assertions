@@ -68,149 +68,149 @@ class CsonSerializerTests
 
         Serialize('a')
             .ShouldBe("""
-                      "a"
+                      'a'
                       """);
 
         Serialize('☺')
             .ShouldBe("""
-                      "\u263A"
+                      '☺'
                       """);
         
         // Escape Sequence: Null
         Serialize('\u0000')
             .ShouldBe("""
-                      "\u0000"
+                      '\0'
                       """);
         Serialize('\0')
             .ShouldBe("""
-                      "\u0000"
+                      '\0'
                       """);
 
         // Escape Sequence: Alert
         Serialize('\u0007')
             .ShouldBe("""
-                      "\u0007"
+                      '\a'
                       """);
         Serialize('\a')
             .ShouldBe("""
-                      "\u0007"
+                      '\a'
                       """);
 
         // Escape Sequence: Backspace
         Serialize('\u0008')
             .ShouldBe("""
-                      "\b"
+                      '\b'
                       """);
         Serialize('\b')
             .ShouldBe("""
-                      "\b"
+                      '\b'
                       """);
 
         // Escape Sequence: Horizontal tab
         Serialize('\u0009')
             .ShouldBe("""
-                      "\t"
+                      '\t'
                       """);
         Serialize('\t')
             .ShouldBe("""
-                      "\t"
+                      '\t'
                       """);
 
         // Escape Sequence: New line
         Serialize('\u000A')
             .ShouldBe("""
-                      "\n"
+                      '\n'
                       """);
         Serialize('\n')
             .ShouldBe("""
-                      "\n"
+                      '\n'
                       """);
 
         // Escape Sequence: Vertical tab
         Serialize('\u000B')
             .ShouldBe("""
-                      "\u000B"
+                      '\v'
                       """);
         Serialize('\v')
             .ShouldBe("""
-                      "\u000B"
+                      '\v'
                       """);
 
         // Escape Sequence: Form feed
         Serialize('\u000C')
             .ShouldBe("""
-                      "\f"
+                      '\f'
                       """);
         Serialize('\f')
             .ShouldBe("""
-                      "\f"
+                      '\f'
                       """);
 
         // Escape Sequence: Carriage return
         Serialize('\u000D')
             .ShouldBe("""
-                      "\r"
+                      '\r'
                       """);
         Serialize('\r')
             .ShouldBe("""
-                      "\r"
+                      '\r'
                       """);
 
         // TODO: Applicable in C# 13
         // Escape Sequence: Escape
         // Serialize('\u001B')
         //     .ShouldBe("""
-        //               "\e"
+        //               '\e'
         //               """);
         // Serialize('\e')
         //     .ShouldBe("""
-        //               "\e"
+        //               '\e'
         //               """);
 
         // Literal Space
         Serialize('\u0020')
             .ShouldBe("""
-                      " "
+                      ' '
                       """);
         Serialize(' ')
             .ShouldBe("""
-                      " "
+                      ' '
                       """);
 
         // Escape Sequence: Double quote
         Serialize('\u0022')
             .ShouldBe("""
-                      "\u0022"
+                      '\"'
                       """);
         Serialize('\"')
             .ShouldBe("""
-                      "\u0022"
+                      '\"'
                       """);
 
         // Escape Sequence: Single quote
         Serialize('\u0027')
             .ShouldBe("""
-                      "\u0027"
+                      '\''
                       """);
         Serialize('\'')
             .ShouldBe("""
-                      "\u0027"
+                      '\''
                       """);
 
         // Escape Sequence: Backslash
         Serialize('\u005C')
             .ShouldBe("""
-                      "\\"
+                      '\\'
                       """);
         Serialize('\\')
             .ShouldBe("""
-                      "\\"
+                      '\\'
                       """);
 
         foreach (var c in UnicodeEscapedCharacters())
             Serialize(c)
                 .ShouldBe($"""
-                           "\u{(int)c:X4}"
+                           '\u{(int)c:X4}'
                            """);
     }
 

@@ -5,80 +5,11 @@ class TextAssertionTests
     public void ShouldAssertChars()
     {
         'a'.ShouldBe('a');
-        '☺'.ShouldBe('☺');
         Contradiction('a', x => x.ShouldBe('z'), "x should be 'z' but was 'a'");
-        
-        // Escape Sequence: Null
-        '\u0000'.ShouldBe('\0');
-        '\0'.ShouldBe('\0');
-        Contradiction('\n', x => x.ShouldBe('\0'), "x should be '\\0' but was '\\n'");
 
-        // Escape Sequence: Alert
-        '\u0007'.ShouldBe('\a');
-        '\a'.ShouldBe('\a');
-        Contradiction('\n', x => x.ShouldBe('\a'), "x should be '\\a' but was '\\n'");
-
-        // Escape Sequence: Backspace
-        '\u0008'.ShouldBe('\b');
-        '\b'.ShouldBe('\b');
-        Contradiction('\n', x => x.ShouldBe('\b'), "x should be '\\b' but was '\\n'");
-
-        // Escape Sequence: Horizontal tab
-        '\u0009'.ShouldBe('\t');
-        '\t'.ShouldBe('\t');
-        Contradiction('\n', x => x.ShouldBe('\t'), "x should be '\\t' but was '\\n'");
-
-        // Escape Sequence: New line
-        '\u000A'.ShouldBe('\n');
-        '\n'.ShouldBe('\n');
-        Contradiction('\r', x => x.ShouldBe('\n'), "x should be '\\n' but was '\\r'");
-
-        // Escape Sequence: Vertical tab
-        '\u000B'.ShouldBe('\v');
-        '\v'.ShouldBe('\v');
-        Contradiction('\n', x => x.ShouldBe('\v'), "x should be '\\v' but was '\\n'");
-
-        // Escape Sequence: Form feed
-        '\u000C'.ShouldBe('\f');
-        '\f'.ShouldBe('\f');
-        Contradiction('\n', x => x.ShouldBe('\f'), "x should be '\\f' but was '\\n'");
-
-        // Escape Sequence: Carriage return
-        '\u000D'.ShouldBe('\r');
-        '\r'.ShouldBe('\r');
-        Contradiction('\n', x => x.ShouldBe('\r'), "x should be '\\r' but was '\\n'");
-
-        // TODO: Applicable in C# 13
-        // Escape Sequence: Escape
-        // '\u001B'.ShouldBe('\e');
-        // '\e'.ShouldBe('\e');
-        // Contradiction('\n', x => x.ShouldBe('\e'), "x should be '\\e' but was '\\n'");
-
-        // Literal Space
-        ' '.ShouldBe(' ');
-        '\u0020'.ShouldBe(' ');
-        Contradiction('\n', x => x.ShouldBe(' '), "x should be ' ' but was '\\n'");
-
-        // Escape Sequence: Double quote
-        '\u0022'.ShouldBe('\"');
-        '\"'.ShouldBe('\"');
-        Contradiction('\n', x => x.ShouldBe('\"'), "x should be '\\\"' but was '\\n'");
-
-        // Escape Sequence: Single quote
-        '\u0027'.ShouldBe('\'');
-        '\''.ShouldBe('\'');
-        Contradiction('\n', x => x.ShouldBe('\''), "x should be '\\'' but was '\\n'");
-
-        // Escape Sequence: Backslash
-        '\u005C'.ShouldBe('\\');
-        '\\'.ShouldBe('\\');
-        Contradiction('\n', x => x.ShouldBe('\\'), "x should be '\\\\' but was '\\n'");
-
-        foreach (var c in UnicodeEscapedCharacters())
-        {
-            c.ShouldBe(c);
-            Contradiction('a', x => x.ShouldBe(c), $"x should be '\\u{(int)c:X4}' but was 'a'");
-        }
+        ((char?)null).ShouldBe(null);
+        Contradiction((char?)null, x => x.ShouldBe('z'), "x should be 'z' but was null");
+        Contradiction((char?)'a', x => x.ShouldBe(null), "x should be null but was 'a'");
     }
 
     public void ShouldAssertStrings()
