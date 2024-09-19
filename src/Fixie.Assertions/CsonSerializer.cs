@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using static Fixie.Assertions.StringUtilities;
+using static System.Environment;
 
 namespace Fixie.Assertions;
 
@@ -15,6 +17,7 @@ class CsonSerializer
         };
 
         JsonSerializerOptions.Converters.Add(new CharacterLiteral());
+        JsonSerializerOptions.Converters.Add(new StringLiteral());
         JsonSerializerOptions.Converters.Add(new TypeLiteral());
     }
 
@@ -30,6 +33,15 @@ class CsonSerializer
             => writer.WriteRawValue(Serialize(value), skipInputValidation: true);
     }
 
+    class StringLiteral : JsonConverter<string>
+    {
+        public override string? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            => throw new NotImplementedException();
+
+        public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
+            => writer.WriteRawValue(Serialize(value), skipInputValidation: true);
+    }
+
     class TypeLiteral : JsonConverter<Type>
     {
         public override Type Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -40,6 +52,39 @@ class CsonSerializer
     }
 
     static string Serialize(char x) => $"'{Escape(x)}'";
+
+    static string Serialize(string x)
+    {
+        if (IsMultiline(x))
+        {
+            var terminal = RawStringTerminal(x);
+
+            return $"{terminal}{NewLine}{x}{NewLine}{terminal}";
+        }
+        
+        return $"\"{string.Join("", x.Select(Escape))}\"";
+    }
+
+    static string RawStringTerminal(string x)
+    {
+        var longestDoubleQuoteSequence = 0;
+        var currentDoubleQuoteSequence = 0;
+
+        foreach (var c in x)
+        {
+            if (c != '\"')
+            {
+                currentDoubleQuoteSequence = 0;
+                continue;
+            }
+
+            currentDoubleQuoteSequence++;
+            if (currentDoubleQuoteSequence > longestDoubleQuoteSequence)
+                longestDoubleQuoteSequence = currentDoubleQuoteSequence;
+        }
+
+        return new string('\"', longestDoubleQuoteSequence < 3 ? 3 : longestDoubleQuoteSequence + 1);
+    }
 
     static string Escape(char x) =>
         x switch
