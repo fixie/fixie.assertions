@@ -1,6 +1,6 @@
 ﻿namespace Tests;
 
-class CsonSerializerListTests
+class CsonListTests
 {
     public void ShouldSerializeLists()
     {
