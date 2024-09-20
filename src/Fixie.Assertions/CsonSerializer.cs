@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using static Fixie.Assertions.StringUtilities;
 using static System.Environment;
@@ -31,7 +32,7 @@ class CsonSerializer
     abstract class CsonConverter<T> : JsonConverter<T>
     {
         public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            => throw new NotImplementedException();
+            => throw new UnreachableException();
 
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
         {
