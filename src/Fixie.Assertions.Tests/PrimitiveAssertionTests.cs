@@ -97,7 +97,11 @@ class PrimitiveAssertionTests
         StringSplitOptions.TrimEntries.ShouldBe(StringSplitOptions.TrimEntries);
         ((StringSplitOptions)int.MaxValue).ShouldBe((StringSplitOptions)int.MaxValue);
 
-        Contradiction(StringSplitOptions.None, x => x.ShouldBe(StringSplitOptions.RemoveEmptyEntries), "x should be RemoveEmptyEntries but was None");
-        Contradiction((StringSplitOptions)int.MaxValue, x => x.ShouldBe((StringSplitOptions)int.MinValue), "x should be -2147483648 but was 2147483647");
+        Contradiction(StringSplitOptions.None, x => x.ShouldBe(StringSplitOptions.RemoveEmptyEntries), "x should be System.StringSplitOptions.RemoveEmptyEntries but was System.StringSplitOptions.None");
+        Contradiction((StringSplitOptions)int.MaxValue, x => x.ShouldBe((StringSplitOptions)int.MinValue), "x should be (System.StringSplitOptions)(-2147483648) but was (System.StringSplitOptions)2147483647");
+
+        ((StringSplitOptions?)null).ShouldBe(null);
+        Contradiction((StringSplitOptions?)null, x => x.ShouldBe(StringSplitOptions.None), "x should be System.StringSplitOptions.None but was null");
+        Contradiction((StringSplitOptions?)StringSplitOptions.TrimEntries, x => x.ShouldBe(null), "x should be null but was System.StringSplitOptions.TrimEntries");
     }
 }

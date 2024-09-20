@@ -25,6 +25,9 @@ static class Serialization
         if (type == typeof(Type) || type.IsSubclassOf(typeof(Type)))
             return CsonSerializer.Serialize((Type)any);
 
+        if (type.IsEnum)
+            return CsonSerializer.Serialize(any);
+
         return any.ToString() ?? any.GetType().ToString();
     }
 

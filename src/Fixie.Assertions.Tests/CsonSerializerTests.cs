@@ -364,16 +364,19 @@ class CsonSerializerTests
             .ShouldBe("null");
 
         Serialize(StringSplitOptions.None)
-            .ShouldBe("0");
+            .ShouldBe("System.StringSplitOptions.None");
 
         Serialize(StringSplitOptions.RemoveEmptyEntries)
-            .ShouldBe("1");
+            .ShouldBe("System.StringSplitOptions.RemoveEmptyEntries");
 
         Serialize(StringSplitOptions.TrimEntries)
-            .ShouldBe("2");
+            .ShouldBe("System.StringSplitOptions.TrimEntries");
+
+        Serialize((StringSplitOptions)int.MinValue)
+            .ShouldBe("(System.StringSplitOptions)(-2147483648)");
 
         Serialize((StringSplitOptions)int.MaxValue)
-            .ShouldBe("2147483647");
+            .ShouldBe("(System.StringSplitOptions)2147483647");
     }
 
     public void ShouldSerializeGuids()

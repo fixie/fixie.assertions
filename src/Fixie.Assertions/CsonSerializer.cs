@@ -18,6 +18,7 @@ class CsonSerializer
 
         JsonSerializerOptions.Converters.Add(new CharacterLiteral());
         JsonSerializerOptions.Converters.Add(new StringLiteral());
+        JsonSerializerOptions.Converters.Add(new EnumLiteralFactory());
         JsonSerializerOptions.Converters.Add(new TypeLiteral());
     }
 
@@ -40,6 +41,39 @@ class CsonSerializer
 
         public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
             => writer.WriteRawValue(Serialize(value), skipInputValidation: true);
+    }
+
+    class EnumLiteral<T> : JsonConverter<T> where T : struct, Enum
+    {
+        public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            => throw new NotImplementedException();
+
+        public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+        {
+            if (Enum.IsDefined(typeof(T), value))
+                writer.WriteRawValue($"{typeof(T).FullName}.{value}", skipInputValidation: true);
+            else
+            {
+                var numeric = value.ToString();
+
+                if (numeric.StartsWith('-'))
+                    writer.WriteRawValue($"({typeof(T).FullName})({value})", skipInputValidation: true);
+                else
+                    writer.WriteRawValue($"({typeof(T).FullName}){value}", skipInputValidation: true);
+            }
+        }
+    }
+
+    class EnumLiteralFactory : JsonConverterFactory
+    {
+        public override bool CanConvert(Type typeToConvert)
+            => typeToConvert.IsEnum;
+
+        public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
+        {
+            Type converterType = typeof(EnumLiteral<>).MakeGenericType(typeToConvert);
+            return (JsonConverter)Activator.CreateInstance(converterType)!;
+        }
     }
 
     class TypeLiteral : JsonConverter<Type>
