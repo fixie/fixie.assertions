@@ -414,7 +414,7 @@ class CsonSerializerTests
     {
         Serialize((Type?)null).ShouldBe("null");
 
-        Serialize(typeof(Utility)).ShouldBe("typeof(Tests.Utility)");
+        Serialize(typeof(Guid)).ShouldBe("typeof(System.Guid)");
         Serialize(typeof(bool)).ShouldBe("typeof(bool)");
         Serialize(typeof(sbyte)).ShouldBe("typeof(sbyte)");
         Serialize(typeof(byte)).ShouldBe("typeof(byte)");
@@ -432,6 +432,9 @@ class CsonSerializerTests
         Serialize(typeof(char)).ShouldBe("typeof(char)");
         Serialize(typeof(string)).ShouldBe("typeof(string)");
         Serialize(typeof(object)).ShouldBe("typeof(object)");
+
+        Serialize(typeof(Guid?)).ShouldBe("typeof(System.Guid?)");
+        Serialize(typeof(int?)).ShouldBe("typeof(int?)");
     }
 
     public void ShouldSerializeLists()
