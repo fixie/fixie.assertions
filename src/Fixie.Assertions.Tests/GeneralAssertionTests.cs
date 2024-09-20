@@ -127,15 +127,7 @@ class GeneralAssertionTests
     {
         Contradiction((object)new int[]{}, x => x.ShouldBe((int[])[]),
             """
-            x should be
-                [
-                
-                ]
-            
-            but was
-                [
-                
-                ]
+            x should be [] but was []
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
             """);
@@ -145,9 +137,7 @@ class GeneralAssertionTests
         Contradiction(new[] { 0 }, x => x.ShouldMatch([]),
             """
             x should be
-                [
-                
-                ]
+                []
 
             but was
                 [
@@ -163,9 +153,7 @@ class GeneralAssertionTests
                 ]
 
             but was
-                [
-                
-                ]
+                []
             """);
 
         new[] { false, true, false }.ShouldMatch([false, true, false]);
