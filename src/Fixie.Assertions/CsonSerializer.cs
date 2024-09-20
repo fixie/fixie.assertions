@@ -28,51 +28,51 @@ class CsonSerializer
     public static string Serialize<T>(T value)
         => JsonSerializer.Serialize(value, JsonSerializerOptions);
 
-    class RawStringLiteral<T> : JsonConverter<T>
+    abstract class CsonConverter<T> : JsonConverter<T>
     {
         public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             => throw new NotImplementedException();
 
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
-            => writer.WriteRawValue(value?.ToString() ?? "null", skipInputValidation: true);
+        {
+            if (value != null)
+                writer.WriteRawValue(RawValue(value), skipInputValidation: true);
+        }
+
+        protected abstract string RawValue(T value);
     }
 
-    class CharacterLiteral : JsonConverter<char>
+    class RawStringLiteral<T> : CsonConverter<T> where T : struct
     {
-        public override char Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            => throw new NotImplementedException();
-
-        public override void Write(Utf8JsonWriter writer, char value, JsonSerializerOptions options)
-            => writer.WriteRawValue(Serialize(value), skipInputValidation: true);
+        protected override string RawValue(T value)
+            => value.ToString() ?? "null";
     }
 
-    class StringLiteral : JsonConverter<string>
+    class CharacterLiteral : CsonConverter<char>
     {
-        public override string? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            => throw new NotImplementedException();
-
-        public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
-            => writer.WriteRawValue(Serialize(value), skipInputValidation: true);
+        protected override string RawValue(char value)
+            => Serialize(value);
     }
 
-    class EnumLiteral<T> : JsonConverter<T> where T : struct, Enum
+    class StringLiteral : CsonConverter<string>
     {
-        public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            => throw new NotImplementedException();
+        protected override string RawValue(string value)
+            => Serialize(value);
+    }
 
-        public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+    class EnumLiteral<T> : CsonConverter<T> where T : struct, Enum
+    {
+        protected override string RawValue(T value)
         {
             if (Enum.IsDefined(typeof(T), value))
-                writer.WriteRawValue($"{typeof(T).FullName}.{value}", skipInputValidation: true);
-            else
-            {
-                var numeric = value.ToString();
+                return $"{typeof(T).FullName}.{value}";
+            
+            var numeric = value.ToString();
 
-                if (numeric.StartsWith('-'))
-                    writer.WriteRawValue($"({typeof(T).FullName})({value})", skipInputValidation: true);
-                else
-                    writer.WriteRawValue($"({typeof(T).FullName}){value}", skipInputValidation: true);
-            }
+            if (numeric.StartsWith('-'))
+                return $"({typeof(T).FullName})({value})";
+            else
+                return $"({typeof(T).FullName}){value}";
         }
     }
 
@@ -88,13 +88,10 @@ class CsonSerializer
         }
     }
 
-    class TypeLiteral : JsonConverter<Type>
+    class TypeLiteral : CsonConverter<Type>
     {
-        public override Type Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            => throw new NotImplementedException();
-
-        public override void Write(Utf8JsonWriter writer, Type value, JsonSerializerOptions options)
-            => writer.WriteRawValue(Serialize(value), skipInputValidation: true);
+        protected override string RawValue(Type value)
+            => Serialize(value);
     }
 
     static string Serialize(char x) => $"'{Escape(x)}'";
