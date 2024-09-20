@@ -141,7 +141,7 @@ class GeneralAssertionTests
 
             but was
                 [
-                    0
+                  0
                 ]
             """);
 
@@ -149,7 +149,7 @@ class GeneralAssertionTests
             """
             x should be
                 [
-                    0
+                  0
                 ]
 
             but was
@@ -162,15 +162,15 @@ class GeneralAssertionTests
             """
             x should be
                 [
-                    false,
-                    true
+                  false,
+                  true
                 ]
 
             but was
                 [
-                    false,
-                    true,
-                    false
+                  false,
+                  true,
+                  false
                 ]
             """);
         
@@ -180,15 +180,15 @@ class GeneralAssertionTests
             """
             x should be
                 [
-                    'A',
-                    'C'
+                  'A',
+                  'C'
                 ]
 
             but was
                 [
-                    'A',
-                    'B',
-                    'C'
+                  'A',
+                  'B',
+                  'C'
                 ]
             """);
 
@@ -198,15 +198,15 @@ class GeneralAssertionTests
             """
             x should be
                 [
-                    "A",
-                    "C"
+                  "A",
+                  "C"
                 ]
 
             but was
                 [
-                    "A",
-                    "B",
-                    "C"
+                  "A",
+                  "B",
+                  "C"
                 ]
             """);
 
@@ -216,14 +216,14 @@ class GeneralAssertionTests
             """
             x should be
                 [
-                    typeof(bool),
-                    typeof(int)
+                  typeof(bool),
+                  typeof(int)
                 ]
             
             but was
                 [
-                    typeof(int),
-                    typeof(bool)
+                  typeof(int),
+                  typeof(bool)
                 ]
             """);
 
@@ -236,14 +236,14 @@ class GeneralAssertionTests
             """
             x should be
                 [
-                    Sample B,
-                    Sample A
+                  Sample B,
+                  Sample A
                 ]
 
             but was
                 [
-                    Sample A,
-                    Sample B
+                  Sample A,
+                  Sample B
                 ]
             """);
     }

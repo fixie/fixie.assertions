@@ -39,7 +39,7 @@ static class Serialization
         if (items.Length == 0)
             return "[]";
 
-        var formattedItems = string.Join("," + NewLine, items.Cast<object>().Select(arg => "    " + Serialize(arg)));
+        var formattedItems = string.Join("," + NewLine, items.Cast<object>().Select(arg => "  " + Serialize(arg)));
 
         return $"[{NewLine}{formattedItems}{NewLine}]";
     }
