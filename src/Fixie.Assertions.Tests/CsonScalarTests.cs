@@ -1,6 +1,6 @@
 ﻿namespace Tests;
 
-class CsonSerializerTests
+class CsonScalarTests
 {
     public void ShouldSerializeBools()
     {
