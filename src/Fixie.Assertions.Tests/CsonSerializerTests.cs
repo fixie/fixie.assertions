@@ -35,6 +35,13 @@ class CsonSerializerTests
 
         Serialize(ulong.MinValue).ShouldBe("0");
         Serialize(ulong.MaxValue).ShouldBe("18446744073709551615");
+
+        Serialize((nint)(-1)).ShouldBe("-1");
+        Serialize((nint)0).ShouldBe("0");
+        Serialize((nint)1).ShouldBe("1");
+
+        Serialize((nuint)0).ShouldBe("0");
+        Serialize((nuint)1).ShouldBe("1");
     }
 
     public void ShouldSerializeFractionalNumbers()
@@ -544,13 +551,6 @@ class CsonSerializerTests
             
         Serialize(new SampleNullToString())
             .ShouldBe("{}");
-    }
-
-    public void ShouldNotSerializeUnsupportedTypes()
-    {
-        Action unsupported = () => Serialize(IntPtr.Zero);
-
-        unsupported.ShouldThrow<NotSupportedException>("Serialization and deserialization of 'System.IntPtr' instances is not supported. Path: $.");
     }
 
     static string Serialize<T>(T value)

@@ -28,6 +28,9 @@ static class Serialization
         if (type.IsEnum)
             return CsonSerializer.Serialize(any);
 
+        if (IsNumeric(type))
+            return CsonSerializer.Serialize(any);
+
         return any.ToString() ?? any.GetType().ToString();
     }
 
@@ -36,5 +39,24 @@ static class Serialization
         var formattedItems = string.Join("," + NewLine, items.Cast<object>().Select(arg => "    " + Serialize(arg)));
 
         return $"[{NewLine}{formattedItems}{NewLine}]";
+    }
+
+    static bool IsNumeric(Type type)
+    {
+        if (type == typeof(sbyte)) return true;
+        if (type == typeof(byte)) return true;
+        if (type == typeof(short)) return true;
+        if (type == typeof(ushort)) return true;
+        if (type == typeof(int)) return true;
+        if (type == typeof(uint)) return true;
+        if (type == typeof(long)) return true;
+        if (type == typeof(ulong)) return true;
+        if (type == typeof(nint)) return true;
+        if (type == typeof(nuint)) return true;
+        if (type == typeof(decimal)) return true;
+        if (type == typeof(double)) return true;
+        if (type == typeof(float)) return true;
+
+        return false;
     }
 }

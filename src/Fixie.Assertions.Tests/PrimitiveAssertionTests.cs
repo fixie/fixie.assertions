@@ -52,6 +52,10 @@ class PrimitiveAssertionTests
         nuint.MinValue.ShouldBe(nuint.MinValue);
         nuint.MaxValue.ShouldBe(nuint.MaxValue);
         Contradiction((nuint)10, x => x.ShouldBe((nuint)11), "x should be 11 but was 10");
+
+        ((int?)null).ShouldBe(null);
+        Contradiction((int?)null, x => x.ShouldBe(1), "x should be 1 but was null");
+        Contradiction((int?)1, x => x.ShouldBe(null), "x should be null but was 1");
     }
 
     public void ShouldAssertFractionalNumbers()

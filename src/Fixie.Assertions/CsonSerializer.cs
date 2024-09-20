@@ -16,6 +16,9 @@ class CsonSerializer
             WriteIndented = true
         };
 
+        JsonSerializerOptions.Converters.Add(new RawStringLiteral<nint>());
+        JsonSerializerOptions.Converters.Add(new RawStringLiteral<nuint>());
+
         JsonSerializerOptions.Converters.Add(new CharacterLiteral());
         JsonSerializerOptions.Converters.Add(new StringLiteral());
         JsonSerializerOptions.Converters.Add(new EnumLiteralFactory());
@@ -24,6 +27,15 @@ class CsonSerializer
 
     public static string Serialize<T>(T value)
         => JsonSerializer.Serialize(value, JsonSerializerOptions);
+
+    class RawStringLiteral<T> : JsonConverter<T>
+    {
+        public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            => throw new NotImplementedException();
+
+        public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+            => writer.WriteRawValue(value?.ToString() ?? "null", skipInputValidation: true);
+    }
 
     class CharacterLiteral : JsonConverter<char>
     {
