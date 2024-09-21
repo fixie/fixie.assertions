@@ -7,9 +7,6 @@ class CsonTextTests
 {
     public void ShouldSerializeChars()
     {
-        Serialize((char?)null)
-            .ShouldBe("null");
-
         Serialize('a')
             .ShouldBe("""
                       'a'
@@ -156,6 +153,14 @@ class CsonTextTests
                 .ShouldBe($"""
                            '\u{(int)c:X4}'
                            """);
+
+        Serialize((char?)null)
+            .ShouldBe("null");
+        
+        Serialize((char?)'a')
+            .ShouldBe("""
+                      'a'
+                      """);
     }
 
     public void ShouldSerializeStrings()
@@ -308,6 +313,15 @@ class CsonTextTests
             .ShouldBe(
             """
             "1f39a64c-cb96-4f1f-8b0f-ab8f6d153a7e"
+            """);
+
+        Serialize((Guid?)null)
+            .ShouldBe("null");
+
+        Serialize((Guid?)Guid.Parse("2fc7251f-a8d0-4573-87a5-d12408231e77"))
+            .ShouldBe(
+            """
+            "2fc7251f-a8d0-4573-87a5-d12408231e77"
             """);
     }
 

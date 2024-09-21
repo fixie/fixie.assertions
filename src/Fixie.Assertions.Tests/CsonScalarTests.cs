@@ -8,42 +8,27 @@ class CsonScalarTests
     {
         Serialize(true).ShouldBe("true");
         Serialize(false).ShouldBe("false");
+
+        Serialize((bool?)null).ShouldBe("null");        
+        Serialize((bool?)true).ShouldBe("true");
+        Serialize((bool?)false).ShouldBe("false");
     }
 
     public void ShouldSerializeEnums()
     {
-        Serialize((StringSplitOptions?)null)
-            .ShouldBe("null");
+        var prefix = "System.StringSplitOptions";
 
-        Serialize(StringSplitOptions.None)
-            .ShouldBe("System.StringSplitOptions.None");
+        Serialize(StringSplitOptions.None).ShouldBe(prefix+".None");
+        Serialize(StringSplitOptions.RemoveEmptyEntries).ShouldBe(prefix+".RemoveEmptyEntries");
+        Serialize(StringSplitOptions.TrimEntries).ShouldBe(prefix+".TrimEntries");
 
-        Serialize(StringSplitOptions.RemoveEmptyEntries)
-            .ShouldBe("System.StringSplitOptions.RemoveEmptyEntries");
+        Serialize((StringSplitOptions)int.MinValue).ShouldBe($"({prefix})(-2147483648)");
+        Serialize((StringSplitOptions)int.MaxValue).ShouldBe($"({prefix})2147483647");
 
-        Serialize(StringSplitOptions.TrimEntries)
-            .ShouldBe("System.StringSplitOptions.TrimEntries");
-
-        Serialize((StringSplitOptions)int.MinValue)
-            .ShouldBe("(System.StringSplitOptions)(-2147483648)");
-
-        Serialize((StringSplitOptions)int.MaxValue)
-            .ShouldBe("(System.StringSplitOptions)2147483647");
-    }
-
-    public void ShouldSerializeNullableValueTypes()
-    {
-        bool? nullableBool = null;
-
-        Serialize(nullableBool).ShouldBe("null");
-
-        nullableBool = false;
-
-        Serialize(nullableBool).ShouldBe("false");
-
-        nullableBool = true;
-
-        Serialize(nullableBool).ShouldBe("true");
+        Serialize((StringSplitOptions?)null).ShouldBe("null");
+        Serialize((StringSplitOptions?)StringSplitOptions.None).ShouldBe(prefix+".None");
+        Serialize((StringSplitOptions?)StringSplitOptions.RemoveEmptyEntries).ShouldBe(prefix+".RemoveEmptyEntries");
+        Serialize((StringSplitOptions?)StringSplitOptions.TrimEntries).ShouldBe(prefix+".TrimEntries");
     }
 
     public void ShouldSerializeTypes()
