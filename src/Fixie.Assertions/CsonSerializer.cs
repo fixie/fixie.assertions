@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using static Fixie.Assertions.StringUtilities;
@@ -25,6 +25,7 @@ class CsonSerializer
         JsonSerializerOptions.Converters.Add(new EnumLiteralFactory());
         JsonSerializerOptions.Converters.Add(new TypeLiteral());
 
+        JsonSerializerOptions.Converters.Add(new PairsLiteralFactory());
         JsonSerializerOptions.Converters.Add(new ListLiteralFactory());
     }
 
@@ -97,26 +98,44 @@ class CsonSerializer
             => Serialize(value);
     }
 
+    class PairsLiteralFactory : JsonConverterFactory
+    {
+        public override bool CanConvert(Type typeToConvert)
+            => GetPairType(typeToConvert) != null;
+
+        public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options)
+        {
+            var pairType = GetPairType(typeToConvert) ?? throw new UnreachableException();
+
+            Type converterType = typeof(PairsLiteral<,>).MakeGenericType(pairType.GetGenericArguments());
+            return (JsonConverter)Activator.CreateInstance(converterType)!;
+        }
+    }
+
+    class PairsLiteral<TKey, TValue> : JsonConverter<IEnumerable<KeyValuePair<TKey, TValue>>>
+    {
+        public override IEnumerable<KeyValuePair<TKey, TValue>>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            => throw new UnreachableException();
+
+        public override void Write(Utf8JsonWriter writer, IEnumerable<KeyValuePair<TKey, TValue>> value, JsonSerializerOptions options)
+        {
+            writer.WriteStartObject();
+
+            foreach (var item in value)
+            {
+                writer.WritePropertyName(item.Key?.ToString()!);
+
+                JsonSerializer.Serialize(writer, item.Value, options);
+            }
+
+            writer.WriteEndObject();
+        }
+    }
+
     class ListLiteralFactory : JsonConverterFactory
     {
         public override bool CanConvert(Type typeToConvert)
-        {
-            var enumerableType = GetEnumerableType(typeToConvert);
-            
-            if (enumerableType != null)
-            {
-                //TODO: Once we have a higher priority factory detecting
-                //IEnumerable<KeyValuePair<TKey, TValue>>, this whole
-                //method can become a simple check for `GetEnumerableType(...) != null`,
-                //as this next condition becomes always-false.
-                if (GetPairType(typeToConvert) != null)
-                    return false;
-
-                return true;
-            }
-
-            return false;
-        }
+            => GetEnumerableType(typeToConvert) != null;
 
         public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
         {
@@ -154,6 +173,22 @@ class CsonSerializer
 
     static bool IsEnumerableT(Type type)
         => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+
+    static Type? GetPairType(Type typeToConvert)
+    {
+        var enumerableType = GetEnumerableType(typeToConvert);
+            
+        if (enumerableType != null)
+        {
+            var itemType = enumerableType.GetGenericArguments()[0];
+
+            if (itemType.IsGenericType &&
+                itemType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
+                return itemType;
+        }
+
+        return null;
+    }
 
     static string Serialize(char x) => $"'{Escape(x)}'";
 
