@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using static Fixie.Assertions.StringUtilities;
@@ -24,6 +24,8 @@ class CsonSerializer
         JsonSerializerOptions.Converters.Add(new StringLiteral());
         JsonSerializerOptions.Converters.Add(new EnumLiteralFactory());
         JsonSerializerOptions.Converters.Add(new TypeLiteral());
+
+        JsonSerializerOptions.Converters.Add(new ListLiteralFactory());
     }
 
     public static string Serialize<T>(T value)
@@ -94,6 +96,64 @@ class CsonSerializer
         protected override string RawValue(Type value)
             => Serialize(value);
     }
+
+    class ListLiteralFactory : JsonConverterFactory
+    {
+        public override bool CanConvert(Type typeToConvert)
+        {
+            var enumerableType = GetEnumerableType(typeToConvert);
+            
+            if (enumerableType != null)
+            {
+                //TODO: Once we have a higher priority factory detecting
+                //IEnumerable<KeyValuePair<TKey, TValue>>, this whole
+                //method can become a simple check for `GetEnumerableType(...) != null`,
+                //as this next condition becomes always-false.
+                if (GetPairType(typeToConvert) != null)
+                    return false;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
+        {
+            var enumerableType = GetEnumerableType(typeToConvert) ?? throw new UnreachableException();
+            var itemType = enumerableType.GetGenericArguments()[0];
+
+            Type converterType = typeof(ListLiteral<>).MakeGenericType(itemType);
+            return (JsonConverter)Activator.CreateInstance(converterType)!;
+        }
+    }
+
+    class ListLiteral<T> : JsonConverter<IEnumerable<T>>
+    {
+        public override IEnumerable<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            => throw new UnreachableException();
+
+        public override void Write(Utf8JsonWriter writer, IEnumerable<T> value, JsonSerializerOptions options)
+        {
+            writer.WriteStartArray();
+
+            foreach (var item in value)
+                JsonSerializer.Serialize(writer, item, options);
+
+            writer.WriteEndArray();
+        }
+    }
+
+    static Type? GetEnumerableType(Type typeToConvert)
+    {
+        if (IsEnumerableT(typeToConvert))
+            return typeToConvert;
+
+        return typeToConvert.GetInterfaces().FirstOrDefault(IsEnumerableT);
+    }
+
+    static bool IsEnumerableT(Type type)
+        => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
 
     static string Serialize(char x) => $"'{Escape(x)}'";
 
