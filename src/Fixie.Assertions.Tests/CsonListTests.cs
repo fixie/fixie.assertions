@@ -1,4 +1,6 @@
-﻿namespace Tests;
+﻿using static Fixie.Assertions.CsonSerializer;
+
+namespace Tests;
 
 class CsonListTests
 {
@@ -28,7 +30,4 @@ class CsonListTests
                       ]
                       """);
     }
-
-    static string Serialize<T>(T value)
-        => CsonSerializer.Serialize(value);
 }

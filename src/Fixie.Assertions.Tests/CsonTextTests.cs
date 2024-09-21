@@ -1,4 +1,5 @@
 ﻿using static System.Environment;
+using static Fixie.Assertions.CsonSerializer;
 
 namespace Tests;
 
@@ -309,9 +310,6 @@ class CsonTextTests
             "1f39a64c-cb96-4f1f-8b0f-ab8f6d153a7e"
             """);
     }
-
-    static string Serialize<T>(T value)
-        => CsonSerializer.Serialize(value);
 
     static IEnumerable<char> UnicodeEscapedCharacters()
     {

@@ -1,4 +1,6 @@
-﻿namespace Tests;
+﻿using static Fixie.Assertions.CsonSerializer;
+
+namespace Tests;
 
 class CsonPropertyTests
 {
@@ -49,10 +51,7 @@ class CsonPropertyTests
                       """);
     }
 
-    static string Serialize<T>(T value)
-        => CsonSerializer.Serialize(value);
-
-        struct Empty;
+    struct Empty;
     
     struct PointFields
     {

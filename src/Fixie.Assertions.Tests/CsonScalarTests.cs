@@ -1,4 +1,6 @@
-﻿namespace Tests;
+﻿using static Fixie.Assertions.CsonSerializer;
+
+namespace Tests;
 
 class CsonScalarTests
 {
@@ -128,7 +130,4 @@ class CsonScalarTests
         Serialize(typeof(Guid?)).ShouldBe("typeof(System.Guid?)");
         Serialize(typeof(int?)).ShouldBe("typeof(int?)");
     }
-
-    static string Serialize<T>(T value)
-        => CsonSerializer.Serialize(value);
 }
