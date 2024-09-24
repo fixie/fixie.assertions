@@ -1,128 +1,83 @@
-﻿namespace Fixie.Assertions;
+﻿using System.Runtime.ExceptionServices;
+using System.Text;
 
-ref partial struct Utf8JsonReader
+namespace Fixie.Assertions;
+
+partial class CsonSerializer
 {
+    public static string Serialize<TValue>(TValue value, CsonSerializerOptions options)
+    {
+        var output = new StringBuilder();
+        var writer = new CsonWriter(output);
+
+        SerializeInternal(writer, value, options);
+
+        return output.ToString();
+    }
+
+    public static void SerializeInternal<TValue>(CsonWriter writer, TValue value, CsonSerializerOptions options)
+    {
+        if (value == null)
+        {
+            writer.WriteRawValue("null");
+            return;
+        }
+
+        var type = typeof(TValue);
+        
+        if (type == typeof(object))
+            type = value.GetType();
+        
+        var converter = options.Converters.First(x => x.CanConvert(type));
+
+        if (converter.GetType().IsSubclassOf(typeof(CsonConverterFactory)))
+            converter = ((CsonConverterFactory)converter).CreateConverter(type);
+
+        var write = converter.GetType().GetMethod("Write")!;
+        try
+        {
+            write.Invoke(converter, [writer, value, options]);
+        }
+        catch (Exception exception)
+        {
+            ExceptionDispatchInfo.Capture(exception.InnerException!).Throw();
+            throw; // Unreachable.
+        }
+    }
 }
 
-class Utf8JsonWriter
-{
-    public void WriteRawValue(string json, bool skipInputValidation = false)
-    {
-    }
-
-    public void WriteStringValue(string? value)
-    {
-    }
-
-    public void WriteStartArray()
-    {
-    }
-
-    public void WriteEndArray()
-    {
-    }
-
-    public void WriteStartObject()
-    {
-    }
-
-    public void WritePropertyName(string propertyName)
-    {
-    }
-
-    public void WriteEndObject()
-    {
-    }
-}
-
-class JsonSerializer
-{
-    public static string Serialize<TValue>(TValue value, JsonSerializerOptions? options = null)
-        => throw new NotImplementedException();
-
-    public static void Serialize<TValue>(Utf8JsonWriter writer, TValue value, JsonSerializerOptions? options = null)
-    {
-    }
-}
-
-abstract class JsonConverter<T> : JsonConverter
+abstract class CsonConverter<T> : CsonConverter
 {
         public override bool CanConvert(Type typeToConvert)
-            => throw new NotImplementedException();
+            => typeToConvert == typeof(T);
 
         public abstract void Write(
-            Utf8JsonWriter writer,
+            CsonWriter writer,
 #nullable disable // T may or may not be nullable depending on the derived converter's HandleNull override.
             T value,
 #nullable restore
-            JsonSerializerOptions options);
-
-        public abstract T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options);
+            CsonSerializerOptions options);
 }
 
-abstract class JsonConverter
+abstract class CsonConverter
 {
     public abstract bool CanConvert(Type typeToConvert);
 }
 
-abstract class JsonConverterFactory : JsonConverter
+abstract class CsonConverterFactory : CsonConverter
 {
-    public abstract JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options);
+    public abstract CsonConverter CreateConverter(Type typeToConvert);
 }
 
-class JsonSerializerOptions
+class CsonSerializerOptions
 {
-    public List<JsonConverter> Converters { get; } = [];
-    public bool WriteIndented { get; init; }
+    public List<CsonConverter> Converters { get; } = [];
 }
 
-class JsonException : Exception
+class CsonException : Exception
 {
-}
-
-abstract class JsonAttribute : Attribute
-{
-}
-
-public enum JsonIgnoreCondition
-{
-    WhenWritingNull
-}
-
-class JsonIgnoreAttribute : JsonAttribute
-{
-    public JsonIgnoreCondition Condition { get; set; }
-}
-
-class JsonPropertyNameAttribute : JsonAttribute
-{
-    public JsonPropertyNameAttribute(string name)
+    public CsonException(string message)
+        : base(message)
     {
     }
-}
-
-class JsonIncludeAttribute : JsonAttribute
-{
-}
-
-class JsonConverterAttribute : JsonAttribute
-{
-    public JsonConverterAttribute(Type converterType)
-    {
-    }
-}
-
-class JsonExtensionDataAttribute : JsonAttribute
-{
-}
-
-readonly struct JsonElement{ }
-
-class JsonDocument
-{
-    public static JsonDocument Parse(string json)
-        => throw new NotImplementedException();
-
-    public JsonElement RootElement
-        => throw new NotImplementedException();
 }

@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Tests;
 
@@ -19,11 +21,8 @@ class CsonSerializerProtectionTests
             CsonSerializer.Serialize(nested);
         };
 
-        exceedDepthLimit.ShouldThrow<JsonException>(
-            "A possible object cycle was detected. This can either be due to a " +
-            "cycle or if the object depth is larger than the maximum allowed " +
-            "depth of 64. Consider using ReferenceHandler.Preserve on " +
-            "JsonSerializerOptions to support cycles. Path: $.");
+        exceedDepthLimit.ShouldThrow<CsonException>(
+            "This type could not be serialized because the object graph is too deep.");
     }
 
     public void ShouldProtectFromCycles()
@@ -66,21 +65,8 @@ class CsonSerializerProtectionTests
             CsonSerializer.Serialize(ouroboros);
         };
 
-        exceedDepthLimitDueToCycle.ShouldThrow<JsonException>(
-            "A possible object cycle was detected. This can either " +
-            "be due to a cycle or if the object depth is larger than " +
-            "the maximum allowed depth of 64. Consider using " +
-            "ReferenceHandler.Preserve on JsonSerializerOptions to " +
-            "support cycles. Path: $" +
-            ".Manager.Manager.Manager.Manager.Manager.Manager.Manager" +
-            ".Manager.Manager.Manager.Manager.Manager.Manager.Manager" +
-            ".Manager.Manager.Manager.Manager.Manager.Manager.Manager" +
-            ".Manager.Manager.Manager.Manager.Manager.Manager.Manager" +
-            ".Manager.Manager.Manager.Manager.Manager.Manager.Manager" +
-            ".Manager.Manager.Manager.Manager.Manager.Manager.Manager" +
-            ".Manager.Manager.Manager.Manager.Manager.Manager.Manager" +
-            ".Manager.Manager.Manager.Manager.Manager.Manager.Manager" +
-            ".Manager.Manager.Manager.Manager.Manager.Manager.Manager.Name.");
+        exceedDepthLimitDueToCycle.ShouldThrow<CsonException>(
+            "This type could not be serialized because the object graph is too deep.");
     }
 
     public void ShouldNotBeAffectedByJsonCustomizationAttributes()
@@ -121,13 +107,21 @@ class CsonSerializerProtectionTests
         CsonSerializer.Serialize(model)
             .ShouldBe("""
                       {
-                        "custom_name": "Property Value From JsonCustomizedName",
-                        "JsonPrivateIncluded": "Property Value From JsonPrivateIncluded",
-                        "JsonCustomConverted": "A Key/Value pair was obfuscated during JSON serialization.",
+                        "JsonIgnored": "Property Value From JsonIgnored",
+                        "JsonCustomizedName": "Property Value From JsonCustomizedName",
+                        "JsonCustomConverted": {
+                          "Key": "Key/Value Pair",
+                          "Value": "From JsonCustomConverted"
+                        },
                         "JsonNotIgnoredBecauseNonNull": "Property Value From JsonNotIgnoredBecauseNonNull",
-                        {
-                          "A": 1,
-                          "B": 2
+                        "JsonIgnoredBecauseNull": null,
+                        "JsonExtendedData": {
+                          "A": {
+                            "ValueKind": System.Text.Json.JsonValueKind.Number
+                          },
+                          "B": {
+                            "ValueKind": System.Text.Json.JsonValueKind.Number
+                          }
                         }
                       }
                       """);

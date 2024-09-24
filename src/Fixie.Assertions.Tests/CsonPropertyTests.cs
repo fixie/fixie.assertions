@@ -49,6 +49,31 @@ class CsonPropertyTests
                         "Method": "POST"
                       }
                       """);
+
+        Serialize(new SampleWithIndexer("Alex", 32))
+            .ShouldBe("""
+                      {
+                        "Name": "Alex",
+                        "Age": 32
+                      }
+                      """);
+    }
+
+    public void ShouldSerializeUnrecognizedNullableValueTypes()
+    {
+        var point = new PointProperties { X = 1, Y = 2 };
+
+        var pointSerialized =
+            """
+            {
+              "X": 1,
+              "Y": 2
+            }
+            """;
+
+        Serialize(point).ShouldBe(pointSerialized);
+        Serialize((PointProperties?)null).ShouldBe("null");
+        Serialize((PointProperties?)point).ShouldBe(pointSerialized);
     }
 
     struct Empty;
@@ -79,5 +104,12 @@ class CsonPropertyTests
     class SampleNullToString
     {
         public override string? ToString() => null;
+    }
+
+    class SampleWithIndexer(string name, int age)
+    {
+        public string Name { get; init; } = name;
+        public int Age { get; init; } = age;
+        public int this[int index] => 1;
     }
 }

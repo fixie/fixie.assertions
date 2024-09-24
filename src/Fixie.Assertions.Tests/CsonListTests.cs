@@ -35,7 +35,9 @@ class CsonListTests
         //      whitespace gets skipped as a consequence of WriteRawValue.
         Serialize((List<string>)["ABC", "123"])
             .ShouldBe("""
-                      ["ABC","123"
+                      [
+                        "ABC",
+                        "123"
                       ]
                       """);
     }

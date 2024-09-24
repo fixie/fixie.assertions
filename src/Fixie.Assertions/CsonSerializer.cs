@@ -1,163 +1,239 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using static Fixie.Assertions.StringUtilities;
 using static System.Environment;
 
 namespace Fixie.Assertions;
 
-class CsonSerializer
+partial class CsonSerializer
 {
-    static readonly JsonSerializerOptions JsonSerializerOptions;
+    static readonly CsonSerializerOptions JsonSerializerOptions;
 
     static CsonSerializer()
     {
-        JsonSerializerOptions = new JsonSerializerOptions
-        {
-            WriteIndented = true
-        };
+        JsonSerializerOptions = new CsonSerializerOptions();
 
-        JsonSerializerOptions.Converters.Add(new RawStringLiteral<nint>());
-        JsonSerializerOptions.Converters.Add(new RawStringLiteral<nuint>());
+        JsonSerializerOptions.Converters.Add(new Literal<byte>());
+        JsonSerializerOptions.Converters.Add(new Literal<sbyte>());
+        JsonSerializerOptions.Converters.Add(new Literal<short>());
+        JsonSerializerOptions.Converters.Add(new Literal<ushort>());
+        JsonSerializerOptions.Converters.Add(new Literal<int>());
+        JsonSerializerOptions.Converters.Add(new Literal<uint>());
+        JsonSerializerOptions.Converters.Add(new Literal<long>());
+        JsonSerializerOptions.Converters.Add(new Literal<ulong>());
+        JsonSerializerOptions.Converters.Add(new Literal<decimal>());
+        JsonSerializerOptions.Converters.Add(new Literal<double>());
+        JsonSerializerOptions.Converters.Add(new Literal<float>());
 
-        JsonSerializerOptions.Converters.Add(new CharacterLiteral());
-        JsonSerializerOptions.Converters.Add(new StringLiteral());
+        JsonSerializerOptions.Converters.Add(new Literal<nint>());
+        JsonSerializerOptions.Converters.Add(new Literal<nuint>());
+
+        JsonSerializerOptions.Converters.Add(new Literal<bool>(Serialize));
+        JsonSerializerOptions.Converters.Add(new Literal<char>(Serialize));
+        JsonSerializerOptions.Converters.Add(new Literal<string>(Serialize));
+        JsonSerializerOptions.Converters.Add(new Literal<Guid>(Serialize));
+        JsonSerializerOptions.Converters.Add(new Literal<Type>(Serialize));
+
         JsonSerializerOptions.Converters.Add(new EnumLiteralFactory());
-        JsonSerializerOptions.Converters.Add(new TypeLiteral());
-
+        JsonSerializerOptions.Converters.Add(new NullableLiteralFactory());
         JsonSerializerOptions.Converters.Add(new PairsLiteralFactory());
         JsonSerializerOptions.Converters.Add(new ListLiteralFactory());
+        JsonSerializerOptions.Converters.Add(new PropertiesLiteralFactory());
     }
 
     public static string Serialize<T>(T value)
-        => JsonSerializer.Serialize(value, JsonSerializerOptions);
+        => Serialize(value, JsonSerializerOptions);
 
-    abstract class CsonConverter<T> : JsonConverter<T>
+    class Literal<T> : CsonConverter<T>
     {
-        public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            => throw new UnreachableException();
+        readonly Func<T, string> serialize;
 
-        public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+        public Literal()
+            : this(DefaultSerialize)
+        {
+        }
+
+        public Literal(Func<T, string> serialize)
+        {
+            this.serialize = serialize;
+        }
+
+        public override void Write(CsonWriter writer, T value, CsonSerializerOptions options)
         {
             if (value != null)
-                writer.WriteRawValue(RawValue(value), skipInputValidation: true);
+                writer.WriteRawValue(serialize(value));
         }
 
-        protected abstract string RawValue(T value);
+        static string DefaultSerialize(T value)
+            => value?.ToString()! ?? throw new UnreachableException();
     }
 
-    class RawStringLiteral<T> : CsonConverter<T> where T : struct
+    class EnumLiteral<T> : Literal<T> where T : struct, Enum
     {
-        protected override string RawValue(T value)
-            => value.ToString() ?? "null";
-    }
-
-    class CharacterLiteral : CsonConverter<char>
-    {
-        protected override string RawValue(char value)
-            => Serialize(value);
-    }
-
-    class StringLiteral : CsonConverter<string>
-    {
-        protected override string RawValue(string value)
-            => Serialize(value);
-    }
-
-    class EnumLiteral<T> : CsonConverter<T> where T : struct, Enum
-    {
-        protected override string RawValue(T value)
+        public EnumLiteral()
+            : base(SerializeEnum<T>)
         {
-            if (Enum.IsDefined(typeof(T), value))
-                return $"{typeof(T).FullName}.{value}";
-            
-            var numeric = value.ToString();
-
-            if (numeric.StartsWith('-'))
-                return $"({typeof(T).FullName})({value})";
-            else
-                return $"({typeof(T).FullName}){value}";
         }
     }
 
-    class EnumLiteralFactory : JsonConverterFactory
+    class EnumLiteralFactory : CsonConverterFactory
     {
         public override bool CanConvert(Type typeToConvert)
             => typeToConvert.IsEnum;
 
-        public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
+        public override CsonConverter CreateConverter(Type typeToConvert)
         {
             Type converterType = typeof(EnumLiteral<>).MakeGenericType(typeToConvert);
-            return (JsonConverter)Activator.CreateInstance(converterType)!;
+            return (CsonConverter)Activator.CreateInstance(converterType)!;
         }
     }
 
-    class TypeLiteral : CsonConverter<Type>
+    class NullableLiteral<T> : CsonConverter<T> where T : struct
     {
-        protected override string RawValue(Type value)
-            => Serialize(value);
+        public override void Write(CsonWriter writer, T value, CsonSerializerOptions options)
+            => SerializeInternal(writer, value, options);
     }
 
-    class PairsLiteralFactory : JsonConverterFactory
+    class NullableLiteralFactory : CsonConverterFactory
+    {
+        public override bool CanConvert(Type typeToConvert)
+            => Nullable.GetUnderlyingType(typeToConvert) != null;
+
+        public override CsonConverter CreateConverter(Type typeToConvert)
+        {
+            var underlyingType = Nullable.GetUnderlyingType(typeToConvert) ?? throw new UnreachableException();
+
+            Type converterType = typeof(NullableLiteral<>).MakeGenericType(underlyingType);
+            return (CsonConverter)Activator.CreateInstance(converterType)!;
+        }
+    }
+
+    class PairsLiteralFactory : CsonConverterFactory
     {
         public override bool CanConvert(Type typeToConvert)
             => GetPairType(typeToConvert) != null;
 
-        public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options)
+        public override CsonConverter CreateConverter(Type typeToConvert)
         {
             var pairType = GetPairType(typeToConvert) ?? throw new UnreachableException();
 
             Type converterType = typeof(PairsLiteral<,>).MakeGenericType(pairType.GetGenericArguments());
-            return (JsonConverter)Activator.CreateInstance(converterType)!;
+            return (CsonConverter)Activator.CreateInstance(converterType)!;
         }
     }
 
-    class PairsLiteral<TKey, TValue> : JsonConverter<IEnumerable<KeyValuePair<TKey, TValue>>>
+    class PairsLiteral<TKey, TValue> : CsonConverter<IEnumerable<KeyValuePair<TKey, TValue>>>
     {
-        public override IEnumerable<KeyValuePair<TKey, TValue>>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            => throw new UnreachableException();
-
-        public override void Write(Utf8JsonWriter writer, IEnumerable<KeyValuePair<TKey, TValue>> value, JsonSerializerOptions options)
+        public override void Write(CsonWriter writer, IEnumerable<KeyValuePair<TKey, TValue>> value, CsonSerializerOptions options)
         {
             writer.WriteStartObject();
 
+            bool any = false;
             foreach (var item in value)
             {
+                if (!any)
+                {
+                    writer.StartItems();
+                    any = true;
+                }
+                else
+                    writer.WriteItemSeparator();
+
                 writer.WritePropertyName(item.Key?.ToString()!);
 
-                JsonSerializer.Serialize(writer, item.Value, options);
+                SerializeInternal(writer, item.Value, options);
             }
+
+            if (any)
+                writer.EndItems();
 
             writer.WriteEndObject();
         }
     }
 
-    class ListLiteralFactory : JsonConverterFactory
+    class ListLiteralFactory : CsonConverterFactory
     {
         public override bool CanConvert(Type typeToConvert)
             => GetEnumerableType(typeToConvert) != null;
 
-        public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
+        public override CsonConverter CreateConverter(Type typeToConvert)
         {
             var enumerableType = GetEnumerableType(typeToConvert) ?? throw new UnreachableException();
             var itemType = enumerableType.GetGenericArguments()[0];
 
             Type converterType = typeof(ListLiteral<>).MakeGenericType(itemType);
-            return (JsonConverter)Activator.CreateInstance(converterType)!;
+            return (CsonConverter)Activator.CreateInstance(converterType)!;
         }
     }
 
-    class ListLiteral<T> : JsonConverter<IEnumerable<T>>
+    class ListLiteral<T> : CsonConverter<IEnumerable<T>>
     {
-        public override IEnumerable<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            => throw new UnreachableException();
-
-        public override void Write(Utf8JsonWriter writer, IEnumerable<T> value, JsonSerializerOptions options)
+        public override void Write(CsonWriter writer, IEnumerable<T> value, CsonSerializerOptions options)
         {
             writer.WriteStartArray();
 
+            bool any = false;
             foreach (var item in value)
-                JsonSerializer.Serialize(writer, item, options);
+            {
+                if (!any)
+                {
+                    writer.StartItems();
+                    any = true;
+                }
+                else
+                    writer.WriteItemSeparator();
+
+                SerializeInternal(writer, item, options);
+            }
+
+            if (any)
+                writer.EndItems();
 
             writer.WriteEndArray();
+        }
+    }
+
+    class PropertiesLiteralFactory : CsonConverterFactory
+    {
+        public override bool CanConvert(Type typeToConvert)
+            => true;
+
+        public override CsonConverter CreateConverter(Type typeToConvert)
+        {
+            Type converterType = typeof(PropertiesLiteral<>).MakeGenericType(typeToConvert);
+            return (CsonConverter)Activator.CreateInstance(converterType)!;
+        }
+    }
+
+    class PropertiesLiteral<T> : CsonConverter<T>
+    {
+        public override void Write(CsonWriter writer, T value, CsonSerializerOptions options)
+        {
+            writer.WriteStartObject();
+
+            bool any = false;
+            foreach (var property in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (property.GetIndexParameters().Length > 0)
+                    continue;
+
+                if (!any)
+                {
+                    writer.StartItems();
+                    any = true;
+                }
+                else
+                    writer.WriteItemSeparator();
+
+                writer.WritePropertyName(property.Name);
+
+                SerializeInternal(writer, property.GetValue(value), options);
+            }
+
+            if (any)
+                writer.EndItems();
+
+            writer.WriteEndObject();
         }
     }
 
@@ -188,7 +264,11 @@ class CsonSerializer
         return null;
     }
 
+    static string Serialize(bool x) => x ? "true" : "false";
+
     static string Serialize(char x) => $"'{Escape(x)}'";
+
+    static string Serialize(Guid x) => Serialize(x.ToString());
 
     static string Serialize(string x)
     {
@@ -275,4 +355,17 @@ class CsonSerializer
                 _ when x == typeof(object) => "object",
                 _ => x.ToString()
             };
+
+    static string SerializeEnum<T>(T value) where T : struct, Enum
+    {
+        if (Enum.IsDefined(typeof(T), value))
+            return $"{typeof(T).FullName}.{value}";
+            
+        var numeric = value.ToString();
+
+        if (numeric.StartsWith('-'))
+            return $"({typeof(T).FullName})({value})";
+        else
+            return $"({typeof(T).FullName}){value}";
+    }
 }
