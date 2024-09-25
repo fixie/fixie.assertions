@@ -14,7 +14,6 @@ partial class CsonSerializer
         JsonSerializerOptions = new CsonSerializerOptions();
 
         JsonSerializerOptions.Converters.Add(new EnumLiteralFactory());
-        JsonSerializerOptions.Converters.Add(new NullableLiteralFactory());
         JsonSerializerOptions.Converters.Add(new PairsLiteralFactory());
         JsonSerializerOptions.Converters.Add(new ListLiteralFactory());
         JsonSerializerOptions.Converters.Add(new PropertiesLiteralFactory());
@@ -37,26 +36,6 @@ partial class CsonSerializer
         public override CsonConverter CreateConverter(Type typeToConvert)
         {
             Type converterType = typeof(EnumLiteral<>).MakeGenericType(typeToConvert);
-            return (CsonConverter)Activator.CreateInstance(converterType)!;
-        }
-    }
-
-    class NullableLiteral<T> : CsonConverter<T> where T : struct
-    {
-        public override void Write(CsonWriter writer, T value, CsonSerializerOptions options)
-            => SerializeInternal(writer, value, options);
-    }
-
-    class NullableLiteralFactory : CsonConverterFactory
-    {
-        public override bool CanConvert(Type typeToConvert)
-            => Nullable.GetUnderlyingType(typeToConvert) != null;
-
-        public override CsonConverter CreateConverter(Type typeToConvert)
-        {
-            var underlyingType = Nullable.GetUnderlyingType(typeToConvert) ?? throw new UnreachableException();
-
-            Type converterType = typeof(NullableLiteral<>).MakeGenericType(underlyingType);
             return (CsonConverter)Activator.CreateInstance(converterType)!;
         }
     }

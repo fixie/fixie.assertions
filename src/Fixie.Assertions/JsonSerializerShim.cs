@@ -1,10 +1,13 @@
-﻿using System.Runtime.ExceptionServices;
+﻿using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Text;
 
 namespace Fixie.Assertions;
 
 partial class CsonSerializer
 {
+    static MethodInfo SerializeInternalDefinition = typeof(CsonSerializer).GetMethod("SerializeInternal")!;
+
     public static string Serialize<TValue>(TValue value, CsonSerializerOptions options)
     {
         var output = new StringBuilder();
@@ -17,10 +20,22 @@ partial class CsonSerializer
 
     public static void SerializeInternal<TValue>(CsonWriter writer, TValue value, CsonSerializerOptions options)
     {
+        if (value is null)
+        {
+            writer.WriteRawValue("null");
+            return;
+        }
+
+        var underlyingType = Nullable.GetUnderlyingType(typeof(TValue));
+
+        if (underlyingType != null)
+        {
+            SerializeViaReflection(underlyingType, writer, value, options);
+            return;
+        }
+
         switch (value)
         {
-            case null: writer.WriteRawValue("null"); return;
-
             case byte v: writer.WriteRawValue(v.ToString()); return;
             case sbyte v: writer.WriteRawValue(v.ToString()); return;
             case short v: writer.WriteRawValue(v.ToString()); return;
@@ -57,7 +72,22 @@ partial class CsonSerializer
         {
             write.Invoke(converter, [writer, value, options]);
         }
-        catch (Exception exception)
+        catch (TargetInvocationException exception)
+        {
+            ExceptionDispatchInfo.Capture(exception.InnerException!).Throw();
+            throw; // Unreachable.
+        }
+    }
+
+    static void SerializeViaReflection(Type type, CsonWriter writer, object value, CsonSerializerOptions options)
+    {
+        try
+        {
+            SerializeInternalDefinition
+                .MakeGenericMethod(type)
+                .Invoke(null, [writer, value, options]);
+        }
+        catch (TargetInvocationException  exception)
         {
             ExceptionDispatchInfo.Capture(exception.InnerException!).Throw();
             throw; // Unreachable.
