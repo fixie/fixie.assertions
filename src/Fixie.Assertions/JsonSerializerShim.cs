@@ -17,11 +17,30 @@ partial class CsonSerializer
 
     public static void SerializeInternal<TValue>(CsonWriter writer, TValue value, CsonSerializerOptions options)
     {
-        if (value == null)
+        switch (value)
         {
-            writer.WriteRawValue("null");
-            return;
-        }
+            case null: writer.WriteRawValue("null"); return;
+
+            case byte v: writer.WriteRawValue(v.ToString()); return;
+            case sbyte v: writer.WriteRawValue(v.ToString()); return;
+            case short v: writer.WriteRawValue(v.ToString()); return;
+            case ushort v: writer.WriteRawValue(v.ToString()); return;
+            case int v: writer.WriteRawValue(v.ToString()); return;
+            case uint v: writer.WriteRawValue(v.ToString()); return;
+            case long v: writer.WriteRawValue(v.ToString()); return;
+            case ulong v: writer.WriteRawValue(v.ToString()); return;
+            case decimal v: writer.WriteRawValue(v.ToString()); return;
+            case double v: writer.WriteRawValue(v.ToString()); return;
+            case float v: writer.WriteRawValue(v.ToString()); return;
+            case nint v: writer.WriteRawValue(v.ToString()); return;
+            case nuint v: writer.WriteRawValue(v.ToString()); return;
+
+            case bool v: writer.WriteRawValue(Serialize(v)); return;
+            case char v: writer.WriteRawValue(Serialize(v)); return;
+            case string v: writer.WriteRawValue(Serialize(v)); return;
+            case Guid v: writer.WriteRawValue(Serialize(v)); return;
+            case Type v: writer.WriteRawValue(Serialize(v)); return;
+        };
 
         var type = typeof(TValue);
         

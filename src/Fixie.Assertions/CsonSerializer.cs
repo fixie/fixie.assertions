@@ -13,27 +13,6 @@ partial class CsonSerializer
     {
         JsonSerializerOptions = new CsonSerializerOptions();
 
-        JsonSerializerOptions.Converters.Add(new Literal<byte>());
-        JsonSerializerOptions.Converters.Add(new Literal<sbyte>());
-        JsonSerializerOptions.Converters.Add(new Literal<short>());
-        JsonSerializerOptions.Converters.Add(new Literal<ushort>());
-        JsonSerializerOptions.Converters.Add(new Literal<int>());
-        JsonSerializerOptions.Converters.Add(new Literal<uint>());
-        JsonSerializerOptions.Converters.Add(new Literal<long>());
-        JsonSerializerOptions.Converters.Add(new Literal<ulong>());
-        JsonSerializerOptions.Converters.Add(new Literal<decimal>());
-        JsonSerializerOptions.Converters.Add(new Literal<double>());
-        JsonSerializerOptions.Converters.Add(new Literal<float>());
-
-        JsonSerializerOptions.Converters.Add(new Literal<nint>());
-        JsonSerializerOptions.Converters.Add(new Literal<nuint>());
-
-        JsonSerializerOptions.Converters.Add(new Literal<bool>(Serialize));
-        JsonSerializerOptions.Converters.Add(new Literal<char>(Serialize));
-        JsonSerializerOptions.Converters.Add(new Literal<string>(Serialize));
-        JsonSerializerOptions.Converters.Add(new Literal<Guid>(Serialize));
-        JsonSerializerOptions.Converters.Add(new Literal<Type>(Serialize));
-
         JsonSerializerOptions.Converters.Add(new EnumLiteralFactory());
         JsonSerializerOptions.Converters.Add(new NullableLiteralFactory());
         JsonSerializerOptions.Converters.Add(new PairsLiteralFactory());
@@ -44,36 +23,10 @@ partial class CsonSerializer
     public static string Serialize<T>(T value)
         => Serialize(value, JsonSerializerOptions);
 
-    class Literal<T> : CsonConverter<T>
+    class EnumLiteral<T> : CsonConverter<T> where T : struct, Enum
     {
-        readonly Func<T, string> serialize;
-
-        public Literal()
-            : this(DefaultSerialize)
-        {
-        }
-
-        public Literal(Func<T, string> serialize)
-        {
-            this.serialize = serialize;
-        }
-
         public override void Write(CsonWriter writer, T value, CsonSerializerOptions options)
-        {
-            if (value != null)
-                writer.WriteRawValue(serialize(value));
-        }
-
-        static string DefaultSerialize(T value)
-            => value?.ToString()! ?? throw new UnreachableException();
-    }
-
-    class EnumLiteral<T> : Literal<T> where T : struct, Enum
-    {
-        public EnumLiteral()
-            : base(SerializeEnum<T>)
-        {
-        }
+            => writer.WriteRawValue(SerializeEnum(value));
     }
 
     class EnumLiteralFactory : CsonConverterFactory
