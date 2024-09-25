@@ -8,17 +8,17 @@ partial class CsonSerializer
 {
     static MethodInfo SerializeInternalDefinition = typeof(CsonSerializer).GetMethod("SerializeInternal")!;
 
-    public static string Serialize<TValue>(TValue value, CsonSerializerOptions options)
+    public static string Serialize<TValue>(TValue value)
     {
         var output = new StringBuilder();
         var writer = new CsonWriter(output);
 
-        SerializeInternal(writer, value, options);
+        SerializeInternal(writer, value);
 
         return output.ToString();
     }
 
-    public static void SerializeInternal<TValue>(CsonWriter writer, TValue value, CsonSerializerOptions options)
+    public static void SerializeInternal<TValue>(CsonWriter writer, TValue value)
     {
         if (value is null)
         {
@@ -30,7 +30,7 @@ partial class CsonSerializer
 
         if (underlyingType != null)
         {
-            SerializeViaReflection(underlyingType, writer, value, options);
+            SerializeViaReflection(underlyingType, writer, value);
             return;
         }
 
@@ -62,7 +62,13 @@ partial class CsonSerializer
         if (type == typeof(object))
             type = value.GetType();
         
-        var converter = options.Converters.First(x => x.CanConvert(type));
+        CsonConverter[] converters = [
+            new EnumLiteralFactory(),
+            new PairsLiteralFactory(),
+            new ListLiteralFactory(),
+            new PropertiesLiteralFactory()
+        ];
+        var converter = converters.First(x => x.CanConvert(type));
 
         if (converter.GetType().IsSubclassOf(typeof(CsonConverterFactory)))
             converter = ((CsonConverterFactory)converter).CreateConverter(type);
@@ -70,7 +76,7 @@ partial class CsonSerializer
         var write = converter.GetType().GetMethod("Write")!;
         try
         {
-            write.Invoke(converter, [writer, value, options]);
+            write.Invoke(converter, [writer, value]);
         }
         catch (TargetInvocationException exception)
         {
@@ -79,13 +85,13 @@ partial class CsonSerializer
         }
     }
 
-    static void SerializeViaReflection(Type type, CsonWriter writer, object value, CsonSerializerOptions options)
+    static void SerializeViaReflection(Type type, CsonWriter writer, object value)
     {
         try
         {
             SerializeInternalDefinition
                 .MakeGenericMethod(type)
-                .Invoke(null, [writer, value, options]);
+                .Invoke(null, [writer, value]);
         }
         catch (TargetInvocationException  exception)
         {
@@ -103,9 +109,9 @@ abstract class CsonConverter<T> : CsonConverter
         public abstract void Write(
             CsonWriter writer,
 #nullable disable // T may or may not be nullable depending on the derived converter's HandleNull override.
-            T value,
+            T value
 #nullable restore
-            CsonSerializerOptions options);
+            );
 }
 
 abstract class CsonConverter
@@ -116,11 +122,6 @@ abstract class CsonConverter
 abstract class CsonConverterFactory : CsonConverter
 {
     public abstract CsonConverter CreateConverter(Type typeToConvert);
-}
-
-class CsonSerializerOptions
-{
-    public List<CsonConverter> Converters { get; } = [];
 }
 
 class CsonException : Exception

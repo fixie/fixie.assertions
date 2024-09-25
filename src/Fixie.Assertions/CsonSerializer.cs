@@ -7,24 +7,9 @@ namespace Fixie.Assertions;
 
 partial class CsonSerializer
 {
-    static readonly CsonSerializerOptions JsonSerializerOptions;
-
-    static CsonSerializer()
-    {
-        JsonSerializerOptions = new CsonSerializerOptions();
-
-        JsonSerializerOptions.Converters.Add(new EnumLiteralFactory());
-        JsonSerializerOptions.Converters.Add(new PairsLiteralFactory());
-        JsonSerializerOptions.Converters.Add(new ListLiteralFactory());
-        JsonSerializerOptions.Converters.Add(new PropertiesLiteralFactory());
-    }
-
-    public static string Serialize<T>(T value)
-        => Serialize(value, JsonSerializerOptions);
-
     class EnumLiteral<T> : CsonConverter<T> where T : struct, Enum
     {
-        public override void Write(CsonWriter writer, T value, CsonSerializerOptions options)
+        public override void Write(CsonWriter writer, T value)
             => writer.WriteRawValue(SerializeEnum(value));
     }
 
@@ -56,7 +41,7 @@ partial class CsonSerializer
 
     class PairsLiteral<TKey, TValue> : CsonConverter<IEnumerable<KeyValuePair<TKey, TValue>>>
     {
-        public override void Write(CsonWriter writer, IEnumerable<KeyValuePair<TKey, TValue>> value, CsonSerializerOptions options)
+        public override void Write(CsonWriter writer, IEnumerable<KeyValuePair<TKey, TValue>> value)
         {
             writer.WriteStartObject();
 
@@ -73,7 +58,7 @@ partial class CsonSerializer
 
                 writer.WritePropertyName(item.Key?.ToString()!);
 
-                SerializeInternal(writer, item.Value, options);
+                SerializeInternal(writer, item.Value);
             }
 
             if (any)
@@ -100,7 +85,7 @@ partial class CsonSerializer
 
     class ListLiteral<T> : CsonConverter<IEnumerable<T>>
     {
-        public override void Write(CsonWriter writer, IEnumerable<T> value, CsonSerializerOptions options)
+        public override void Write(CsonWriter writer, IEnumerable<T> value)
         {
             writer.WriteStartArray();
 
@@ -115,7 +100,7 @@ partial class CsonSerializer
                 else
                     writer.WriteItemSeparator();
 
-                SerializeInternal(writer, item, options);
+                SerializeInternal(writer, item);
             }
 
             if (any)
@@ -139,7 +124,7 @@ partial class CsonSerializer
 
     class PropertiesLiteral<T> : CsonConverter<T>
     {
-        public override void Write(CsonWriter writer, T value, CsonSerializerOptions options)
+        public override void Write(CsonWriter writer, T value)
         {
             writer.WriteStartObject();
 
@@ -159,7 +144,7 @@ partial class CsonSerializer
 
                 writer.WritePropertyName(property.Name);
 
-                SerializeInternal(writer, property.GetValue(value), options);
+                SerializeInternal(writer, property.GetValue(value));
             }
 
             if (any)
