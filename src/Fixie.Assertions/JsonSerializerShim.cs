@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Text;
 
@@ -64,17 +65,17 @@ partial class CsonSerializer
         
         if (type.IsEnum)
         {
-            var converter = typeof(CsonSerializer)
-                .GetMethod("WriteEnumLiteral", BindingFlags.Static | BindingFlags.NonPublic)!
-                .MakeGenericMethod(type);
+            var converter = GetConverter("WriteEnumLiteral", type);
 
-            WriteViaReflection(converter, writer, value); //converter<type>(writer, value)
+            WriteViaReflection(converter, writer, value);
             return;
         }
-        
-        if (GetPairType(type) != null)
+
+        var pairType = GetPairType(type);
+        if (pairType != null)
         {
-            var converter = PairsLiteralFactory.CreateConverter(type);
+            var converter = GetConverter("WritePairsLiteral", pairType.GetGenericArguments());
+
             WriteViaReflection(converter, writer, value);
             return;
         }
@@ -91,6 +92,14 @@ partial class CsonSerializer
             var converter = PropertiesLiteralFactory.CreateConverter(type);
             WriteViaReflection(converter, writer, value);
         }
+    }
+
+    static MethodInfo GetConverter(string method, params Type[] typeArguments)
+    {
+        return typeof(CsonSerializer)
+            .GetMethod(method, BindingFlags.Static | BindingFlags.NonPublic)?
+            .MakeGenericMethod(typeArguments)
+            ?? throw new UnreachableException();
     }
 
     static void WriteViaReflection<TValue>(MethodInfo converter, CsonWriter writer, TValue value)

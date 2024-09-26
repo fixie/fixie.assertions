@@ -10,44 +10,30 @@ partial class CsonSerializer
     static void WriteEnumLiteral<TValue>(CsonWriter writer, TValue value) where TValue : struct, Enum
         => writer.WriteRawValue(SerializeEnum(value));
 
-    static class PairsLiteralFactory
+    static void WritePairsLiteral<TKey, TValue>(CsonWriter writer, IEnumerable<KeyValuePair<TKey, TValue>> value)
     {
-        public static CsonConverter CreateConverter(Type typeToConvert)
+        writer.WriteStartObject();
+
+        bool any = false;
+        foreach (var item in value)
         {
-            var pairType = GetPairType(typeToConvert) ?? throw new UnreachableException();
-
-            Type converterType = typeof(PairsLiteral<,>).MakeGenericType(pairType.GetGenericArguments());
-            return (CsonConverter)Activator.CreateInstance(converterType)!;
-        }
-    }
-
-    class PairsLiteral<TKey, TValue> : CsonConverter<IEnumerable<KeyValuePair<TKey, TValue>>>
-    {
-        public override void Write(CsonWriter writer, IEnumerable<KeyValuePair<TKey, TValue>> value)
-        {
-            writer.WriteStartObject();
-
-            bool any = false;
-            foreach (var item in value)
+            if (!any)
             {
-                if (!any)
-                {
-                    writer.StartItems();
-                    any = true;
-                }
-                else
-                    writer.WriteItemSeparator();
-
-                writer.WritePropertyName(item.Key?.ToString()!);
-
-                SerializeInternal(writer, item.Value);
+                writer.StartItems();
+                any = true;
             }
+            else
+                writer.WriteItemSeparator();
 
-            if (any)
-                writer.EndItems();
+            writer.WritePropertyName(item.Key?.ToString()!);
 
-            writer.WriteEndObject();
+            SerializeInternal(writer, item.Value);
         }
+
+        if (any)
+            writer.EndItems();
+
+        writer.WriteEndObject();
     }
 
     static class ListLiteralFactory
