@@ -101,9 +101,6 @@ partial class CsonSerializer
 
 abstract class CsonConverter<T> : CsonConverter
 {
-        public override bool CanConvert(Type typeToConvert)
-            => typeToConvert == typeof(T);
-
         public abstract void Write(
             CsonWriter writer,
 #nullable disable // T may or may not be nullable depending on the derived converter's HandleNull override.
@@ -114,11 +111,12 @@ abstract class CsonConverter<T> : CsonConverter
 
 abstract class CsonConverter
 {
-    public abstract bool CanConvert(Type typeToConvert);
 }
 
-abstract class CsonConverterFactory : CsonConverter
+abstract class CsonConverterFactory
 {
+    public abstract bool CanConvert(Type typeToConvert);
+
     public abstract CsonConverter CreateConverter(Type typeToConvert);
 }
 
