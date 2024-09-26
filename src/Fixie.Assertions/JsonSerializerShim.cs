@@ -62,46 +62,39 @@ partial class CsonSerializer
         
         if (type == typeof(object))
             type = value.GetType();
-        
-        if (type.IsEnum)
-        {
-            var converter = GetConverter("WriteEnumLiteral", type);
 
-            WriteViaReflection(converter, writer, value);
-            return;
-        }
+        var converter = GetDynamicConverter(type);
 
+        WriteViaReflection(converter, writer, value);
+    }
+
+    static MethodInfo GetDynamicConverter(Type type)
+    {
         var pairType = GetPairType(type);
         if (pairType != null)
         {
             var typeArguments = pairType.GetGenericArguments();
             var keyType = typeArguments[0];
             var valueType = typeArguments[1];
-            var converter = GetConverter("WritePairsLiteral", keyType, valueType);
 
-            WriteViaReflection(converter, writer, value);
-            return;
+            return GetDynamicConverter("WritePairsLiteral", keyType, valueType);
         }
-        
+
         var enumerableType = GetEnumerableType(type);
         if (enumerableType != null)
         {
             var itemType = enumerableType.GetGenericArguments()[0];
-            var converter = GetConverter("WriteListLiteral", itemType);
 
-            WriteViaReflection(converter, writer, value);
-            return;
+            return GetDynamicConverter("WriteListLiteral", itemType);
         }
-        
-        if (true)
-        {
-            var converter = GetConverter("WritePropertiesLiteral", type);
 
-            WriteViaReflection(converter, writer, value);
-        }
+        return GetDynamicConverter(
+            type.IsEnum
+                ? "WriteEnumLiteral"
+                : "WritePropertiesLiteral", type);
     }
 
-    static MethodInfo GetConverter(string method, params Type[] typeArguments)
+    static MethodInfo GetDynamicConverter(string method, params Type[] typeArguments)
     {
         return typeof(CsonSerializer)
             .GetMethod(method, BindingFlags.Static | BindingFlags.NonPublic)?
@@ -114,20 +107,6 @@ partial class CsonSerializer
         try
         {
             converter.Invoke(null, [writer, value]);
-        }
-        catch (TargetInvocationException exception)
-        {
-            ExceptionDispatchInfo.Capture(exception.InnerException!).Throw();
-            throw; // Unreachable.
-        }
-    }
-
-    static void WriteViaReflection<TValue>(CsonConverter converter, CsonWriter writer, TValue value)
-    {
-        var write = converter.GetType().GetMethod("Write")!;
-        try
-        {
-            write.Invoke(converter, [writer, value]);
         }
         catch (TargetInvocationException exception)
         {
