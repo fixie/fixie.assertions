@@ -62,16 +62,14 @@ partial class CsonSerializer
         if (type == typeof(object))
             type = value.GetType();
         
-        CsonConverter[] converters = [
+        CsonConverterFactory[] factories = [
             new EnumLiteralFactory(),
             new PairsLiteralFactory(),
             new ListLiteralFactory(),
             new PropertiesLiteralFactory()
         ];
-        var converter = converters.First(x => x.CanConvert(type));
-
-        if (converter.GetType().IsSubclassOf(typeof(CsonConverterFactory)))
-            converter = ((CsonConverterFactory)converter).CreateConverter(type);
+        var factory = factories.First(x => x.CanConvert(type));
+        var converter = factory.CreateConverter(type);
 
         var write = converter.GetType().GetMethod("Write")!;
         try
