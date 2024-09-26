@@ -131,20 +131,6 @@ partial class CsonSerializer
     }
 }
 
-abstract class CsonConverter<T> : CsonConverter
-{
-        public abstract void Write(
-            CsonWriter writer,
-#nullable disable // T may or may not be nullable depending on the derived converter's HandleNull override.
-            T value
-#nullable restore
-            );
-}
-
-abstract class CsonConverter
-{
-}
-
 class CsonException : Exception
 {
     public CsonException(string message)
