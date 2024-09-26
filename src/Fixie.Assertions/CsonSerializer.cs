@@ -36,43 +36,28 @@ partial class CsonSerializer
         writer.WriteEndObject();
     }
 
-    static class ListLiteralFactory
+    static void WriteListLiteral<TItem>(CsonWriter writer, IEnumerable<TItem> value)
     {
-        public static CsonConverter CreateConverter(Type typeToConvert)
+        writer.WriteStartArray();
+
+        bool any = false;
+        foreach (var item in value)
         {
-            var enumerableType = GetEnumerableType(typeToConvert) ?? throw new UnreachableException();
-            var itemType = enumerableType.GetGenericArguments()[0];
-
-            Type converterType = typeof(ListLiteral<>).MakeGenericType(itemType);
-            return (CsonConverter)Activator.CreateInstance(converterType)!;
-        }
-    }
-
-    class ListLiteral<T> : CsonConverter<IEnumerable<T>>
-    {
-        public override void Write(CsonWriter writer, IEnumerable<T> value)
-        {
-            writer.WriteStartArray();
-
-            bool any = false;
-            foreach (var item in value)
+            if (!any)
             {
-                if (!any)
-                {
-                    writer.StartItems();
-                    any = true;
-                }
-                else
-                    writer.WriteItemSeparator();
-
-                SerializeInternal(writer, item);
+                writer.StartItems();
+                any = true;
             }
+            else
+                writer.WriteItemSeparator();
 
-            if (any)
-                writer.EndItems();
-
-            writer.WriteEndArray();
+            SerializeInternal(writer, item);
         }
+
+        if (any)
+            writer.EndItems();
+
+        writer.WriteEndArray();
     }
 
     static class PropertiesLiteralFactory

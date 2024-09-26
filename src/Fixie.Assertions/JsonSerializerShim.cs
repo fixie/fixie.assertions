@@ -74,15 +74,21 @@ partial class CsonSerializer
         var pairType = GetPairType(type);
         if (pairType != null)
         {
-            var converter = GetConverter("WritePairsLiteral", pairType.GetGenericArguments());
+            var typeArguments = pairType.GetGenericArguments();
+            var keyType = typeArguments[0];
+            var valueType = typeArguments[1];
+            var converter = GetConverter("WritePairsLiteral", keyType, valueType);
 
             WriteViaReflection(converter, writer, value);
             return;
         }
         
-        if (GetEnumerableType(type) != null)
+        var enumerableType = GetEnumerableType(type);
+        if (enumerableType != null)
         {
-            var converter = ListLiteralFactory.CreateConverter(type);
+            var itemType = enumerableType.GetGenericArguments()[0];
+            var converter = GetConverter("WriteListLiteral", itemType);
+
             WriteViaReflection(converter, writer, value);
             return;
         }
