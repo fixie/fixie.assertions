@@ -95,7 +95,8 @@ partial class CsonSerializer
         
         if (true)
         {
-            var converter = PropertiesLiteralFactory.CreateConverter(type);
+            var converter = GetConverter("WritePropertiesLiteral", type);
+
             WriteViaReflection(converter, writer, value);
         }
     }

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Reflection;
+﻿using System.Reflection;
 using static Fixie.Assertions.StringUtilities;
 using static System.Environment;
 
@@ -60,45 +59,33 @@ partial class CsonSerializer
         writer.WriteEndArray();
     }
 
-    static class PropertiesLiteralFactory
+    static void WritePropertiesLiteral<T>(CsonWriter writer, T value)
     {
-        public static CsonConverter CreateConverter(Type typeToConvert)
-        {
-            Type converterType = typeof(PropertiesLiteral<>).MakeGenericType(typeToConvert);
-            return (CsonConverter)Activator.CreateInstance(converterType)!;
-        }
-    }
+        writer.WriteStartObject();
 
-    class PropertiesLiteral<T> : CsonConverter<T>
-    {
-        public override void Write(CsonWriter writer, T value)
+        bool any = false;
+        foreach (var property in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {
-            writer.WriteStartObject();
+            if (property.GetIndexParameters().Length > 0)
+                continue;
 
-            bool any = false;
-            foreach (var property in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            if (!any)
             {
-                if (property.GetIndexParameters().Length > 0)
-                    continue;
-
-                if (!any)
-                {
-                    writer.StartItems();
-                    any = true;
-                }
-                else
-                    writer.WriteItemSeparator();
-
-                writer.WritePropertyName(property.Name);
-
-                SerializeInternal(writer, property.GetValue(value));
+                writer.StartItems();
+                any = true;
             }
+            else
+                writer.WriteItemSeparator();
 
-            if (any)
-                writer.EndItems();
+            writer.WritePropertyName(property.Name);
 
-            writer.WriteEndObject();
+            SerializeInternal(writer, property.GetValue(value));
         }
+
+        if (any)
+            writer.EndItems();
+
+        writer.WriteEndObject();
     }
 
     static Type? GetEnumerableType(Type typeToConvert)
