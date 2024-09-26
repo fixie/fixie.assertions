@@ -13,24 +13,24 @@ partial class CsonSerializer
             => writer.WriteRawValue(SerializeEnum(value));
     }
 
-    class EnumLiteralFactory : CsonConverterFactory
+    static class EnumLiteralFactory
     {
-        public override bool CanConvert(Type typeToConvert)
+        public static bool CanConvert(Type typeToConvert)
             => typeToConvert.IsEnum;
 
-        public override CsonConverter CreateConverter(Type typeToConvert)
+        public static CsonConverter CreateConverter(Type typeToConvert)
         {
             Type converterType = typeof(EnumLiteral<>).MakeGenericType(typeToConvert);
             return (CsonConverter)Activator.CreateInstance(converterType)!;
         }
     }
 
-    class PairsLiteralFactory : CsonConverterFactory
+    static class PairsLiteralFactory
     {
-        public override bool CanConvert(Type typeToConvert)
+        public static bool CanConvert(Type typeToConvert)
             => GetPairType(typeToConvert) != null;
 
-        public override CsonConverter CreateConverter(Type typeToConvert)
+        public static CsonConverter CreateConverter(Type typeToConvert)
         {
             var pairType = GetPairType(typeToConvert) ?? throw new UnreachableException();
 
@@ -68,12 +68,12 @@ partial class CsonSerializer
         }
     }
 
-    class ListLiteralFactory : CsonConverterFactory
+    static class ListLiteralFactory
     {
-        public override bool CanConvert(Type typeToConvert)
+        public static bool CanConvert(Type typeToConvert)
             => GetEnumerableType(typeToConvert) != null;
 
-        public override CsonConverter CreateConverter(Type typeToConvert)
+        public static CsonConverter CreateConverter(Type typeToConvert)
         {
             var enumerableType = GetEnumerableType(typeToConvert) ?? throw new UnreachableException();
             var itemType = enumerableType.GetGenericArguments()[0];
@@ -110,12 +110,12 @@ partial class CsonSerializer
         }
     }
 
-    class PropertiesLiteralFactory : CsonConverterFactory
+    static class PropertiesLiteralFactory
     {
-        public override bool CanConvert(Type typeToConvert)
+        public static bool CanConvert(Type typeToConvert)
             => true;
 
-        public override CsonConverter CreateConverter(Type typeToConvert)
+        public static CsonConverter CreateConverter(Type typeToConvert)
         {
             Type converterType = typeof(PropertiesLiteral<>).MakeGenericType(typeToConvert);
             return (CsonConverter)Activator.CreateInstance(converterType)!;

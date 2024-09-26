@@ -62,15 +62,36 @@ partial class CsonSerializer
         if (type == typeof(object))
             type = value.GetType();
         
-        CsonConverterFactory[] factories = [
-            new EnumLiteralFactory(),
-            new PairsLiteralFactory(),
-            new ListLiteralFactory(),
-            new PropertiesLiteralFactory()
-        ];
-        var factory = factories.First(x => x.CanConvert(type));
-        var converter = factory.CreateConverter(type);
+        if (EnumLiteralFactory.CanConvert(type))
+        {
+            var converter = EnumLiteralFactory.CreateConverter(type);
+            WriteViaReflection(converter, writer, value);
+            return;
+        }
+        
+        if (PairsLiteralFactory.CanConvert(type))
+        {
+            var converter = PairsLiteralFactory.CreateConverter(type);
+            WriteViaReflection(converter, writer, value);
+            return;
+        }
+        
+        if (ListLiteralFactory.CanConvert(type))
+        {
+            var converter = ListLiteralFactory.CreateConverter(type);
+            WriteViaReflection(converter, writer, value);
+            return;
+        }
+        
+        if (PropertiesLiteralFactory.CanConvert(type))
+        {
+            var converter = PropertiesLiteralFactory.CreateConverter(type);
+            WriteViaReflection(converter, writer, value);
+        }
+    }
 
+    static void WriteViaReflection<TValue>(CsonConverter converter, CsonWriter writer, TValue value)
+    {
         var write = converter.GetType().GetMethod("Write")!;
         try
         {
@@ -111,13 +132,6 @@ abstract class CsonConverter<T> : CsonConverter
 
 abstract class CsonConverter
 {
-}
-
-abstract class CsonConverterFactory
-{
-    public abstract bool CanConvert(Type typeToConvert);
-
-    public abstract CsonConverter CreateConverter(Type typeToConvert);
 }
 
 class CsonException : Exception
