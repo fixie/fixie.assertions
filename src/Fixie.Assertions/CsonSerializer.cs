@@ -1,120 +1,10 @@
-﻿using System.Reflection;
-using static Fixie.Assertions.StringUtilities;
+﻿using static Fixie.Assertions.StringUtilities;
 using static System.Environment;
 
 namespace Fixie.Assertions;
 
 partial class CsonSerializer
 {
-    static void WriteEnumLiteral<TValue>(CsonWriter writer, TValue value) where TValue : struct, Enum
-        => writer.WriteRawValue(SerializeEnum(value));
-
-    static void WritePairsLiteral<TKey, TValue>(CsonWriter writer, IEnumerable<KeyValuePair<TKey, TValue>> value)
-    {
-        writer.WriteStartObject();
-
-        bool any = false;
-        foreach (var item in value)
-        {
-            if (!any)
-            {
-                writer.StartItems();
-                any = true;
-            }
-            else
-                writer.WriteItemSeparator();
-
-            writer.WritePropertyName(item.Key?.ToString()!);
-
-            SerializeInternal(writer, item.Value);
-        }
-
-        if (any)
-            writer.EndItems();
-
-        writer.WriteEndObject();
-    }
-
-    static void WriteListLiteral<TItem>(CsonWriter writer, IEnumerable<TItem> value)
-    {
-        writer.WriteStartArray();
-
-        bool any = false;
-        foreach (var item in value)
-        {
-            if (!any)
-            {
-                writer.StartItems();
-                any = true;
-            }
-            else
-                writer.WriteItemSeparator();
-
-            SerializeInternal(writer, item);
-        }
-
-        if (any)
-            writer.EndItems();
-
-        writer.WriteEndArray();
-    }
-
-    static void WritePropertiesLiteral<T>(CsonWriter writer, T value)
-    {
-        writer.WriteStartObject();
-
-        bool any = false;
-        foreach (var property in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
-        {
-            if (property.GetIndexParameters().Length > 0)
-                continue;
-
-            if (!any)
-            {
-                writer.StartItems();
-                any = true;
-            }
-            else
-                writer.WriteItemSeparator();
-
-            writer.WritePropertyName(property.Name);
-
-            SerializeInternal(writer, property.GetValue(value));
-        }
-
-        if (any)
-            writer.EndItems();
-
-        writer.WriteEndObject();
-    }
-
-    static Type? GetEnumerableType(Type typeToConvert)
-    {
-        if (IsEnumerableT(typeToConvert))
-            return typeToConvert;
-
-        return typeToConvert.GetInterfaces().FirstOrDefault(IsEnumerableT);
-    }
-
-    static bool IsEnumerableT(Type type)
-        => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
-
-    static Type? GetPairType(Type typeToConvert)
-    {
-        var enumerableType = GetEnumerableType(typeToConvert);
-            
-        if (enumerableType != null)
-        {
-            var itemType = enumerableType.GetGenericArguments()[0];
-
-            if (itemType.IsGenericType &&
-                itemType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
-                return itemType;
-        }
-
-        return null;
-    }
-
     static string Serialize(bool x) => x ? "true" : "false";
 
     static string Serialize(char x) => $"'{Escape(x)}'";
@@ -206,17 +96,4 @@ partial class CsonSerializer
                 _ when x == typeof(object) => "object",
                 _ => x.ToString()
             };
-
-    static string SerializeEnum<T>(T value) where T : struct, Enum
-    {
-        if (Enum.IsDefined(typeof(T), value))
-            return $"{typeof(T).FullName}.{value}";
-            
-        var numeric = value.ToString();
-
-        if (numeric.StartsWith('-'))
-            return $"({typeof(T).FullName})({value})";
-        else
-            return $"({typeof(T).FullName}){value}";
-    }
 }

@@ -130,11 +130,3 @@ partial class CsonSerializer
         }
     }
 }
-
-class CsonException : Exception
-{
-    public CsonException(string message)
-        : base(message)
-    {
-    }
-}
