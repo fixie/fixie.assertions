@@ -7,20 +7,8 @@ namespace Fixie.Assertions;
 
 partial class CsonSerializer
 {
-    class EnumLiteral<T> : CsonConverter<T> where T : struct, Enum
-    {
-        public override void Write(CsonWriter writer, T value)
-            => writer.WriteRawValue(SerializeEnum(value));
-    }
-
-    static class EnumLiteralFactory
-    {
-        public static CsonConverter CreateConverter(Type typeToConvert)
-        {
-            Type converterType = typeof(EnumLiteral<>).MakeGenericType(typeToConvert);
-            return (CsonConverter)Activator.CreateInstance(converterType)!;
-        }
-    }
+    static void WriteEnumLiteral<TValue>(CsonWriter writer, TValue value) where TValue : struct, Enum
+        => writer.WriteRawValue(SerializeEnum(value));
 
     static class PairsLiteralFactory
     {

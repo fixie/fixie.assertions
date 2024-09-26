@@ -64,8 +64,11 @@ partial class CsonSerializer
         
         if (type.IsEnum)
         {
-            var converter = EnumLiteralFactory.CreateConverter(type);
-            WriteViaReflection(converter, writer, value);
+            var converter = typeof(CsonSerializer)
+                .GetMethod("WriteEnumLiteral", BindingFlags.Static | BindingFlags.NonPublic)!
+                .MakeGenericMethod(type);
+
+            WriteViaReflection(converter, writer, value); //converter<type>(writer, value)
             return;
         }
         
@@ -87,6 +90,19 @@ partial class CsonSerializer
         {
             var converter = PropertiesLiteralFactory.CreateConverter(type);
             WriteViaReflection(converter, writer, value);
+        }
+    }
+
+    static void WriteViaReflection<TValue>(MethodInfo converter, CsonWriter writer, TValue value)
+    {
+        try
+        {
+            converter.Invoke(null, [writer, value]);
+        }
+        catch (TargetInvocationException exception)
+        {
+            ExceptionDispatchInfo.Capture(exception.InnerException!).Throw();
+            throw; // Unreachable.
         }
     }
 
