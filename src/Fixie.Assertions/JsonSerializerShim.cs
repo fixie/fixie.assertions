@@ -62,28 +62,28 @@ partial class CsonSerializer
         if (type == typeof(object))
             type = value.GetType();
         
-        if (EnumLiteralFactory.CanConvert(type))
+        if (type.IsEnum)
         {
             var converter = EnumLiteralFactory.CreateConverter(type);
             WriteViaReflection(converter, writer, value);
             return;
         }
         
-        if (PairsLiteralFactory.CanConvert(type))
+        if (GetPairType(type) != null)
         {
             var converter = PairsLiteralFactory.CreateConverter(type);
             WriteViaReflection(converter, writer, value);
             return;
         }
         
-        if (ListLiteralFactory.CanConvert(type))
+        if (GetEnumerableType(type) != null)
         {
             var converter = ListLiteralFactory.CreateConverter(type);
             WriteViaReflection(converter, writer, value);
             return;
         }
         
-        if (PropertiesLiteralFactory.CanConvert(type))
+        if (true)
         {
             var converter = PropertiesLiteralFactory.CreateConverter(type);
             WriteViaReflection(converter, writer, value);

@@ -15,9 +15,6 @@ partial class CsonSerializer
 
     static class EnumLiteralFactory
     {
-        public static bool CanConvert(Type typeToConvert)
-            => typeToConvert.IsEnum;
-
         public static CsonConverter CreateConverter(Type typeToConvert)
         {
             Type converterType = typeof(EnumLiteral<>).MakeGenericType(typeToConvert);
@@ -27,9 +24,6 @@ partial class CsonSerializer
 
     static class PairsLiteralFactory
     {
-        public static bool CanConvert(Type typeToConvert)
-            => GetPairType(typeToConvert) != null;
-
         public static CsonConverter CreateConverter(Type typeToConvert)
         {
             var pairType = GetPairType(typeToConvert) ?? throw new UnreachableException();
@@ -70,9 +64,6 @@ partial class CsonSerializer
 
     static class ListLiteralFactory
     {
-        public static bool CanConvert(Type typeToConvert)
-            => GetEnumerableType(typeToConvert) != null;
-
         public static CsonConverter CreateConverter(Type typeToConvert)
         {
             var enumerableType = GetEnumerableType(typeToConvert) ?? throw new UnreachableException();
@@ -112,9 +103,6 @@ partial class CsonSerializer
 
     static class PropertiesLiteralFactory
     {
-        public static bool CanConvert(Type typeToConvert)
-            => true;
-
         public static CsonConverter CreateConverter(Type typeToConvert)
         {
             Type converterType = typeof(PropertiesLiteral<>).MakeGenericType(typeToConvert);
