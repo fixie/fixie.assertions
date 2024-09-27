@@ -22,8 +22,8 @@ partial class CsonSerializer
             else
                 writer.WriteItemSeparator();
 
-            SerializeInternal(writer, property.Name);
-            writer.Write(": ");
+            writer.Write(property.Name);
+            writer.Write(" = ");
             SerializeInternal(writer, property.GetValue(value));
         }
 

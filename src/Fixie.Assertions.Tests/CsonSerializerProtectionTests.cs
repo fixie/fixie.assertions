@@ -42,18 +42,18 @@ class CsonSerializerProtectionTests
         CsonSerializer.Serialize(founder)
             .ShouldBe("""
                       {
-                        "Name": "Morgan",
-                        "Manager": null
+                        Name = "Morgan",
+                        Manager = null
                       }
                       """);
 
         CsonSerializer.Serialize(supervisor)
             .ShouldBe("""
                       {
-                        "Name": "Riley",
-                        "Manager": {
-                          "Name": "Morgan",
-                          "Manager": null
+                        Name = "Riley",
+                        Manager = {
+                          Name = "Morgan",
+                          Manager = null
                         }
                       }
                       """);
@@ -67,8 +67,8 @@ class CsonSerializerProtectionTests
         CsonSerializer.Serialize(ouroboros)
             .ShouldBe("""
                       {
-                        "Name": "Ouroboros",
-                        "Manager": null
+                        Name = "Ouroboros",
+                        Manager = null
                       }
                       """);
 
@@ -100,40 +100,23 @@ class CsonSerializerProtectionTests
                       }
                       """);
 
-        // WARNING: This assertion was originally written as characterization coverage, and is
-        //          NOT describing a desirable effect. This is expected to start failing the moment
-        //          that CsonSerializer begins to take control over property iteration. Until then,
-        //          ShouldMatch is at risk for behaving strangely on structurally-unequal objects
-        //          that happen to have equal JSON representations, and on structurally-equal objects
-        //          that happen to have unequal JSON representations (such as those spoiled by private
-        //          inclusion).
-        //
-        //          Once this starts failing as expected, the point is to rewrite the assertion to
-        //          affirm that the JSON customization attributes do NOT impact the output, in contrast
-        //          to the assertions above.
-
-        //TODO:     We experience an intermediate state while we handle dictionaries but not yet
-        //          properites, where we get A and B wrapped in braces as expected but missing
-        //          their respective property name. It appears to be a bug in JsonSerializer that it
-        //          isn't throwing a malformed JSON exception, but we're going with it for now.
-
         CsonSerializer.Serialize(model)
             .ShouldBe("""
                       {
-                        "JsonIgnored": "Property Value From JsonIgnored",
-                        "JsonCustomizedName": "Property Value From JsonCustomizedName",
-                        "JsonCustomConverted": {
-                          "Key": "Key/Value Pair",
-                          "Value": "From JsonCustomConverted"
+                        JsonIgnored = "Property Value From JsonIgnored",
+                        JsonCustomizedName = "Property Value From JsonCustomizedName",
+                        JsonCustomConverted = {
+                          Key = "Key/Value Pair",
+                          Value = "From JsonCustomConverted"
                         },
-                        "JsonNotIgnoredBecauseNonNull": "Property Value From JsonNotIgnoredBecauseNonNull",
-                        "JsonIgnoredBecauseNull": null,
-                        "JsonExtendedData": {
+                        JsonNotIgnoredBecauseNonNull = "Property Value From JsonNotIgnoredBecauseNonNull",
+                        JsonIgnoredBecauseNull = null,
+                        JsonExtendedData = {
                           ["A"] = {
-                            "ValueKind": System.Text.Json.JsonValueKind.Number
+                            ValueKind = System.Text.Json.JsonValueKind.Number
                           },
                           ["B"] = {
-                            "ValueKind": System.Text.Json.JsonValueKind.Number
+                            ValueKind = System.Text.Json.JsonValueKind.Number
                           }
                         }
                       }

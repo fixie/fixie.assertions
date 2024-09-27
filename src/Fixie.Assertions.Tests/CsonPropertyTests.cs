@@ -30,23 +30,29 @@ class CsonPropertyTests
         Serialize(new Person("Alex", 32))
             .ShouldBe("""
                       {
-                        "Name": "Alex",
-                        "Age": 32
+                        Name = "Alex",
+                        Age = 32
                       }
                       """);
 
-        Serialize(new PointProperties { X = 1, Y = 2 })
+        var pointProperties = new PointProperties
+        {
+            X = 1,
+            Y = 2
+        };
+
+        Serialize(pointProperties)
             .ShouldBe("""
                       {
-                        "X": 1,
-                        "Y": 2
+                        X = 1,
+                        Y = 2
                       }
                       """);
 
         Serialize(HttpMethod.Post)
             .ShouldBe("""
                       {
-                        "Method": "POST"
+                        Method = "POST"
                       }
                       """);
 
@@ -59,21 +65,25 @@ class CsonPropertyTests
         Serialize(sampleWithIndexer)
             .ShouldBe("""
                       {
-                        "Name": "Alex",
-                        "Age": 32
+                        Name = "Alex",
+                        Age = 32
                       }
                       """);
     }
 
     public void ShouldSerializeUnrecognizedNullableValueTypes()
     {
-        var point = new PointProperties { X = 1, Y = 2 };
+        var point = new PointProperties
+        {
+            X = 1,
+            Y = 2
+        };
 
         var pointSerialized =
             """
             {
-              "X": 1,
-              "Y": 2
+              X = 1,
+              Y = 2
             }
             """;
 
