@@ -27,8 +27,17 @@ class CsonSerializerProtectionTests
 
     public void ShouldProtectFromCycles()
     {
-        var founder = new Employee("Morgan", manager: null);
-        var supervisor = new Employee("Riley", manager: founder);
+        var founder = new Employee
+        {
+            Name = "Morgan",
+            Manager = null
+        };
+
+        var supervisor = new Employee
+        {
+            Name = "Riley",
+            Manager = founder
+        };
 
         CsonSerializer.Serialize(founder)
             .ShouldBe("""
@@ -49,7 +58,11 @@ class CsonSerializerProtectionTests
                       }
                       """);
 
-        var ouroboros = new Employee("Ouroboros");
+        var ouroboros = new Employee
+        {
+            Name = "Ouroboros",
+            Manager = null
+        };
 
         CsonSerializer.Serialize(ouroboros)
             .ShouldBe("""
@@ -127,10 +140,10 @@ class CsonSerializerProtectionTests
                       """);
     }
 
-    class Employee(string name, Employee? manager = null)
+    class Employee
     {
-        public string Name { get; init; } = name;
-        public Employee? Manager { get; set; } = manager;
+        public required string Name { get; init; }
+        public required Employee? Manager { get; set; }
     }
 
     class JsonCustomizedModel

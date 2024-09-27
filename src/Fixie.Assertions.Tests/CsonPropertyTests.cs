@@ -50,7 +50,13 @@ class CsonPropertyTests
                       }
                       """);
 
-        Serialize(new SampleWithIndexer("Alex", 32))
+        var sampleWithIndexer = new SampleWithIndexer
+        {
+            Name = "Alex",
+            Age = 32
+        };
+
+        Serialize(sampleWithIndexer)
             .ShouldBe("""
                       {
                         "Name": "Alex",
@@ -106,10 +112,10 @@ class CsonPropertyTests
         public override string? ToString() => null;
     }
 
-    class SampleWithIndexer(string name, int age)
+    class SampleWithIndexer
     {
-        public string Name { get; init; } = name;
-        public int Age { get; init; } = age;
+        public required string Name { get; init; }
+        public required int Age { get; init; }
         public int this[int index] => 1;
     }
 }
