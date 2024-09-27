@@ -5,7 +5,18 @@ class GeneralAssertionTests
     public void ShouldAssertEquatables()
     {
         HttpMethod.Post.ShouldBe(HttpMethod.Post);
-        Contradiction(HttpMethod.Post, x => x.ShouldBe(HttpMethod.Get), "x should be GET but was POST");
+        Contradiction(HttpMethod.Post, x => x.ShouldBe(HttpMethod.Get),
+            """
+            x should be
+                {
+                  Method = "GET"
+                }
+            
+            but was
+                {
+                  Method = "POST"
+                }
+            """);
     }
 
     public void ShouldAssertObjects()
@@ -19,17 +30,21 @@ class GeneralAssertionTests
         nonNullObjectWithNullToString.ShouldBe(nonNullObjectWithNullToString);
 
         Contradiction(objectB, x => x.ShouldBe((object?)null),
-            $"x should be null but was {FullName<SampleB>()}");
+            "x should be null but was {}");
         Contradiction(objectB, x => x.ShouldBe((SampleB?)null),
-            $"x should be null but was {FullName<SampleB>()}");
+            "x should be null but was {}");
 
-        Contradiction((object)objectB, x => x.ShouldBe((object)objectA),
-            $"x should be {FullName<SampleA>()} but was {FullName<SampleB>()}");
-        Contradiction((object)objectA, x => x.ShouldBe((object)objectB),
-            $"x should be {FullName<SampleB>()} but was {FullName<SampleA>()}");
+        var trivialSimilarity =
+            """
+            x should be {} but was {}
 
-        Contradiction(nonNullObjectWithNullToString, x => x.ShouldBe(objectB),
-            $"x should be {FullName<SampleB>()} but was {FullName<SampleNullToString>()}");
+            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+            """;
+
+        Contradiction((object)objectB, x => x.ShouldBe((object)objectA), trivialSimilarity);
+        Contradiction((object)objectA, x => x.ShouldBe((object)objectB), trivialSimilarity);
+
+        Contradiction(nonNullObjectWithNullToString, x => x.ShouldBe(objectB), trivialSimilarity);
     }
 
     public void ShouldAssertReferenceTypesByTheirNaturalEqualityComparer()
@@ -50,9 +65,9 @@ class GeneralAssertionTests
         nonNullObject.ShouldNotBeNull();
 
         Contradiction((object?)null, x => x.ShouldBe(nonNullObject),
-            $"x should be {FullName<SampleA>()} but was null");
+            "x should be {} but was null");
         Contradiction(nonNullObject, x => x.ShouldBe(null),
-            $"x should be null but was {FullName<SampleA>()}");
+            "x should be null but was {}");
         Contradiction((object?)null, x => x.ShouldNotBeNull(),
             "x should not be null but was null");
     }
@@ -102,7 +117,7 @@ class GeneralAssertionTests
         guidA.ShouldBe(guidA);
         guidB.ShouldBe(guidB);
         
-        Contradiction(guidA, x => x.ShouldBe(guidB), $"x should be {guidB} but was {guidA}");
+        Contradiction(guidA, x => x.ShouldBe(guidB), $"x should be \"{guidB}\" but was \"{guidA}\"");
 
         var emptyA = new Empty();
         var emptyB = new Empty();
@@ -119,8 +134,13 @@ class GeneralAssertionTests
         positionA.ShouldBe(positionA);
         positionB.ShouldBe(positionB);
         positionA.ShouldBe(positionB);
-        
-        Contradiction(origin, x => x.ShouldBe(positionA), $"x should be (1,2) but was (0,0)");
+
+        Contradiction(origin, x => x.ShouldBe(positionA),
+            """
+            x should be {} but was {}
+
+            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+            """);
     }
 
     public void ShouldAssertLists()
@@ -236,15 +256,17 @@ class GeneralAssertionTests
             """
             x should be
                 [
-                  Sample B,
-                  Sample A
+                  {},
+                  {}
                 ]
 
             but was
                 [
-                  Sample A,
-                  Sample B
+                  {},
+                  {}
                 ]
+
+            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
             """);
     }
 
@@ -265,7 +287,7 @@ class GeneralAssertionTests
         var a2 = new SampleA();
 
         a1.Should(x => x == a1);
-        Contradiction(a1, value => value.Should(x => x == a2), $"value should be == a2 but was {FullName<SampleA>()}");
+        Contradiction(a1, value => value.Should(x => x == a2), "value should be == a2 but was {}");
 
         object? nullObject = null;
         nullObject.Should(_ => _ == null);
