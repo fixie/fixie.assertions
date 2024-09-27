@@ -6,7 +6,7 @@ partial class CsonSerializer
 {
     static void WritePropertiesLiteral<T>(CsonWriter writer, T value)
     {
-        writer.WriteStartObject();
+        writer.Write('{');
 
         bool any = false;
         foreach (var property in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
@@ -22,14 +22,14 @@ partial class CsonSerializer
             else
                 writer.WriteItemSeparator();
 
-            writer.WritePropertyName(property.Name);
-
+            SerializeInternal(writer, property.Name);
+            writer.Write(": ");
             SerializeInternal(writer, property.GetValue(value));
         }
 
         if (any)
             writer.EndItems();
 
-        writer.WriteEndObject();
+        writer.Write('}');
     }
 }

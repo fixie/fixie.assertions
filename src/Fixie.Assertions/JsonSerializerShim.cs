@@ -23,7 +23,7 @@ partial class CsonSerializer
     {
         if (value is null)
         {
-            writer.WriteRawValue("null");
+            writer.Write("null");
             return;
         }
 
@@ -37,25 +37,25 @@ partial class CsonSerializer
 
         switch (value)
         {
-            case byte v: writer.WriteRawValue(v.ToString()); return;
-            case sbyte v: writer.WriteRawValue(v.ToString()); return;
-            case short v: writer.WriteRawValue(v.ToString()); return;
-            case ushort v: writer.WriteRawValue(v.ToString()); return;
-            case int v: writer.WriteRawValue(v.ToString()); return;
-            case uint v: writer.WriteRawValue(v.ToString()); return;
-            case long v: writer.WriteRawValue(v.ToString()); return;
-            case ulong v: writer.WriteRawValue(v.ToString()); return;
-            case decimal v: writer.WriteRawValue(v.ToString()); return;
-            case double v: writer.WriteRawValue(v.ToString()); return;
-            case float v: writer.WriteRawValue(v.ToString()); return;
-            case nint v: writer.WriteRawValue(v.ToString()); return;
-            case nuint v: writer.WriteRawValue(v.ToString()); return;
+            case byte v: writer.Write(v.ToString()); return;
+            case sbyte v: writer.Write(v.ToString()); return;
+            case short v: writer.Write(v.ToString()); return;
+            case ushort v: writer.Write(v.ToString()); return;
+            case int v: writer.Write(v.ToString()); return;
+            case uint v: writer.Write(v.ToString()); return;
+            case long v: writer.Write(v.ToString()); return;
+            case ulong v: writer.Write(v.ToString()); return;
+            case decimal v: writer.Write(v.ToString()); return;
+            case double v: writer.Write(v.ToString()); return;
+            case float v: writer.Write(v.ToString()); return;
+            case nint v: writer.Write(v.ToString()); return;
+            case nuint v: writer.Write(v.ToString()); return;
 
-            case bool v: writer.WriteRawValue(Serialize(v)); return;
-            case char v: writer.WriteRawValue(Serialize(v)); return;
-            case string v: writer.WriteRawValue(Serialize(v)); return;
-            case Guid v: writer.WriteRawValue(Serialize(v)); return;
-            case Type v: writer.WriteRawValue(Serialize(v)); return;
+            case bool v: writer.Write(Serialize(v)); return;
+            case char v: writer.Write(Serialize(v)); return;
+            case string v: writer.Write(Serialize(v)); return;
+            case Guid v: writer.Write(Serialize(v)); return;
+            case Type v: writer.Write(Serialize(v)); return;
         };
 
         var type = typeof(TValue);

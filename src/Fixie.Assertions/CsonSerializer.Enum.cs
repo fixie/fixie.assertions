@@ -3,7 +3,7 @@
 partial class CsonSerializer
 {
     static void WriteEnumLiteral<TValue>(CsonWriter writer, TValue value) where TValue : struct, Enum
-        => writer.WriteRawValue(SerializeEnum(value));
+        => writer.Write(SerializeEnum(value));
 
     static string SerializeEnum<T>(T value) where T : struct, Enum
     {

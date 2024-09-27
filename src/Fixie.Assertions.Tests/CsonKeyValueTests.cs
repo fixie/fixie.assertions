@@ -42,9 +42,9 @@ class CsonKeyValueTests
         Serialize(numericKeys)
             .ShouldBe("""
                       {
-                        "1": "First Value",
-                        "2": "Second Value",
-                        "3": "Third Value"
+                        1: "First Value",
+                        2: "Second Value",
+                        3: "Third Value"
                       }
                       """);
     }

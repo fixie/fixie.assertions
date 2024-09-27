@@ -15,7 +15,7 @@ partial class CsonSerializer
 
     static void WriteListLiteral<TItem>(CsonWriter writer, IEnumerable<TItem> value)
     {
-        writer.WriteStartArray();
+        writer.Write('[');
 
         bool any = false;
         foreach (var item in value)
@@ -34,6 +34,6 @@ partial class CsonSerializer
         if (any)
             writer.EndItems();
 
-        writer.WriteEndArray();
+        writer.Write(']');
     }
 }
