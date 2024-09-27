@@ -33,8 +33,9 @@ partial class CsonSerializer
             else
                 writer.WriteItemSeparator();
 
+            writer.Write('[');
             SerializeInternal(writer, item.Key);
-            writer.Write(": ");
+            writer.Write("] = ");
             SerializeInternal(writer, item.Value);
         }
 

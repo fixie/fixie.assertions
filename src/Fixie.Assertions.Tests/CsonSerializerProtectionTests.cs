@@ -116,10 +116,10 @@ class CsonSerializerProtectionTests
                         "JsonNotIgnoredBecauseNonNull": "Property Value From JsonNotIgnoredBecauseNonNull",
                         "JsonIgnoredBecauseNull": null,
                         "JsonExtendedData": {
-                          "A": {
+                          ["A"] = {
                             "ValueKind": System.Text.Json.JsonValueKind.Number
                           },
-                          "B": {
+                          ["B"] = {
                             "ValueKind": System.Text.Json.JsonValueKind.Number
                           }
                         }
