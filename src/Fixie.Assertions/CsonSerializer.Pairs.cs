@@ -18,30 +18,14 @@ partial class CsonSerializer
         return null;
     }
 
-    static void WritePairsLiteral<TKey, TValue>(CsonWriter writer, IEnumerable<KeyValuePair<TKey, TValue>> value)
+    static void WritePairsLiteral<TKey, TValue>(CsonWriter writer, IEnumerable<KeyValuePair<TKey, TValue>> pairs)
     {
-        writer.Write('{');
-
-        bool any = false;
-        foreach (var item in value)
+        writer.WriteItems('{', pairs, '}', pair =>
         {
-            if (!any)
-            {
-                writer.StartItems();
-                any = true;
-            }
-            else
-                writer.WriteItemSeparator();
-
             writer.Write('[');
-            SerializeInternal(writer, item.Key);
+            SerializeInternal(writer, pair.Key);
             writer.Write("] = ");
-            SerializeInternal(writer, item.Value);
-        }
-
-        if (any)
-            writer.EndItems();
-
-        writer.Write('}');
+            SerializeInternal(writer, pair.Value);
+        });
     }
 }

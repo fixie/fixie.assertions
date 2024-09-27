@@ -13,27 +13,11 @@ partial class CsonSerializer
     static bool IsEnumerableT(Type type)
         => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
 
-    static void WriteListLiteral<TItem>(CsonWriter writer, IEnumerable<TItem> value)
+    static void WriteListLiteral<TItem>(CsonWriter writer, IEnumerable<TItem> items)
     {
-        writer.Write('[');
-
-        bool any = false;
-        foreach (var item in value)
+        writer.WriteItems('[', items, ']', item =>
         {
-            if (!any)
-            {
-                writer.StartItems();
-                any = true;
-            }
-            else
-                writer.WriteItemSeparator();
-
             SerializeInternal(writer, item);
-        }
-
-        if (any)
-            writer.EndItems();
-
-        writer.Write(']');
+        });
     }
 }
