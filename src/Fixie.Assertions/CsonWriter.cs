@@ -9,6 +9,7 @@ class CsonWriter(StringBuilder output)
 {
     readonly StringBuilder output = output;
     int indentation = 0;
+    int lengthAtLineStart = 0;
 
     public void WriteNull()
     {
@@ -20,59 +21,69 @@ class CsonWriter(StringBuilder output)
         Append(value ? "true" : "false");
     }
 
-    public void WriteNumber<T>(T number) where T : struct, INumber<T>
+    public void WriteNumber<T>(T value) where T : struct, INumber<T>
     {
-        Append(number.ToString());
+        Append(value.ToString());
     }
 
-    public void WriteChar(char x)
+    public void WriteChar(char value)
     {
         Append('\'');
-        Append(Escape(x));
+        Append(Escape(value));
         Append('\'');
     }
 
-    public void WriteGuid(Guid id)
+    public void WriteGuid(Guid value)
     {
         Append('\"');
-        Append(id.ToString());
+        Append(value.ToString());
         Append('\"');
     }
 
-    public void WriteString(string x)
+    public void WriteString(string value)
     {
-        if (IsMultiline(x))
+        if (IsMultiline(value))
         {
-            var terminalLength = RawStringTerminalLength(x);
+            var lengthAtOpenTerminalStart = output.Length;
+            var indentationLength = lengthAtOpenTerminalStart-lengthAtLineStart;
+            var terminalLength = RawStringTerminalLength(value);
 
             Append('\"', terminalLength);
             AppendLine();
-            AppendLine(x);
+
+            foreach (var content in value.Split(Environment.NewLine))
+            {
+                Append(' ', indentationLength);
+                Append(content);
+                AppendLine();
+            }
+
+            Append(' ', indentationLength);
             Append('\"', terminalLength);
         }
         else
         {
             Append('\"');
-            foreach (var c in x)
+            foreach (var c in value)
                 Append(Escape(c));
             Append('\"');
         }
     }
 
-    public void WriteType(Type type)
+    public void WriteType(Type value)
     {
         bool nullable = false;
-        var underlyingType = Nullable.GetUnderlyingType(type);
+        var underlyingType = Nullable.GetUnderlyingType(value);
 
         Append("typeof(");
 
         if (underlyingType != null)
         {
-            type = underlyingType;
+            value = underlyingType;
             nullable = true;
         }
 
-        Append(TypeName(type));
+        Append(TypeName(value));
 
         if (nullable)
             Append('?');
@@ -265,6 +276,10 @@ class CsonWriter(StringBuilder output)
     void Append(char content, int repeatCount) => output.Append(content, repeatCount);
     void Append(string? content) => output.Append(content);
     void Append(object? content) => output.Append(content);
-    void AppendLine(string? content) => output.AppendLine(content);
-    void AppendLine() => output.AppendLine();
+    
+    void AppendLine()
+    {
+        output.AppendLine();
+        lengthAtLineStart = output.Length;
+    }
 }

@@ -307,6 +307,151 @@ class CsonTextTests
                       """""");
     }
 
+    public void ShouldSerializeMultilineStringsRespectingIndentation()
+    {
+        Model[] items =
+        [
+            new()
+            {
+                Text = "ABC",
+                Inner = new() {
+                    Text = "DEF"
+                },
+                Pairs = new() {
+                    ["ABC"] = "DEF"
+                },
+                List = [
+                    "GHI",
+                    "JKL"
+                ]
+            },
+            new()
+            {
+                Text = """
+                       Line 1
+                       Line 2
+                       """,
+                Inner = new() {
+                    Text = """
+                           
+                           Line 2
+                           Line 3
+                           """
+                },
+                Pairs = new() {
+                    ["ABC"] = """
+                              Line 1
+                              Line 2
+                              """,
+                    ["DEF"] = """
+                              Line 1
+                              
+                              Line 3
+                              """,
+                    ["""
+                     Line 1
+                     Line 2
+                     """] = """
+                            Line 1
+                            Line 2
+                            
+                            """
+                },
+                List = [
+                    """
+                    Line 1
+                    Line 2
+                    Line 3
+                    """,
+                    "ABC",
+                    """
+                    Line 1
+                    Line 2
+                    Line 3
+                    """
+                ]
+            }
+        ];
+
+        Serialize(items)
+            .ShouldBe(
+            """"
+            [
+              {
+                Text = "ABC",
+                Inner = {
+                  Text = "DEF"
+                },
+                Pairs = {
+                  ["ABC"] = "DEF"
+                },
+                List = [
+                  "GHI",
+                  "JKL"
+                ]
+              },
+              {
+                Text = """
+                       Line 1
+                       Line 2
+                       """,
+                Inner = {
+                  Text = """
+                         
+                         Line 2
+                         Line 3
+                         """
+                },
+                Pairs = {
+                  ["ABC"] = """
+                            Line 1
+                            Line 2
+                            """,
+                  ["DEF"] = """
+                            Line 1
+                            
+                            Line 3
+                            """,
+                  ["""
+                   Line 1
+                   Line 2
+                   """] = """
+                          Line 1
+                          Line 2
+                          
+                          """
+                },
+                List = [
+                  """
+                  Line 1
+                  Line 2
+                  Line 3
+                  """,
+                  "ABC",
+                  """
+                  Line 1
+                  Line 2
+                  Line 3
+                  """
+                ]
+              }
+            ]
+            """");
+    }
+
+    class Model
+    {
+        public required string Text { get; init; }
+        public required InnerModel Inner { get; init; }
+        public required Dictionary<string, string> Pairs { get; init; }
+        public required string[] List { get; init; }
+    }
+
+    class InnerModel
+    {
+        public required string Text { get; init; }
+    }
+
     public void ShouldSerializeGuids()
     {
         Serialize(Guid.Parse("1f39a64c-cb96-4f1f-8b0f-ab8f6d153a7e"))
