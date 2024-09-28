@@ -37,8 +37,8 @@ public class AssertException : Exception
     public override string Message => message;
 
     static string MultilineMessage(string? expression, string expected, string actual)
-        => $"{expression} should be{NewLine}{Indent(expected)}{NewLine}{NewLine}" +
-           $"but was{NewLine}{Indent(actual)}";
+        => $"{expression} should be{NewLine}{NewLine}{Indent(expected)}{NewLine}{NewLine}" +
+           $"but was{NewLine}{NewLine}{Indent(actual)}";
 
     static string ScalarMessage(string? expression, string expected, string actual)
         => $"{expression} should be {expected} but was {actual}";

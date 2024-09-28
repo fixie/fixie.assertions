@@ -8,11 +8,13 @@ class GeneralAssertionTests
         Contradiction(HttpMethod.Post, x => x.ShouldBe(HttpMethod.Get),
             """
             x should be
+
                 {
                   Method = "GET"
                 }
             
             but was
+
                 {
                   Method = "POST"
                 }
@@ -157,9 +159,11 @@ class GeneralAssertionTests
         Contradiction(new[] { 0 }, x => x.ShouldMatch([]),
             """
             x should be
+
                 []
 
             but was
+
                 [
                   0
                 ]
@@ -168,11 +172,13 @@ class GeneralAssertionTests
         Contradiction(new int[] { }, x => x.ShouldMatch([0]),
             """
             x should be
+
                 [
                   0
                 ]
 
             but was
+
                 []
             """);
 
@@ -181,12 +187,14 @@ class GeneralAssertionTests
         Contradiction(new[] { false, true, false }, x => x.ShouldMatch([false, true]),
             """
             x should be
+
                 [
                   false,
                   true
                 ]
 
             but was
+
                 [
                   false,
                   true,
@@ -199,12 +207,14 @@ class GeneralAssertionTests
         Contradiction(new[] { 'A', 'B', 'C' }, x => x.ShouldMatch(['A', 'C']),
             """
             x should be
+
                 [
                   'A',
                   'C'
                 ]
 
             but was
+
                 [
                   'A',
                   'B',
@@ -217,12 +227,14 @@ class GeneralAssertionTests
         Contradiction(new[] { "A", "B", "C" }, x => x.ShouldMatch(["A", "C"]),
             """
             x should be
+
                 [
                   "A",
                   "C"
                 ]
 
             but was
+
                 [
                   "A",
                   "B",
@@ -235,12 +247,14 @@ class GeneralAssertionTests
         Contradiction(new[] { typeof(int), typeof(bool) }, x => x.ShouldMatch([typeof(bool), typeof(int)]),
             """
             x should be
+
                 [
                   typeof(bool),
                   typeof(int)
                 ]
             
             but was
+
                 [
                   typeof(int),
                   typeof(bool)
@@ -255,12 +269,14 @@ class GeneralAssertionTests
         Contradiction(new[] { sampleA, sampleB }, x => x.ShouldMatch([sampleB, sampleA]),
             """
             x should be
+
                 [
                   {},
                   {}
                 ]
 
             but was
+
                 [
                   {},
                   {}

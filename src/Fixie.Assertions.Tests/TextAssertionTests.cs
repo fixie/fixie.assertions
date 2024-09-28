@@ -47,9 +47,11 @@ class TextAssertionTests
         Contradiction(lines, x => x.ShouldBe("abc"),
             """"
             x should be
+
                 "abc"
             
             but was
+
                 """
                 Line 1
                 Line 2
@@ -61,6 +63,7 @@ class TextAssertionTests
         Contradiction("abc", x => x.ShouldBe(lines),
             """"
             x should be
+
                 """
                 Line 1
                 Line 2
@@ -69,6 +72,7 @@ class TextAssertionTests
                 """
 
             but was
+
                 "abc"
             """");
     }
