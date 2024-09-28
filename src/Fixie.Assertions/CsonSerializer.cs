@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Text;
@@ -23,7 +24,7 @@ partial class CsonSerializer
     {
         if (value is null)
         {
-            writer.Write("null");
+            writer.WriteNull();
             return;
         }
 
@@ -37,25 +38,25 @@ partial class CsonSerializer
 
         switch (value)
         {
-            case byte v: writer.Write(v.ToString()); return;
-            case sbyte v: writer.Write(v.ToString()); return;
-            case short v: writer.Write(v.ToString()); return;
-            case ushort v: writer.Write(v.ToString()); return;
-            case int v: writer.Write(v.ToString()); return;
-            case uint v: writer.Write(v.ToString()); return;
-            case long v: writer.Write(v.ToString()); return;
-            case ulong v: writer.Write(v.ToString()); return;
-            case decimal v: writer.Write(v.ToString()); return;
-            case double v: writer.Write(v.ToString()); return;
-            case float v: writer.Write(v.ToString()); return;
-            case nint v: writer.Write(v.ToString()); return;
-            case nuint v: writer.Write(v.ToString()); return;
+            case byte v: writer.WriteNumber(v); return;
+            case sbyte v: writer.WriteNumber(v); return;
+            case short v: writer.WriteNumber(v); return;
+            case ushort v: writer.WriteNumber(v); return;
+            case int v: writer.WriteNumber(v); return;
+            case uint v: writer.WriteNumber(v); return;
+            case long v: writer.WriteNumber(v); return;
+            case ulong v: writer.WriteNumber(v); return;
+            case decimal v: writer.WriteNumber(v); return;
+            case double v: writer.WriteNumber(v); return;
+            case float v: writer.WriteNumber(v); return;
+            case nint v: writer.WriteNumber(v); return;
+            case nuint v: writer.WriteNumber(v); return;
 
-            case bool v: writer.Write(Serialize(v)); return;
-            case char v: writer.Write(Serialize(v)); return;
-            case string v: writer.Write(Serialize(v)); return;
-            case Guid v: writer.Write(Serialize(v)); return;
-            case Type v: writer.Write(Serialize(v)); return;
+            case bool v: writer.WriteBool(v); return;
+            case char v: writer.WriteChar(v); return;
+            case string v: writer.WriteString(v); return;
+            case Guid v: writer.WriteGuid(v); return;
+            case Type v: writer.WriteType(v); return;
         };
 
         var type = typeof(TValue);
@@ -70,34 +71,59 @@ partial class CsonSerializer
 
     static MethodInfo GetDynamicConverter(Type type)
     {
-        var pairType = GetPairType(type);
-        if (pairType != null)
-        {
-            var typeArguments = pairType.GetGenericArguments();
-            var keyType = typeArguments[0];
-            var valueType = typeArguments[1];
+        if (IsPairType(type, out var keyType, out var valueType))
+            return GetDynamicWriter(nameof(CsonWriter.WritePairs), keyType, valueType);
 
-            return GetDynamicConverter("WritePairsLiteral", keyType, valueType);
-        }
+        if (IsEnumerableType(type, out var itemType))
+            return GetDynamicWriter(nameof(CsonWriter.WriteList), itemType);
 
-        var enumerableType = GetEnumerableType(type);
-        if (enumerableType != null)
-        {
-            var itemType = enumerableType.GetGenericArguments()[0];
-
-            return GetDynamicConverter("WriteListLiteral", itemType);
-        }
-
-        return GetDynamicConverter(
+        return GetDynamicWriter(
             type.IsEnum
-                ? "WriteEnumLiteral"
-                : "WritePropertiesLiteral", type);
+                ? nameof(CsonWriter.WriteEnum)
+                : nameof(CsonWriter.WriteProperties), type);
     }
 
-    static MethodInfo GetDynamicConverter(string method, params Type[] typeArguments)
+    static bool IsPairType(Type typeToConvert,
+        [NotNullWhen(true)] out Type? keyType,
+        [NotNullWhen(true)] out Type? valueType)
     {
-        return typeof(CsonSerializer)
-            .GetMethod(method, BindingFlags.Static | BindingFlags.NonPublic)?
+        if (IsEnumerableType(typeToConvert, out var itemType))
+        {
+            if (itemType.IsGenericType &&
+                itemType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
+            {
+                var typeArguments = itemType.GetGenericArguments();
+
+                keyType = typeArguments[0];
+                valueType = typeArguments[1];
+                return true;
+            }
+        }
+
+        keyType = null;
+        valueType = null;
+        return false;
+    }
+
+    static bool IsEnumerableType(Type typeToConvert, [NotNullWhen(true)] out Type? itemType)
+    {
+        var enumerableType =
+            IsEnumerableT(typeToConvert)
+                ? typeToConvert
+                : typeToConvert.GetInterfaces().FirstOrDefault(IsEnumerableT);
+
+        itemType = enumerableType?.GetGenericArguments()[0];
+
+        return itemType != null;
+    }
+
+    static bool IsEnumerableT(Type type)
+        => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+
+    static MethodInfo GetDynamicWriter(string method, params Type[] typeArguments)
+    {
+        return typeof(CsonWriter)
+            .GetMethod(method, BindingFlags.Instance | BindingFlags.Public)?
             .MakeGenericMethod(typeArguments)
             ?? throw new UnreachableException();
     }
@@ -106,7 +132,7 @@ partial class CsonSerializer
     {
         try
         {
-            converter.Invoke(null, [writer, value]);
+            converter.Invoke(writer, [value]);
         }
         catch (TargetInvocationException exception)
         {
@@ -129,39 +155,4 @@ partial class CsonSerializer
             throw; // Unreachable.
         }
     }
-
-    static string Serialize(bool x) => x ? "true" : "false";
-
-    static string Serialize(Type type)
-    {
-        var underlyingType = Nullable.GetUnderlyingType(type);
-
-        if (underlyingType != null)
-            return $"typeof({TypeName(underlyingType)}?)";
-
-        return $"typeof({TypeName(type)})";
-    }
-
-    static string TypeName(Type x)
-        => x switch
-            {
-                _ when x == typeof(bool) => "bool",
-                _ when x == typeof(sbyte) => "sbyte",
-                _ when x == typeof(byte) => "byte",
-                _ when x == typeof(short) => "short",
-                _ when x == typeof(ushort) => "ushort",
-                _ when x == typeof(int) => "int",
-                _ when x == typeof(uint) => "uint",
-                _ when x == typeof(long) => "long",
-                _ when x == typeof(ulong) => "ulong",
-                _ when x == typeof(nint) => "nint",
-                _ when x == typeof(nuint) => "nuint",
-                _ when x == typeof(decimal) => "decimal",
-                _ when x == typeof(double) => "double",
-                _ when x == typeof(float) => "float",
-                _ when x == typeof(char) => "char",
-                _ when x == typeof(string) => "string",
-                _ when x == typeof(object) => "object",
-                _ => x.ToString()
-            };
 }
