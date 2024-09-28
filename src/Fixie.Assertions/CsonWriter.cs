@@ -166,8 +166,8 @@ class CsonWriter(StringBuilder output)
         AppendLine();
         
         indentation++;
-        if (indentation > 63)
-            throw new CsonException("This type could not be serialized because the object graph is too deep.");
+        if (indentation > 31)
+            throw new SerializationDepthException(output.ToString());
 
         AppendIndentation();
     }

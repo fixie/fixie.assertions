@@ -10,7 +10,7 @@ class CsonSerializerProtectionTests
     {
         object[] nested = [];
 
-        for (int i = 1; i <= 63; i++)
+        for (int i = 1; i <= 31; i++)
             nested = [nested];
 
         CsonSerializer.Serialize(nested).StartsWith('[').ShouldBe(true);
@@ -21,8 +21,8 @@ class CsonSerializerProtectionTests
             CsonSerializer.Serialize(nested);
         };
 
-        exceedDepthLimit.ShouldThrow<CsonException>(
-            "This type could not be serialized because the object graph is too deep.");
+        exceedDepthLimit
+            .ShouldThrow<SerializationDepthException>(ExpectedDeepRecursionExceptionMessage);
     }
 
     public void ShouldProtectFromCycles()
@@ -78,8 +78,8 @@ class CsonSerializerProtectionTests
             CsonSerializer.Serialize(ouroboros);
         };
 
-        exceedDepthLimitDueToCycle.ShouldThrow<CsonException>(
-            "This type could not be serialized because the object graph is too deep.");
+        exceedDepthLimitDueToCycle
+            .ShouldThrow<SerializationDepthException>(ExpectedCycleExceptionMessage);
     }
 
     public void ShouldNotBeAffectedByJsonCustomizationAttributes()
@@ -189,4 +189,113 @@ class CsonSerializerProtectionTests
         public override void Write(Utf8JsonWriter writer, KeyValuePair<string, string> value, JsonSerializerOptions options)
             => writer.WriteStringValue("A Key/Value pair was obfuscated during JSON serialization.");
     }
+
+        const string ExpectedDeepRecursionExceptionMessage =
+        """
+        A value could not be serialized because its object graph is too deep. Below is the start of the message that was interrupted:
+
+        [
+          [
+            [
+              [
+                [
+                  [
+                    [
+                      [
+                        [
+                          [
+                            [
+                              [
+                                [
+                                  [
+                                    [
+                                      [
+                                        [
+                                          [
+                                            [
+                                              [
+                                                [
+                                                  [
+                                                    [
+                                                      [
+                                                        [
+                                                          [
+                                                            [
+                                                              [
+                                                                [
+                                                                  [
+                                                                    [
+                                                                      [
+
+        """;
+
+    const string ExpectedCycleExceptionMessage =
+        """
+        A value could not be serialized because its object graph is too deep. Below is the start of the message that was interrupted:
+    
+        {
+          Name = "Ouroboros",
+          Manager = {
+            Name = "Ouroboros",
+            Manager = {
+              Name = "Ouroboros",
+              Manager = {
+                Name = "Ouroboros",
+                Manager = {
+                  Name = "Ouroboros",
+                  Manager = {
+                    Name = "Ouroboros",
+                    Manager = {
+                      Name = "Ouroboros",
+                      Manager = {
+                        Name = "Ouroboros",
+                        Manager = {
+                          Name = "Ouroboros",
+                          Manager = {
+                            Name = "Ouroboros",
+                            Manager = {
+                              Name = "Ouroboros",
+                              Manager = {
+                                Name = "Ouroboros",
+                                Manager = {
+                                  Name = "Ouroboros",
+                                  Manager = {
+                                    Name = "Ouroboros",
+                                    Manager = {
+                                      Name = "Ouroboros",
+                                      Manager = {
+                                        Name = "Ouroboros",
+                                        Manager = {
+                                          Name = "Ouroboros",
+                                          Manager = {
+                                            Name = "Ouroboros",
+                                            Manager = {
+                                              Name = "Ouroboros",
+                                              Manager = {
+                                                Name = "Ouroboros",
+                                                Manager = {
+                                                  Name = "Ouroboros",
+                                                  Manager = {
+                                                    Name = "Ouroboros",
+                                                    Manager = {
+                                                      Name = "Ouroboros",
+                                                      Manager = {
+                                                        Name = "Ouroboros",
+                                                        Manager = {
+                                                          Name = "Ouroboros",
+                                                          Manager = {
+                                                            Name = "Ouroboros",
+                                                            Manager = {
+                                                              Name = "Ouroboros",
+                                                              Manager = {
+                                                                Name = "Ouroboros",
+                                                                Manager = {
+                                                                  Name = "Ouroboros",
+                                                                  Manager = {
+                                                                    Name = "Ouroboros",
+                                                                    Manager = {
+                                                                      Name = "Ouroboros",
+                                                                      Manager = {
+
+        """;
 }
