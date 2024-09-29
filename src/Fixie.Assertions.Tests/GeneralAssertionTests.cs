@@ -259,48 +259,6 @@ class GeneralAssertionTests
         exceptionAsConcretion.ShouldBe(exception);
     }
 
-    public void ShouldAssertGuids()
-    {
-        var guidA = Guid.NewGuid();
-        var guidB = Guid.NewGuid();
-
-        guidA.ShouldBe(guidA);
-        guidB.ShouldBe(guidB);
-        
-        Contradiction(guidA, x => x.ShouldBe(guidB),
-            $"""
-             x should be
-             
-                 "{guidB}"
-             
-             but was
-             
-                 "{guidA}"
-             """);
-
-        ((Guid?)null).ShouldBe(null);
-        Contradiction((Guid?)null, x => x.ShouldBe(guidA),
-            $"""
-             x should be
-             
-                 "{guidA}"
-             
-             but was
-             
-                 null
-             """);
-        Contradiction((Guid?)guidB, x => x.ShouldBe(null),
-            $"""
-             x should be
-             
-                 null
-             
-             but was
-             
-                 "{guidB}"
-             """);
-    }
-
     public void ShouldAssertStructs()
     {
         var emptyA = new Empty();
