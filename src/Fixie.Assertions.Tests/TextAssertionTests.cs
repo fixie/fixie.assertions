@@ -17,7 +17,13 @@ class TextAssertionTests
         "a☺".ShouldBe("a☺");
         Contradiction("a☺", x => x.ShouldBe("z☺"),
             """
-            x should be "z☺" but was "a☺"
+            x should be
+            
+                "z☺"
+            
+            but was
+            
+                "a☺"
             """);
 
         var newInstance1 = new string("abc");
@@ -29,11 +35,23 @@ class TextAssertionTests
         ((string?)null).ShouldBe(null);
         Contradiction((string?)null, x => x.ShouldBe("abc"),
             """
-            x should be "abc" but was null
+            x should be
+            
+                "abc"
+            
+            but was
+            
+                null
             """);
         Contradiction((string?)"abc", x => x.ShouldBe(null),
             """
-            x should be null but was "abc"
+            x should be
+            
+                null
+            
+            but was
+            
+                "abc"
             """);
 
         var lines =

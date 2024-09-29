@@ -34,6 +34,7 @@ markdownDocument.ToString().ShouldBe(
 
 ```
 markdownDocument.ToString() should be
+
     """
     # Heading
     
@@ -43,6 +44,7 @@ markdownDocument.ToString() should be
     """
 
 but was
+
     """
     # Heading
     
@@ -67,6 +69,7 @@ prices.ShouldBe([1.20m, 5.99m, 10.14m]); // Fails! .NET arrays do not overload `
 
 ```
 prices should be
+
     [
         1.20,
         5.99,
@@ -74,6 +77,7 @@ prices should be
     ]
 
 but was
+
     [
         1.20,
         5.99,
@@ -92,6 +96,7 @@ prices.ShouldMatch([1.20m, 5.99m, 10.14m, 7.34m]); // Fails by structural compar
 
 ```
 prices should be
+
     [
         1.20,
         5.99,
@@ -100,6 +105,7 @@ prices should be
     ]
 
 but was
+
     [
         1.20,
         5.99,
@@ -117,7 +123,13 @@ o.ShouldBe<int>(); // Fails.
 ```
 
 ```
-o should be typeof(int) but was typeof(string)
+o should be
+
+    typeof(int)
+
+but was
+
+    typeof(string)
 ```
 
 ## Nulls
@@ -145,7 +157,7 @@ divideByZero.ShouldThrow<DivideByZeroException>("Divided By Zero");
 If your operation fails to throw at all:
 
 ```
-divideByZero should have thrown System.DivideByZeroException but did not
+divideByZero should have thrown System.DivideByZeroException but did not.
 ```
 
 If your operation throws the right exception type, but with the wrong message:
@@ -191,7 +203,13 @@ value.Should(x => x > 4);
 ```
 
 ```
-value should be > 4 but was 4
+value should be
+
+    > 4
+
+but was
+
+    4
 ```
 
 ```cs
@@ -200,7 +218,13 @@ value.Should(x => x >= 4);
 ```
 
 ```
-value should be >= 4 but was 3
+value should be
+
+    >= 4
+
+but was
+
+    3
 ```
 
 ## Integration with Fixie

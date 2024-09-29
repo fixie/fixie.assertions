@@ -15,7 +15,7 @@ class ExceptionAssertionTests
 
         Contradiction(doNothing, noop => noop.ShouldThrow<DivideByZeroException>("Divided By Zero"),
             """
-            noop should have thrown System.DivideByZeroException but did not
+            noop should have thrown System.DivideByZeroException but did not.
             """);
 
         Contradiction(divideByZero, divide => divide.ShouldThrow<DivideByZeroException>("Divided By One Minus One"),
@@ -58,7 +58,7 @@ class ExceptionAssertionTests
 
         await Contradiction(doNothing, noop => noop.ShouldThrow<DivideByZeroException>("Divided By Zero"),
             """
-            noop should have thrown System.DivideByZeroException but did not
+            noop should have thrown System.DivideByZeroException but did not.
             """);
 
         await Contradiction(divideByZero, divide => divide.ShouldThrow<DivideByZeroException>("Divided By One Minus One"),

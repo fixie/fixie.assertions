@@ -1,4 +1,5 @@
-﻿using static Fixie.Assertions.StringUtilities;
+﻿using System.Text;
+using static Fixie.Assertions.StringUtilities;
 using static System.Environment;
 
 namespace Fixie.Assertions;
@@ -13,20 +14,14 @@ public class AssertException : Exception
 
     public AssertException(string? expression, string expected, string actual, string? message = null)
     {
-        HasMultilineRepresentation = IsMultiline(expected) || IsMultiline(actual);
-
         Expression = expression;
         Expected = expected;
         Actual = actual;
 
         if (message == null)
         {
-            this.message = HasMultilineRepresentation
-                ? MultilineMessage(Expression, Expected, Actual)
-                : ScalarMessage(Expression, Expected, Actual);
-
-            if (Expected == Actual)
-                this.message = this.message + $"{NewLine}{NewLine}These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?";
+            this.message = WriteMessage(Expression, Expected, Actual, out bool isMultiline);
+            HasMultilineRepresentation = isMultiline;
         }
         else
         {
@@ -36,12 +31,63 @@ public class AssertException : Exception
 
     public override string Message => message;
 
-    static string MultilineMessage(string? expression, string expected, string actual)
-        => $"{expression} should be{NewLine}{NewLine}{Indent(expected)}{NewLine}{NewLine}" +
-           $"but was{NewLine}{NewLine}{Indent(actual)}";
+    static string WriteMessage(string? expression, string expected, string actual, out bool isMultiline)
+    {
+        isMultiline = !IsTrivial(expected) || !IsTrivial(actual);
 
-    static string ScalarMessage(string? expression, string expected, string actual)
-        => $"{expression} should be {expected} but was {actual}";
+        var content = new StringBuilder();
+
+        content.Append(expression);
+        content.Append(" should be");
+
+        if (isMultiline)
+        {
+            content.AppendLine();
+            content.AppendLine();
+            content.Append(Indent(expected));
+            content.AppendLine();
+            content.AppendLine();
+        }
+        else
+        {
+            content.Append(' ');
+            content.Append(expected);
+            content.Append(' ');
+        }
+
+        content.Append("but was");
+
+        if (isMultiline)
+        {
+            content.AppendLine();
+            content.AppendLine();
+            content.Append(Indent(actual));
+        }
+        else
+        {
+            content.Append(' ');
+            content.Append(actual);
+        }
+
+        if (expected == actual)
+        {
+            content.AppendLine();
+            content.AppendLine();
+            content.Append(
+                "These serialized values are identical. Did you mean to perform " +
+                "a structural comparison with `ShouldMatch` instead?");
+        }
+
+        return content.ToString();
+    }
+
+    static bool IsTrivial(string value)
+    {
+        return
+            value == "null" || value == "true" || value == "false" ||
+            value.StartsWith('\'') ||
+            (value.Length > 0 && char.IsDigit(value[0]));
+    }
 
     public override string? StackTrace => FilterStackTrace(base.StackTrace);
 

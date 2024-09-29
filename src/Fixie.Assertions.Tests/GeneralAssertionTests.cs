@@ -32,13 +32,35 @@ class GeneralAssertionTests
         nonNullObjectWithNullToString.ShouldBe(nonNullObjectWithNullToString);
 
         Contradiction(objectB, x => x.ShouldBe((object?)null),
-            "x should be null but was {}");
+            """
+            x should be
+            
+                null
+            
+            but was
+            
+                {}
+            """);
         Contradiction(objectB, x => x.ShouldBe((SampleB?)null),
-            "x should be null but was {}");
+            """
+            x should be
+            
+                null
+            
+            but was
+            
+                {}
+            """);
 
         var trivialSimilarity =
             """
-            x should be {} but was {}
+            x should be
+            
+                {}
+            
+            but was
+            
+                {}
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
             """;
@@ -67,25 +89,97 @@ class GeneralAssertionTests
         nonNullObject.ShouldNotBeNull();
 
         Contradiction((object?)null, x => x.ShouldBe(nonNullObject),
-            "x should be {} but was null");
+            """
+            x should be
+            
+                {}
+            
+            but was
+            
+                null
+            """);
         Contradiction(nonNullObject, x => x.ShouldBe(null),
-            "x should be null but was {}");
+            """
+            x should be
+            
+                null
+            
+            but was
+            
+                {}
+            """);
         Contradiction((object?)null, x => x.ShouldNotBeNull(),
-            "x should not be null but was null");
+            """
+            x should not be null but was null.
+            """);
     }
 
     public void ShouldAssertTypeEquality()
     {
         typeof(int).ShouldBe(typeof(int));
         
-        Contradiction(typeof(Utility), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(Tests.Utility)");
-        Contradiction(typeof(bool), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(bool)");
-        
-        Contradiction(typeof(object), x => x.ShouldBe(typeof(GeneralAssertionTests)), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(object)");
-        Contradiction(typeof(GeneralAssertionTests), x => x.ShouldBe(typeof(object)), $"x should be typeof(object) but was typeof({FullName<GeneralAssertionTests>()})");
+        Contradiction(typeof(Utility), x => x.ShouldBe(typeof(GeneralAssertionTests)),
+            $"""
+             x should be
 
-        Contradiction((Type?)null, x => x.ShouldBe(typeof(object)), $"x should be typeof(object) but was null");
-        Contradiction((Type?)null, x => x.ShouldBe(typeof(Type)), $"x should be typeof(System.Type) but was null");
+                 typeof({FullName<GeneralAssertionTests>()})
+             
+             but was
+             
+                 typeof(Tests.Utility)
+             """);
+        Contradiction(typeof(bool), x => x.ShouldBe(typeof(GeneralAssertionTests)),
+            $"""
+             x should be
+             
+                 typeof({FullName<GeneralAssertionTests>()})
+             
+             but was
+             
+                 typeof(bool)
+             """);
+        
+        Contradiction(typeof(object), x => x.ShouldBe(typeof(GeneralAssertionTests)),
+            $"""
+             x should be
+             
+                 typeof({FullName<GeneralAssertionTests>()})
+             
+             but was
+             
+                 typeof(object)
+             """);
+        Contradiction(typeof(GeneralAssertionTests), x => x.ShouldBe(typeof(object)),
+            $"""
+             x should be
+             
+                 typeof(object)
+             
+             but was
+             
+                 typeof({FullName<GeneralAssertionTests>()})
+             """);
+
+        Contradiction((Type?)null, x => x.ShouldBe(typeof(object)),
+            $"""
+             x should be
+             
+                 typeof(object)
+             
+             but was
+             
+                 null
+             """);
+        Contradiction((Type?)null, x => x.ShouldBe(typeof(Type)),
+            $"""
+             x should be
+             
+                 typeof(System.Type)
+             
+             but was
+             
+                 null
+             """);
         ((Type?)null).ShouldBe(null);
     }
 
@@ -93,16 +187,70 @@ class GeneralAssertionTests
     {
         1.ShouldBe<int>();
 
-        Contradiction(new SampleA(), x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof({FullName<SampleA>()})");
-        Contradiction(true, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(bool)");
+        Contradiction(new SampleA(), x => x.ShouldBe<GeneralAssertionTests>(),
+            $"""
+             x should be
+             
+                 typeof({FullName<GeneralAssertionTests>()})
+             
+             but was
+             
+                 typeof({FullName<SampleA>()})
+             """);
+        Contradiction(true, x => x.ShouldBe<GeneralAssertionTests>(),
+            $"""
+             x should be
+             
+                 typeof({FullName<GeneralAssertionTests>()})
+             
+             but was
+             
+                 typeof(bool)
+             """);
         
-        Contradiction(new object(), x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was typeof(object)");
+        Contradiction(new object(), x => x.ShouldBe<GeneralAssertionTests>(),
+            $"""
+             x should be
+             
+                 typeof({FullName<GeneralAssertionTests>()})
+             
+             but was
+             
+                 typeof(object)
+             """);
         new GeneralAssertionTests().ShouldBe<object>();
 
         // Just like with the `is` keyword, although expressions may have some known compile time type, null values do not have a type.
-        Contradiction((int?)null, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was null");
-        Contradiction((Exception?)null, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was null");
-        Contradiction((GeneralAssertionTests?)null, x => x.ShouldBe<GeneralAssertionTests>(), $"x should be typeof({FullName<GeneralAssertionTests>()}) but was null");
+        Contradiction((int?)null, x => x.ShouldBe<GeneralAssertionTests>(),
+            $"""
+             x should be
+             
+                 typeof({FullName<GeneralAssertionTests>()})
+             
+             but was
+             
+                 null
+             """);
+        Contradiction((Exception?)null, x => x.ShouldBe<GeneralAssertionTests>(),
+            $"""
+             x should be
+
+                 typeof({FullName<GeneralAssertionTests>()})
+             
+             but was
+
+                 null
+             """);
+        Contradiction((GeneralAssertionTests?)null, x => x.ShouldBe<GeneralAssertionTests>(),
+            $"""
+             x should be
+
+                 typeof({FullName<GeneralAssertionTests>()})
+
+             but was
+
+                 null
+             """);
 
         Exception exception = new DivideByZeroException();
         Exception exceptionAsAbstraction = exception.ShouldBe<Exception>();
@@ -119,7 +267,16 @@ class GeneralAssertionTests
         guidA.ShouldBe(guidA);
         guidB.ShouldBe(guidB);
         
-        Contradiction(guidA, x => x.ShouldBe(guidB), $"x should be \"{guidB}\" but was \"{guidA}\"");
+        Contradiction(guidA, x => x.ShouldBe(guidB),
+            $"""
+             x should be
+             
+                 "{guidB}"
+             
+             but was
+             
+                 "{guidA}"
+             """);
 
         var emptyA = new Empty();
         var emptyB = new Empty();
@@ -139,7 +296,13 @@ class GeneralAssertionTests
 
         Contradiction(origin, x => x.ShouldBe(positionA),
             """
-            x should be {} but was {}
+            x should be
+            
+                {}
+            
+            but was
+            
+                {}
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
             """);
@@ -149,7 +312,13 @@ class GeneralAssertionTests
     {
         Contradiction((object)new int[]{}, x => x.ShouldBe((int[])[]),
             """
-            x should be [] but was []
+            x should be
+            
+                []
+            
+            but was
+            
+                []
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
             """);
@@ -288,28 +457,83 @@ class GeneralAssertionTests
 
     public void ShouldAssertExpressions()
     {
-        Contradiction(3, value => value.Should(x => x > 4), "value should be > 4 but was 3");
-        Contradiction(4, value => value.Should(y => y > 4), "value should be > 4 but was 4");
+        Contradiction(3, value => value.Should(x => x > 4),
+            """
+            value should be
+            
+                > 4
+            
+            but was
+            
+                3
+            """);
+        Contradiction(4, value => value.Should(y => y > 4),
+            """
+            value should be
+            
+                > 4
+            
+            but was
+            
+                4
+            """);
         5.Should(x => x > 4);
 
-        Contradiction(3, value => value.Should(abc => abc >= 4), "value should be >= 4 but was 3");
+        Contradiction(3, value => value.Should(abc => abc >= 4),
+            """
+            value should be
+            
+                >= 4
+            
+            but was
+            
+                3
+            """);
         4.Should(x => x >= 4);
         5.Should(x => x >= 4);
 
         Func<int, bool> someExpression = x => x >= 4;
-        Contradiction(3, value => value.Should(someExpression), "value should be someExpression but was 3");
+        Contradiction(3, value => value.Should(someExpression),
+            """
+            value should be
+            
+                someExpression
+            
+            but was
+            
+                3
+            """);
 
         var a1 = new SampleA();
         var a2 = new SampleA();
 
         a1.Should(x => x == a1);
-        Contradiction(a1, value => value.Should(x => x == a2), "value should be == a2 but was {}");
+        Contradiction(a1, value => value.Should(x => x == a2),
+            """
+            value should be
+            
+                == a2
+            
+            but was
+            
+                {}
+            """);
 
         object? nullObject = null;
         nullObject.Should(_ => _ == null);
-        Contradiction(nullObject, value => value.Should(_ => _ != null), $"value should be != null but was null");
+        Contradiction(nullObject, value => value.Should(_ => _ != null),
+            """
+            value should be
+            
+                != null
+            
+            but was
+            
+                null
+            """);
 
-        Contradiction('x', value => value.Should(_ => _ != 'x', expectationBody: null), $"expectationBody should not be null but was null");
+        Contradiction('x', value => value.Should(_ => _ != 'x', expectationBody: null),
+            "expectationBody should not be null but was null.");
     }
 
     class SampleA;
