@@ -1,6 +1,4 @@
-﻿using static Fixie.Assertions.CsonSerializer;
-
-namespace Tests;
+﻿namespace Tests;
 
 class CsonListTests
 {

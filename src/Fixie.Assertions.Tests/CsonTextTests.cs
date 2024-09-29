@@ -1,5 +1,4 @@
 ﻿using static System.Environment;
-using static Fixie.Assertions.CsonSerializer;
 
 namespace Tests;
 
