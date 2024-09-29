@@ -1,6 +1,6 @@
 ﻿namespace Tests;
 
-class CsonPropertyTests
+class PropertyTests
 {
     public void ShouldSerializeAmbiguouslyUninterestingObjects()
     {

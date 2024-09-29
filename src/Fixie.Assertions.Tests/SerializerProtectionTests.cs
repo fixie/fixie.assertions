@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Tests;
 
-class CsonSerializerProtectionTests
+class SerializerProtectionTests
 {
     public void ShouldProtectFromDeepRecursion()
     {

@@ -1,6 +1,6 @@
 ﻿namespace Tests;
 
-class CsonKeyValueTests
+class KeyValueTests
 {
     public void ShouldSerializeDictionaries()
     {
