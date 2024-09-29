@@ -48,9 +48,9 @@ class ListTests
         Serialize(new Custom(3)).ShouldBe(list123);
         Serialize((ICustom)new Custom(3)).ShouldBe(list123);
 
-        Serialize((IEnumerable<int>)[1, 2, 3])
-            .ShouldBe(list123);
+        Serialize((IEnumerable<int>)[1, 2, 3]).ShouldBe(list123);
 
+        Serialize((List<string[]>)[]).ShouldBe("[]");
         Serialize((List<string[]>)[["ABC", "123"], ["DEF", "456"]])
             .ShouldBe("""
                       [
