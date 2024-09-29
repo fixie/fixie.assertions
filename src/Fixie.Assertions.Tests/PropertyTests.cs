@@ -10,9 +10,6 @@ class PropertyTests
         Serialize(new Empty())
             .ShouldBe("{}");
 
-        Serialize(new PointFields { x = 1, y = 2 })
-            .ShouldBe("{}");
-
         Serialize(new Sample("A"))
             .ShouldBe("{}");
             
@@ -32,6 +29,20 @@ class PropertyTests
                         Age = 32
                       }
                       """);
+
+        var pointFields = new PointFields
+        {
+            x = 1,
+            y = 2
+        };
+        
+        Serialize(pointFields)
+            .ShouldBe(""""
+                      {
+                        x = 1,
+                        y = 2
+                      }
+                      """");
 
         var pointProperties = new PointProperties
         {
@@ -94,14 +105,18 @@ class PropertyTests
     
     struct PointFields
     {
+        public PointFields() { ignored = null; }
+
+        private string? ignored;
         public int x;
         public int y;
         
-        public override string ToString() => $"({x},{y})";
+        public override string ToString() => $"({x},{y}{ignored})";
     }
 
     struct PointProperties
     {
+        private string? Ignored { get; set; }
         public int X { get; init; }
         public int Y { get; init; }
         

@@ -136,13 +136,17 @@ class GeneralAssertionTests
             """
             x should be
             
-                {}
+                {
+                  x = 1,
+                  y = 2
+                }
             
             but was
             
-                {}
-
-            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+                {
+                  x = 0,
+                  y = 0
+                }
             """);
 
         var nameA = new Name { Given = "Alice", Family = "Smith" };

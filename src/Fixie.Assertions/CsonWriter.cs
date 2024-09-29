@@ -135,16 +135,22 @@ class CsonWriter(StringBuilder output)
 
     public void WriteProperties<T>(T value)
     {
+        var fields =
+            typeof(T)
+                .GetFields(BindingFlags.Public | BindingFlags.Instance)
+                .Select(field => (field.Name, Value: field.GetValue(value)));
+
         var properties =
             typeof(T)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(property => property.GetIndexParameters().Length == 0);
+                .Where(property => property.GetIndexParameters().Length == 0)
+                .Select(property => (property.Name, Value: property.GetValue(value)));
 
-        WriteItems('{', properties, '}', property =>
+        WriteItems('{', fields.Concat(properties), '}', property =>
         {
             Append(property.Name);
             Append(" = ");
-            WriteSerialized(property.GetValue(value));
+            WriteSerialized(property.Value);
         });
     }
 
