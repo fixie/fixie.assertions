@@ -128,7 +128,7 @@ class GeneralAssertionTests
              
                  typeof(Tests.Utility)
              """);
-        Contradiction(typeof(bool), x => x.ShouldBe(typeof(GeneralAssertionTests)),
+        Contradiction(typeof(bool?), x => x.ShouldBe(typeof(GeneralAssertionTests)),
             $"""
              x should be
              
@@ -136,7 +136,7 @@ class GeneralAssertionTests
              
              but was
              
-                 typeof(bool)
+                 typeof(bool?)
              """);
         
         Contradiction(typeof(object), x => x.ShouldBe(typeof(GeneralAssertionTests)),
@@ -259,7 +259,7 @@ class GeneralAssertionTests
         exceptionAsConcretion.ShouldBe(exception);
     }
 
-    public void ShouldAssertStructs()
+    public void ShouldAssertGuids()
     {
         var guidA = Guid.NewGuid();
         var guidB = Guid.NewGuid();
@@ -278,6 +278,31 @@ class GeneralAssertionTests
                  "{guidA}"
              """);
 
+        ((Guid?)null).ShouldBe(null);
+        Contradiction((Guid?)null, x => x.ShouldBe(guidA),
+            $"""
+             x should be
+             
+                 "{guidA}"
+             
+             but was
+             
+                 null
+             """);
+        Contradiction((Guid?)guidB, x => x.ShouldBe(null),
+            $"""
+             x should be
+             
+                 null
+             
+             but was
+             
+                 "{guidB}"
+             """);
+    }
+
+    public void ShouldAssertStructs()
+    {
         var emptyA = new Empty();
         var emptyB = new Empty();
 
@@ -305,6 +330,37 @@ class GeneralAssertionTests
                 {}
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+            """);
+
+        var nameA = new Name { Given = "Alice", Family = "Smith" };
+        var nameB = new Name { Given = "Bob", Family = "Jones" };
+        
+        ((Name?)null).ShouldBe(null);
+        Contradiction((Name?)null, x => x.ShouldBe(nameA),
+            """
+            x should be
+
+                {
+                  Given = "Alice",
+                  Family = "Smith"
+                }
+
+            but was
+
+                null
+            """);
+        Contradiction((Name?)nameB, x => x.ShouldBe(null),
+            """
+            x should be
+
+                null
+
+            but was
+
+                {
+                  Given = "Bob",
+                  Family = "Jones"
+                }
             """);
     }
 
@@ -545,6 +601,11 @@ class GeneralAssertionTests
         public int y;
         
         public override string ToString() => $"({x},{y})";
+    }
+    struct Name
+    {
+        public string Given { get; init; }
+        public string Family { get; init; }
     }
 
     class Sample(string name)

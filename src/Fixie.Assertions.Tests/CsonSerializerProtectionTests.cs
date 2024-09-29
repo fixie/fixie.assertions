@@ -190,7 +190,7 @@ class CsonSerializerProtectionTests
             => writer.WriteStringValue("A Key/Value pair was obfuscated during JSON serialization.");
     }
 
-        const string ExpectedDeepRecursionExceptionMessage =
+    const string ExpectedDeepRecursionExceptionMessage =
         """
         A value could not be serialized because its object graph is too deep. Below is the start of the message that was interrupted:
 
