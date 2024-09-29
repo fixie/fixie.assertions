@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-class CsonNumericTests
+class NumericTests
 {
     public void ShouldSerializeIntegralNumbers()
     {

@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-class CsonTextTests
+class TextTests
 {
     public void ShouldSerializeChars()
     {

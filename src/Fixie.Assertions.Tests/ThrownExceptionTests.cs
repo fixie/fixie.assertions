@@ -1,6 +1,6 @@
 ﻿namespace Tests;
 
-class ExceptionAssertionTests
+class ThrownExceptionTests
 {
     public void ShouldAssertExpectedExceptions()
     {
