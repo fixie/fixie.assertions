@@ -1,17 +1,19 @@
-﻿namespace Tests;
+﻿using System.Numerics;
+
+namespace Tests;
 
 class CsonNumericTests
 {
     public void ShouldSerializeIntegralNumbers()
     {
-        VerifyMinMaxNull<sbyte>("-128", "127");
-        VerifyMinMaxNull<byte>("0", "255");
-        VerifyMinMaxNull<short>("-32768", "32767");
-        VerifyMinMaxNull<ushort>("0", "65535");
-        VerifyMinMaxNull<int>("-2147483648", "2147483647");
-        VerifyMinMaxNull<uint>("0", "4294967295");
-        VerifyMinMaxNull<long>("-9223372036854775808", "9223372036854775807");
-        VerifyMinMaxNull<ulong>("0", "18446744073709551615");
+        VerifySerialization<sbyte>("-128", "127");
+        VerifySerialization<byte>("0", "255");
+        VerifySerialization<short>("-32768", "32767");
+        VerifySerialization<ushort>("0", "65535");
+        VerifySerialization<int>("-2147483648", "2147483647");
+        VerifySerialization<uint>("0", "4294967295");
+        VerifySerialization<long>("-9223372036854775808", "9223372036854775807");
+        VerifySerialization<ulong>("0", "18446744073709551615");
     }
 
     public void ShouldSerializeNativeIntegralNumbers()
@@ -28,32 +30,32 @@ class CsonNumericTests
         (nuintMaxValue == "4294967295" ||
          nuintMaxValue == "18446744073709551615").ShouldBe(true);
 
-        VerifyMinMaxNull<nint>(nintMinValue, nintMaxValue);
-        VerifyMinMaxNull<nuint>("0", nuintMaxValue);
+        VerifySerialization<nint>(nintMinValue, nintMaxValue);
+        VerifySerialization<nuint>("0", nuintMaxValue);
     }
 
     public void ShouldSerializeFractionalNumbers()
     {
-        VerifyMinMaxNull<decimal>("-79228162514264337593543950335", "79228162514264337593543950335");
+        VerifySerialization<decimal>("-79228162514264337593543950335", "79228162514264337593543950335");
         Serialize(0m).ShouldBe("0");
         Serialize(1m).ShouldBe("1");
         Serialize(0.1m).ShouldBe("0.1");
         Serialize(0.10m).ShouldBe("0.10"); // Trailing zero is preserved.
 
-        VerifyMinMaxNull<double>("-1.7976931348623157E+308", "1.7976931348623157E+308");
+        VerifySerialization<double>("-1.7976931348623157E+308", "1.7976931348623157E+308");
         Serialize(0d).ShouldBe("0");
         Serialize(1d).ShouldBe("1");
         Serialize(0.1d).ShouldBe("0.1");
         Serialize(0.10d).ShouldBe("0.1");
 
-        VerifyMinMaxNull<float>("-3.4028235E+38", "3.4028235E+38");
+        VerifySerialization<float>("-3.4028235E+38", "3.4028235E+38");
         Serialize(0f).ShouldBe("0");
         Serialize(1f).ShouldBe("1");
         Serialize(0.1f).ShouldBe("0.1");
         Serialize(0.10f).ShouldBe("0.1");
     }
 
-    static void VerifyMinMaxNull<T>(string expectedMin, string expectedMax) where T : struct
+    static void VerifySerialization<T>(string expectedMin, string expectedMax) where T : struct, INumber<T>
     {
         var actualMin = ReadConstant<T>("MinValue");
         var actualMax = ReadConstant<T>("MaxValue");
