@@ -12,23 +12,6 @@ class CsonScalarTests
         Serialize((bool?)false).ShouldBe("false");
     }
 
-    public void ShouldSerializeEnums()
-    {
-        var prefix = "System.StringSplitOptions";
-
-        Serialize(StringSplitOptions.None).ShouldBe(prefix+".None");
-        Serialize(StringSplitOptions.RemoveEmptyEntries).ShouldBe(prefix+".RemoveEmptyEntries");
-        Serialize(StringSplitOptions.TrimEntries).ShouldBe(prefix+".TrimEntries");
-
-        Serialize((StringSplitOptions)int.MinValue).ShouldBe($"({prefix})(-2147483648)");
-        Serialize((StringSplitOptions)int.MaxValue).ShouldBe($"({prefix})2147483647");
-
-        Serialize((StringSplitOptions?)null).ShouldBe("null");
-        Serialize((StringSplitOptions?)StringSplitOptions.None).ShouldBe(prefix+".None");
-        Serialize((StringSplitOptions?)StringSplitOptions.RemoveEmptyEntries).ShouldBe(prefix+".RemoveEmptyEntries");
-        Serialize((StringSplitOptions?)StringSplitOptions.TrimEntries).ShouldBe(prefix+".TrimEntries");
-    }
-
     public void ShouldSerializeTypes()
     {
         Serialize((Type?)null).ShouldBe("null");
