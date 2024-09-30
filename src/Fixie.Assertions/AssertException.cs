@@ -6,13 +6,13 @@ namespace Fixie.Assertions;
 
 public class AssertException : Exception
 {
-    public string? Expression { get; }
+    public string Expression { get; }
     public string Expected { get; }
     public string Actual { get; }
     public bool HasMultilineRepresentation { get; }
     readonly string message;
 
-    public AssertException(string? expression, string expected, string actual, string? message = null, bool structural = false)
+    public AssertException(string expression, string expected, string actual, string? message = null, bool structural = false)
     {
         Expression = expression;
         Expected = expected;
@@ -31,7 +31,7 @@ public class AssertException : Exception
 
     public override string Message => message;
 
-    static string WriteMessage(string? expression, string expected, string actual, bool structural, out bool isMultiline)
+    static string WriteMessage(string expression, string expected, string actual, bool structural, out bool isMultiline)
     {
         isMultiline = !IsTrivial(expected) || !IsTrivial(actual);
 

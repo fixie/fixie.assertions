@@ -188,7 +188,7 @@ class GeneralAssertionTests
                 null
             """);
 
-        Contradiction('x', value => value.Should(_ => _ != 'x', expectationBody: null),
+        Contradiction('x', value => value.Should(_ => _ != 'x', expectationBody: null!),
             "expectationBody should not be null but was null.");
     }
 

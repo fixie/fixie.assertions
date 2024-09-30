@@ -13,7 +13,7 @@ public static class AssertionExtensions
     /// Assert that this object is equal to some expected object.
     /// </summary>
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
-    public static void ShouldBe<T>(this T? actual, T? expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
+    public static void ShouldBe<T>(this T? actual, T? expected, [CallerArgumentExpression(nameof(actual))] string expression = default!)
     {
         if (!EqualityComparer<T>.Default.Equals(actual, expected))
             throw EqualityFailure(expression, expected, actual);
@@ -23,7 +23,7 @@ public static class AssertionExtensions
     /// Assert that this object is an instance of the specified type.
     /// </summary>
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
-    public static T ShouldBe<T>(this object? actual, [CallerArgumentExpression(nameof(actual))] string? expression = null)
+    public static T ShouldBe<T>(this object? actual, [CallerArgumentExpression(nameof(actual))] string expression = default!)
     {
         if (actual is T typed)
             return typed;
@@ -35,7 +35,7 @@ public static class AssertionExtensions
     /// Assert that this object is not null.
     /// </summary>
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
-    public static void ShouldNotBeNull([NotNull] this object? actual, [CallerArgumentExpression(nameof(actual))] string? expression = null)
+    public static void ShouldNotBeNull([NotNull] this object? actual, [CallerArgumentExpression(nameof(actual))] string expression = default!)
     {
         if (actual == null)
             throw new AssertException(expression, "not null", "null", $"{expression} should not be null but was null.");
@@ -45,7 +45,7 @@ public static class AssertionExtensions
     /// Assert that this object is structurally equivalent to some expected object.
     /// </summary>
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
-    public static void ShouldMatch<T>(this T actual, T expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
+    public static void ShouldMatch<T>(this T actual, T expected, [CallerArgumentExpression(nameof(actual))] string expression = default!)
     {
         var actualStructure = Serialize(actual);
         var expectedStructure = Serialize(expected);
@@ -58,7 +58,7 @@ public static class AssertionExtensions
     /// Assert that this operation throws an exception of the specified type with some expected message.
     /// </summary>
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
-    public static TException ShouldThrow<TException>(this Action shouldThrow, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrow))] string? expression = null) where TException : Exception
+    public static TException ShouldThrow<TException>(this Action shouldThrow, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrow))] string expression = default!) where TException : Exception
     {
         try
         {
@@ -78,7 +78,7 @@ public static class AssertionExtensions
     /// Assert that this async operation throws an exception of the specified type with some expected message.
     /// </summary>
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
-    public static async Task<TException> ShouldThrow<TException>(this Func<Task> shouldThrowAsync, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrowAsync))] string? expression = null) where TException : Exception
+    public static async Task<TException> ShouldThrow<TException>(this Func<Task> shouldThrowAsync, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrowAsync))] string expression = default!) where TException : Exception
     {
         try
         {
@@ -94,7 +94,7 @@ public static class AssertionExtensions
         throw new UnreachableException();
     }
 
-    static TException ShouldBeException<TException>(string expectedMessage, string? expression, Exception actual) where TException : Exception
+    static TException ShouldBeException<TException>(string expectedMessage, string expression, Exception actual) where TException : Exception
     {
         if (actual is TException typed)
         {
@@ -128,7 +128,7 @@ public static class AssertionExtensions
              """);
     }
 
-    static void ShouldHaveThrown<TException>(string? expression) where TException : Exception
+    static void ShouldHaveThrown<TException>(string expression) where TException : Exception
     {
         var expectedType = typeof(TException).FullName!;
 
@@ -140,7 +140,7 @@ public static class AssertionExtensions
     /// Assert that this object satisfies some expectation.
     /// </summary>
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
-    public static void Should<T>(this T actual, Func<T, bool> expectation, [CallerArgumentExpression(nameof(actual))] string? expression = default!, [CallerArgumentExpression(nameof(expectation))] string? expectationBody = default!)
+    public static void Should<T>(this T actual, Func<T, bool> expectation, [CallerArgumentExpression(nameof(actual))] string expression = default!, [CallerArgumentExpression(nameof(expectation))] string expectationBody = default!)
     {
         if (!expectation(actual))
         {
@@ -166,12 +166,12 @@ public static class AssertionExtensions
         return expectationBody;
     }
 
-    static AssertException EqualityFailure<T>(string? expression, T expected, T actual)
+    static AssertException EqualityFailure<T>(string expression, T expected, T actual)
         => new(expression, Serialize(expected), Serialize(actual));
 
-    static AssertException StructuralEqualityFailure(string? expression, string expectedStructure, string actualStructure)
+    static AssertException StructuralEqualityFailure(string expression, string expectedStructure, string actualStructure)
         => new(expression, expectedStructure, actualStructure, structural: true);
 
-    static AssertException ExpectationFailure<T>(string? expression, string expectation, T actual)
+    static AssertException ExpectationFailure<T>(string expression, string expectation, T actual)
         => new(expression, expectation, Serialize(actual));
 }

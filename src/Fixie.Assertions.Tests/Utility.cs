@@ -14,7 +14,7 @@ static class Utility
                throw new Exception($"Expected type {typeof(T).Name} to have a non-null FullName.");
     }
 
-    public static void Contradiction<T>(T actual, Action<T> shouldThrow, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrow))] string? assertion = null)
+    public static void Contradiction<T>(T actual, Action<T> shouldThrow, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrow))] string assertion = default!)
     {
         try
         {
@@ -31,7 +31,7 @@ static class Utility
         throw new UnreachableException();
     }
 
-    public static async Task Contradiction<T>(T actual, Func<T, Task> shouldThrowAsync, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrowAsync))] string? assertion = null)
+    public static async Task Contradiction<T>(T actual, Func<T, Task> shouldThrowAsync, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrowAsync))] string assertion = default!)
     {
         try
         {
@@ -48,7 +48,7 @@ static class Utility
         throw new UnreachableException();
     }
 
-    static void ShouldBeAssertException<T>(T actual, string expectedMessage, string? assertion, Exception exception)
+    static void ShouldBeAssertException<T>(T actual, string expectedMessage, string assertion, Exception exception)
     {
         if (exception is AssertException)
         {
@@ -70,7 +70,7 @@ static class Utility
             $"\t{exception.Message}");
     }
 
-    static void ShouldHaveFailedAssertion<T>(T actual, string? assertion)
+    static void ShouldHaveFailedAssertion<T>(T actual, string assertion)
     {
         throw new Exception(
             $"An example assertion was expected to fail, but did not:{Line}" +
