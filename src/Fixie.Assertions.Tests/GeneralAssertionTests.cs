@@ -2,25 +2,6 @@
 
 class GeneralAssertionTests
 {
-    public void ShouldAssertEquatables()
-    {
-        HttpMethod.Post.ShouldBe(HttpMethod.Post);
-        Contradiction(HttpMethod.Post, x => x.ShouldBe(HttpMethod.Get),
-            """
-            x should be
-
-                {
-                  Method = "GET"
-                }
-            
-            but was
-
-                {
-                  Method = "POST"
-                }
-            """);
-    }
-
     public void ShouldAssertObjects()
     {
         var objectA = new SampleA();
@@ -78,6 +59,22 @@ class GeneralAssertionTests
 
         ReferenceEquals(uniqueInstanceA, uniqueInstanceB).ShouldBe(false);
         uniqueInstanceA.ShouldBe(uniqueInstanceB);
+
+        HttpMethod.Post.ShouldBe(HttpMethod.Post);
+        Contradiction(HttpMethod.Post, x => x.ShouldBe(HttpMethod.Get),
+            """
+            x should be
+
+                {
+                  Method = "GET"
+                }
+            
+            but was
+
+                {
+                  Method = "POST"
+                }
+            """);
     }
 
     public void ShouldAssertNulls()
@@ -111,73 +108,6 @@ class GeneralAssertionTests
         Contradiction((object?)null, x => x.ShouldNotBeNull(),
             """
             x should not be null but was null.
-            """);
-    }
-
-    public void ShouldAssertStructs()
-    {
-        var emptyA = new Empty();
-        var emptyB = new Empty();
-
-        emptyA.ShouldBe(emptyA);
-        emptyB.ShouldBe(emptyB);
-        emptyA.ShouldBe(emptyB);
-
-        var origin = new Point();
-        var positionA = new Point { x = 1, y = 2 };
-        var positionB = new Point { x = 1, y = 2 };
-
-        origin.ShouldBe(origin);
-        positionA.ShouldBe(positionA);
-        positionB.ShouldBe(positionB);
-        positionA.ShouldBe(positionB);
-
-        Contradiction(origin, x => x.ShouldBe(positionA),
-            """
-            x should be
-            
-                {
-                  x = 1,
-                  y = 2
-                }
-            
-            but was
-            
-                {
-                  x = 0,
-                  y = 0
-                }
-            """);
-
-        var nameA = new Name { Given = "Alice", Family = "Smith" };
-        var nameB = new Name { Given = "Bob", Family = "Jones" };
-        
-        ((Name?)null).ShouldBe(null);
-        Contradiction((Name?)null, x => x.ShouldBe(nameA),
-            """
-            x should be
-
-                {
-                  Given = "Alice",
-                  Family = "Smith"
-                }
-
-            but was
-
-                null
-            """);
-        Contradiction((Name?)nameB, x => x.ShouldBe(null),
-            """
-            x should be
-
-                null
-
-            but was
-
-                {
-                  Given = "Bob",
-                  Family = "Jones"
-                }
             """);
     }
 
@@ -264,19 +194,6 @@ class GeneralAssertionTests
 
     class SampleA;
     class SampleB;
-    struct Empty;
-    struct Point
-    {
-        public int x;
-        public int y;
-        
-        public override string ToString() => $"({x},{y})";
-    }
-    struct Name
-    {
-        public string Given { get; init; }
-        public string Family { get; init; }
-    }
 
     class SampleNullToString
     {

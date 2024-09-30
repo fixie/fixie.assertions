@@ -8,7 +8,9 @@ class PropertyTests
 
         Serialize(new { }).ShouldBe("{}");
 
-        Serialize(new Empty()).ShouldBe("{}");
+        Serialize(new EmptyValue()).ShouldBe("{}");
+
+        Serialize(new EmptyReference()).ShouldBe("{}");
 
         Serialize(new Sample("A")).ShouldBe("{}");
             
@@ -23,8 +25,8 @@ class PropertyTests
     {
         Serialize((object?)null).ShouldBe("null");
         Serialize((Person?)null).ShouldBe("null");
-        Serialize((PointFields?)null).ShouldBe("null");
-        Serialize((PointProperties?)null).ShouldBe("null");
+        Serialize((PointFieldsValue?)null).ShouldBe("null");
+        Serialize((PointPropertiesValue?)null).ShouldBe("null");
 
         Serialize(
             new
@@ -47,21 +49,21 @@ class PropertyTests
                       }
                       """);
 
-        var pointFields = new PointFields
+        var pointFields = new PointFieldsValue
         {
-            x = 1,
-            y = 2
+            X = 1,
+            Y = 2
         };
         
         Serialize(pointFields)
             .ShouldBe(""""
                       {
-                        x = 1,
-                        y = 2
+                        X = 1,
+                        Y = 2
                       }
                       """");
 
-        var pointProperties = new PointProperties
+        var pointProperties = new PointPropertiesValue
         {
             X = 1,
             Y = 2
@@ -118,9 +120,9 @@ class PropertyTests
                 Name = "Anonymous",
                 Age = 64,
                 NestedReference = new Person("Alex", 32),
-                NestedValue = new PointFields {
-                    x = 1,
-                    y = 2
+                NestedValue = new PointFieldsValue {
+                    X = 1,
+                    Y = 2
                 },
                 NestedList = (HttpMethod[])[HttpMethod.Get, HttpMethod.Post],
                 NestedPairs = (KeyValuePair<string, string>[]) [
@@ -141,8 +143,8 @@ class PropertyTests
                           Age = 32
                         },
                         NestedValue = {
-                          x = 1,
-                          y = 2
+                          X = 1,
+                          Y = 2
                         },
                         NestedList = [
                           {
@@ -166,7 +168,7 @@ class PropertyTests
 
     public void ShouldSerializeUnrecognizedNullableValueTypes()
     {
-        var point = new PointProperties
+        var point = new PointPropertiesValue
         {
             X = 1,
             Y = 2
@@ -181,29 +183,344 @@ class PropertyTests
             """;
 
         Serialize(point).ShouldBe(pointSerialized);
-        Serialize((PointProperties?)null).ShouldBe("null");
-        Serialize((PointProperties?)point).ShouldBe(pointSerialized);
+        Serialize((PointPropertiesValue?)null).ShouldBe("null");
+        Serialize((PointPropertiesValue?)point).ShouldBe(pointSerialized);
     }
 
-    struct Empty;
-    
-    struct PointFields
+    public void ShouldAssertUnrecognizedValueTypes()
     {
-        public PointFields() { ignored = null; }
-
-        private string? ignored;
-        public int x;
-        public int y;
+        PointFieldsValue origin = new();
+        PointFieldsValue originNewlyInitialized = new();
+        PointFieldsValue fields = new(1, 2);
+        PointPropertiesValue properties = new(1, 2);
         
-        public override string ToString() => $"({x},{y}{ignored})";
+        origin.ShouldBe(origin);
+        origin.ShouldBe(originNewlyInitialized);
+        fields.ShouldBe(fields);
+        properties.ShouldBe(properties);
+
+        Contradiction(origin, x => x.ShouldBe(new(1, 2)),
+            """
+            x should be
+            
+                {
+                  X = 1,
+                  Y = 2
+                }
+
+            but was
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            """);
+
+        origin.ShouldBe(originNewlyInitialized);
+        origin.ShouldMatch(originNewlyInitialized);
+
+        fields.ShouldBe(new(1,2));
+        fields.ShouldMatch(new(1,2));
+
+        properties.ShouldBe(new(1,2));
+        properties.ShouldMatch(new(1,2));
+
+        ((object)properties).ShouldMatch(fields);
+        ((object)fields).ShouldMatch(properties);
+
+        PointFieldsValue? nullablePoint = null;
+        nullablePoint.ShouldBe(null);
+        nullablePoint.ShouldMatch(null);
+        Contradiction(nullablePoint, x => x.ShouldBe(new()),
+            """
+            x should be
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            
+            but was
+            
+                null
+            """);
+        Contradiction(nullablePoint, x => x.ShouldMatch(new()),
+            """
+            x should match
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            
+            but was
+            
+                null
+            """);
+        
+        nullablePoint = new();
+        Contradiction(nullablePoint, x => x.ShouldBe(null),
+            """
+            x should be
+            
+                null
+            
+            but was
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            """);
+        Contradiction(nullablePoint, x => x.ShouldMatch(null),
+            """
+            x should match
+            
+                null
+            
+            but was
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            """);
+        nullablePoint.ShouldBe(new());
+        nullablePoint.ShouldMatch(new());
     }
 
-    struct PointProperties
+    public void ShouldAssertUnrecognizedReferenceTypes()
+    {
+        PointFieldsReference origin = new();
+        PointFieldsReference originNewlyInitialized = new();
+        PointFieldsReference fields = new(1, 2);
+        PointPropertiesReference properties = new(1, 2);
+        
+        origin.ShouldBe(origin);
+        fields.ShouldBe(fields);
+        properties.ShouldBe(properties);
+
+        Contradiction(origin, x => x.ShouldBe(new(1, 2)),
+            """
+            x should be
+            
+                {
+                  X = 1,
+                  Y = 2
+                }
+
+            but was
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            """);
+
+        Contradiction(origin, x => x.ShouldBe(originNewlyInitialized),
+            """
+            x should be
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+
+            but was
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            
+            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+            """);
+        origin.ShouldMatch(originNewlyInitialized);
+
+        Contradiction(fields, x => x.ShouldBe(new(1,2)),
+            """
+            x should be
+            
+                {
+                  X = 1,
+                  Y = 2
+                }
+
+            but was
+            
+                {
+                  X = 1,
+                  Y = 2
+                }
+
+            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+            """);
+        fields.ShouldMatch(new(1,2));
+
+        Contradiction(properties, x => x.ShouldBe(new(1,2)),
+            """
+            x should be
+            
+                {
+                  X = 1,
+                  Y = 2
+                }
+
+            but was
+            
+                {
+                  X = 1,
+                  Y = 2
+                }
+
+            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+            """);
+        properties.ShouldMatch(new(1,2));
+
+        ((object)properties).ShouldMatch(fields);
+        ((object)fields).ShouldMatch(properties);
+
+        PointFieldsReference? nullablePoint = null;
+        nullablePoint.ShouldBe(null);
+        nullablePoint.ShouldMatch(null);
+        Contradiction(nullablePoint, x => x.ShouldBe(new()),
+            """
+            x should be
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            
+            but was
+            
+                null
+            """);
+        Contradiction(nullablePoint, x => x.ShouldMatch(new()),
+            """
+            x should match
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            
+            but was
+            
+                null
+            """);
+        
+        nullablePoint = new();
+        Contradiction(nullablePoint, x => x.ShouldBe(null),
+            """
+            x should be
+            
+                null
+            
+            but was
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            """);
+        Contradiction(nullablePoint, x => x.ShouldMatch(null),
+            """
+            x should match
+            
+                null
+            
+            but was
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            """);
+        Contradiction(nullablePoint, x => x.ShouldBe(new()),
+            """
+            x should be
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            
+            but was
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            
+            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+            """);
+        nullablePoint.ShouldMatch(new());
+    }
+
+    public void ShouldAssertUnrecognizedEmptyTypes()
+    {
+        EmptyValue emptyValue = new();
+        EmptyReference emptyReference = new();
+
+        emptyValue.ShouldBe(emptyValue);
+        emptyValue.ShouldBe(new());
+        emptyValue.ShouldMatch(new());
+
+        emptyReference.ShouldBe(emptyReference);
+        Contradiction(emptyReference, x => x.ShouldBe(new()),
+            """
+            x should be
+            
+                {}
+            
+            but was
+
+                {}
+            
+            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+            """);
+        emptyReference.ShouldMatch(new());
+        
+        ((object)emptyValue).ShouldMatch(emptyReference);
+    }
+
+    struct EmptyValue;
+    class EmptyReference;
+    
+    struct PointFieldsValue(int x, int y)
+    {
+        private string? ignored = null;
+        public int X = x;
+        public int Y = y;
+        
+        public override string ToString() => $"({X},{Y}{ignored})";
+    }
+
+    struct PointPropertiesValue(int x, int y)
     {
         private string? Ignored { get; set; }
-        public int X { get; init; }
-        public int Y { get; init; }
+        public int X { get; init; } = x;
+        public int Y { get; init; } = y;
+
+        public override string ToString() => $"({X},{Y})";
+    }
+
+    class PointFieldsReference(int x = 0, int y = 0)
+    {
+        private string? ignored = null;
+        public int X = x;
+        public int Y = y;
         
+        public override string ToString() => $"({X},{Y}{ignored})";
+    }
+
+    class PointPropertiesReference(int x, int y)
+    {
+        private string? Ignored { get; set; }
+        public int X { get; init; } = x;
+        public int Y { get; init; } = y;
+
         public override string ToString() => $"({X},{Y})";
     }
 
