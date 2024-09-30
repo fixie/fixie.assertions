@@ -110,6 +110,60 @@ class PropertyTests
                                """);
     }
 
+    public void ShouldSerializeNestedObjectStateRecursively()
+    {
+        Serialize(
+            new
+            {
+                Name = "Anonymous",
+                Age = 64,
+                NestedReference = new Person("Alex", 32),
+                NestedValue = new PointFields {
+                    x = 1,
+                    y = 2
+                },
+                NestedList = (HttpMethod[])[HttpMethod.Get, HttpMethod.Post],
+                NestedPairs = (KeyValuePair<string, string>[]) [
+                    new KeyValuePair<string, string>("A", "1"),
+                    new KeyValuePair<string, string>("B", "2")
+                ],
+                NestedDynamic =  (dynamic) new {
+                    Name = "Dynamic",
+                    Age = -1
+                }
+            })
+            .ShouldBe("""
+                      {
+                        Name = "Anonymous",
+                        Age = 64,
+                        NestedReference = {
+                          Name = "Alex",
+                          Age = 32
+                        },
+                        NestedValue = {
+                          x = 1,
+                          y = 2
+                        },
+                        NestedList = [
+                          {
+                            Method = "GET"
+                          },
+                          {
+                            Method = "POST"
+                          }
+                        ],
+                        NestedPairs = {
+                          ["A"] = "1",
+                          ["B"] = "2"
+                        },
+                        NestedDynamic = {
+                          Name = "Dynamic",
+                          Age = -1
+                        }
+                      }
+                      """);
+    }
+
     public void ShouldSerializeUnrecognizedNullableValueTypes()
     {
         var point = new PointProperties
