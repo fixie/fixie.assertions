@@ -14,11 +14,6 @@ class ListTests
                       ]
                       """;
 
-        Serialize((int[]?)null).ShouldBe("null");
-        Serialize((IEnumerable<bool>?)null).ShouldBe("null");
-        Serialize((Custom?)null).ShouldBe("null");
-        Serialize((ICustom?)null).ShouldBe("null");
-
         Serialize((int[])[]).ShouldBe("[]");
         Serialize((int[])[1, 2, 3]).ShouldBe(list123);
 
@@ -64,6 +59,191 @@ class ListTests
                         ]
                       ]
                       """);
+
+        Serialize((IEnumerable<bool>?)null).ShouldBe("null");
+        Serialize((Custom?)null).ShouldBe("null");
+        Serialize((ICustom?)null).ShouldBe("null");
+        Serialize((int[]?)null).ShouldBe("null");
+        Serialize((int[]?)[]).ShouldBe("[]");
+    }
+
+    public void ShouldAssertLists()
+    {
+        int[] empty = [];
+        int[] emptyNewlyAllocated = {};
+        int[] arrayThree = [1, 2, 3];
+        List<int> listThree = [1, 2, 3];
+        
+        empty.ShouldBe(empty);
+        empty.ShouldBe([]);
+
+        arrayThree.ShouldBe(arrayThree);
+        listThree.ShouldBe(listThree);
+
+        Contradiction(empty, x => x.ShouldBe([1, 2, 3]),
+            """
+            x should be
+            
+                [
+                  1,
+                  2,
+                  3
+                ]
+
+            but was
+            
+                []
+            """);
+
+        Contradiction(empty, x => x.ShouldBe(emptyNewlyAllocated),
+            """
+            x should be
+            
+                []
+
+            but was
+            
+                []
+            
+            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+            """);
+        empty.ShouldMatch(emptyNewlyAllocated);
+
+        Contradiction(arrayThree, x => x.ShouldBe([1, 2, 3]),
+            """
+            x should be
+            
+                [
+                  1,
+                  2,
+                  3
+                ]
+
+            but was
+            
+                [
+                  1,
+                  2,
+                  3
+                ]
+
+            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+            """);
+        arrayThree.ShouldMatch([1, 2, 3]);
+
+        Contradiction(listThree, x => x.ShouldBe([1, 2, 3]),
+            """
+            x should be
+            
+                [
+                  1,
+                  2,
+                  3
+                ]
+
+            but was
+            
+                [
+                  1,
+                  2,
+                  3
+                ]
+
+            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+            """);
+        listThree.ShouldMatch([1, 2, 3]);
+
+        Type[] intBool = [typeof(int), typeof(bool)];
+        Type[] intBoolString = [typeof(int), typeof(bool), typeof(string)];
+
+        intBool.ShouldBe(intBool);
+        intBoolString.ShouldBe(intBoolString);
+
+        Contradiction(intBool, x => x.ShouldBe([typeof(int), typeof(bool)]),
+            """
+            x should be
+
+                [
+                  typeof(int),
+                  typeof(bool)
+                ]
+            
+            but was
+
+                [
+                  typeof(int),
+                  typeof(bool)
+                ]
+
+            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+            """);
+        intBool.ShouldMatch([typeof(int), typeof(bool)]);
+
+        Contradiction(intBool, x => x.ShouldMatch(intBoolString),
+            """
+            x should match
+
+                [
+                  typeof(int),
+                  typeof(bool),
+                  typeof(string)
+                ]
+            
+            but was
+
+                [
+                  typeof(int),
+                  typeof(bool)
+                ]
+            """);
+
+        int[]? nullableArray = null;
+        nullableArray.ShouldBe(null);
+        nullableArray.ShouldMatch(null);
+        Contradiction(nullableArray, x => x.ShouldBe([]),
+            """
+            x should be
+            
+                []
+            
+            but was
+            
+                null
+            """);
+        Contradiction(nullableArray, x => x.ShouldMatch([]),
+            """
+            x should match
+            
+                []
+            
+            but was
+            
+                null
+            """);
+        
+        nullableArray = [];
+        Contradiction(nullableArray, x => x.ShouldBe(null),
+            """
+            x should be
+            
+                null
+            
+            but was
+            
+                []
+            """);
+        Contradiction(nullableArray, x => x.ShouldMatch(null),
+            """
+            x should match
+            
+                null
+            
+            but was
+            
+                []
+            """);
+        nullableArray.ShouldBe([]);
+        nullableArray.ShouldMatch([]);
     }
 
     class Custom(byte size) : ICustom

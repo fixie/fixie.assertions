@@ -42,19 +42,16 @@ public static class AssertionExtensions
     }
 
     /// <summary>
-    /// Assert that this enumerable is structurally equal to some expected array.
+    /// Assert that this object is structurally equivalent to some expected object.
     /// </summary>
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
-    public static void ShouldMatch<T>(this IEnumerable<T> actual, T[] expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
+    public static void ShouldMatch<T>(this T actual, T expected, [CallerArgumentExpression(nameof(actual))] string? expression = null)
     {
-        var actualArray = actual.ToArray();
+        var actualStructure = Serialize(actual);
+        var expectedStructure = Serialize(expected);
 
-        if (actualArray.Length != expected.Length)
-            throw EqualityFailure(expression, expected, actualArray);
-
-        foreach (var (actualItem, expectedItem) in actualArray.Zip(expected))
-            if (!Equals(actualItem, expectedItem))
-                throw EqualityFailure(expression, expected, actualArray);
+        if (actualStructure != expectedStructure)
+            throw StructuralEqualityFailure(expression, expectedStructure, actualStructure);
     }
 
     /// <summary>
@@ -171,6 +168,9 @@ public static class AssertionExtensions
 
     static AssertException EqualityFailure<T>(string? expression, T expected, T actual)
         => new(expression, Serialize(expected), Serialize(actual));
+
+    static AssertException StructuralEqualityFailure(string? expression, string expectedStructure, string actualStructure)
+        => new(expression, expectedStructure, actualStructure, structural: true);
 
     static AssertException ExpectationFailure<T>(string? expression, string expectation, T actual)
         => new(expression, expectation, Serialize(actual));
