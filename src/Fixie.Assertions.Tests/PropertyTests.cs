@@ -1,26 +1,43 @@
-﻿namespace Tests;
+﻿using System.Dynamic;
+
+namespace Tests;
 
 class PropertyTests
 {
     public void ShouldSerializeAmbiguouslyUninterestingObjects()
     {
-        Serialize(new object())
-            .ShouldBe("{}");
+        Serialize(new object()).ShouldBe("{}");
 
-        Serialize(new Empty())
-            .ShouldBe("{}");
+        Serialize(new { }).ShouldBe("{}");
 
-        Serialize(new Sample("A"))
-            .ShouldBe("{}");
+        Serialize(new Empty()).ShouldBe("{}");
+
+        Serialize(new Sample("A")).ShouldBe("{}");
             
-        Serialize(new SampleNullToString())
-            .ShouldBe("{}");
+        Serialize(new SampleNullToString()).ShouldBe("{}");
+
+        dynamic empty = new { };
+        string serialized = Serialize(empty);
+        serialized.ShouldBe("{}");
     }
 
     public void ShouldSerializeObjectProperties()
     {
         Serialize((object?)null)
             .ShouldBe("null");
+
+        Serialize(
+            new
+            {
+                Name = "Anonymous",
+                Age = 64
+            })
+            .ShouldBe("""
+                      {
+                        Name = "Anonymous",
+                        Age = 64
+                      }
+                      """);
 
         Serialize(new Person("Alex", 32))
             .ShouldBe("""
@@ -78,6 +95,19 @@ class PropertyTests
                         Age = 32
                       }
                       """);
+
+        dynamic dynamic = new
+        {
+            Name = "Dynamic",
+            Age = -1
+        };
+        string serialized = Serialize(dynamic);
+        serialized.ShouldBe("""
+                               {
+                                 Name = "Dynamic",
+                                 Age = -1
+                               }
+                               """);
     }
 
     public void ShouldSerializeUnrecognizedNullableValueTypes()
