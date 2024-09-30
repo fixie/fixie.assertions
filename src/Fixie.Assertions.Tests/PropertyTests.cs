@@ -1,6 +1,4 @@
-﻿using System.Dynamic;
-
-namespace Tests;
+﻿namespace Tests;
 
 class PropertyTests
 {
@@ -21,10 +19,12 @@ class PropertyTests
         serialized.ShouldBe("{}");
     }
 
-    public void ShouldSerializeObjectProperties()
+    public void ShouldSerializeObjectState()
     {
-        Serialize((object?)null)
-            .ShouldBe("null");
+        Serialize((object?)null).ShouldBe("null");
+        Serialize((Person?)null).ShouldBe("null");
+        Serialize((PointFields?)null).ShouldBe("null");
+        Serialize((PointProperties?)null).ShouldBe("null");
 
         Serialize(
             new
