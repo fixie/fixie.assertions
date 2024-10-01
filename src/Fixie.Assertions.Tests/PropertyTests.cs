@@ -2,7 +2,7 @@ namespace Tests;
 
 class PropertyTests
 {
-    public void ShouldSerializeAmbiguouslyUninterestingObjects()
+    public void ShouldSerializeStatelessObjectsAsPresentButEmpty()
     {
         Serialize(new object()).ShouldBe("{}");
 
@@ -12,13 +12,18 @@ class PropertyTests
 
         Serialize(new EmptyReference()).ShouldBe("{}");
 
-        Serialize(new Sample("A")).ShouldBe("{}");
-            
         Serialize(new SampleNullToString()).ShouldBe("{}");
 
         dynamic empty = new { };
         string serialized = Serialize(empty);
         serialized.ShouldBe("{}");
+    }
+
+    public void ShouldSerializeStatefulButStructurallyOpaqueObjectsAsPresentButEmpty()
+    {
+        Serialize(new StatefulViaPrimaryConstructor("A")).ShouldBe("{}");
+        Serialize(new FieldStatefulButStructurallyOpaque()).ShouldBe("{}");
+        Serialize(new PropertyStatefulButStructurallyOpaque()).ShouldBe("{}");
     }
 
     public void ShouldSerializeObjectState()
@@ -547,7 +552,7 @@ class PropertyTests
 
     record Person(string Name, int Age);
 
-    class Sample(string name)
+    class StatefulViaPrimaryConstructor(string name)
     {
         public override string ToString() => $"Sample {name}";
     }
@@ -574,6 +579,18 @@ class PropertyTests
     {
         public char ChildField;
         public int ChildProperty { get; set; }
+    }
+
+    class FieldStatefulButStructurallyOpaque
+    {
+        private int field = 1;
+
+        public override string ToString() => field.ToString();
+    }
+
+    class PropertyStatefulButStructurallyOpaque
+    {
+        private int Property { get; set; } = 1;
     }
 
 }
