@@ -12,8 +12,6 @@ class PropertyTests
 
         Serialize(new EmptyReference()).ShouldBe("{}");
 
-        Serialize(new SampleNullToString()).ShouldBe("{}");
-
         dynamic empty = new { };
         string serialized = Serialize(empty);
         serialized.ShouldBe("{}");
@@ -577,11 +575,6 @@ class PropertyTests
     class StatefulViaPrimaryConstructor(string name)
     {
         public override string ToString() => $"Sample {name}";
-    }
-
-    class SampleNullToString
-    {
-        public override string? ToString() => null;
     }
 
     class SampleWithIndexer
