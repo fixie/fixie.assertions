@@ -1,4 +1,4 @@
-﻿namespace Tests;
+namespace Tests;
 
 class PropertyTests
 {
@@ -110,6 +110,27 @@ class PropertyTests
                                  Age = -1
                                }
                                """);
+    }
+
+    public void ShouldSerializeInheritedStructuralState()
+    {
+        var sampleInheritance = new SampleInheritance
+        {
+            ParentField = 1,
+            ParentProperty = 'A',
+            ChildField = 'B',
+            ChildProperty = 2
+        };
+
+        Serialize(sampleInheritance)
+            .ShouldBe("""
+                      {
+                        ChildField = 'B',
+                        ParentField = 1,
+                        ChildProperty = 2,
+                        ParentProperty = 'A'
+                      }
+                      """);
     }
 
     public void ShouldSerializeNestedObjectStateRecursively()
@@ -542,4 +563,17 @@ class PropertyTests
         public required int Age { get; init; }
         public int this[int index] => 1;
     }
+
+    abstract class SampleInheritanceBase
+    {
+        public int ParentField;
+        public char ParentProperty { get; set; }
+    }
+
+    class SampleInheritance : SampleInheritanceBase
+    {
+        public char ChildField;
+        public int ChildProperty { get; set; }
+    }
+
 }
