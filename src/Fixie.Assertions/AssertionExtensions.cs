@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using static Fixie.Assertions.CsonSerializer;
+using static Fixie.Assertions.Serializer;
 using static Fixie.Assertions.StringUtilities;
 
 namespace Fixie.Assertions;

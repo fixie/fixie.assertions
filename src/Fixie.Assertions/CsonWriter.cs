@@ -285,7 +285,7 @@ class CsonWriter(StringBuilder output)
             };
 
     void WriteSerialized<T>(T value)
-        => CsonSerializer.SerializeInternal(this, value);
+        => Serializer.SerializeInternal(this, value);
 
     void Append(char content) => output.Append(content);
     void Append(char content, int repeatCount) => output.Append(content, repeatCount);

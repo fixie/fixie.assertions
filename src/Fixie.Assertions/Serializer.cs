@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Fixie.Assertions;
 
-partial class CsonSerializer
+class Serializer
 {
-    static MethodInfo SerializeInternalDefinition = typeof(CsonSerializer).GetMethod("SerializeInternal")!;
+    static MethodInfo SerializeInternalDefinition = typeof(Serializer).GetMethod("SerializeInternal")!;
 
     public static string Serialize<TValue>(TValue value)
     {

@@ -13,12 +13,12 @@ class SerializerProtectionTests
         for (int i = 1; i <= 31; i++)
             nested = [nested];
 
-        CsonSerializer.Serialize(nested).StartsWith('[').ShouldBe(true);
+        Serializer.Serialize(nested).StartsWith('[').ShouldBe(true);
 
         var exceedDepthLimit = () => {
             nested = [nested];
  
-            CsonSerializer.Serialize(nested);
+            Serializer.Serialize(nested);
         };
 
         exceedDepthLimit
@@ -39,7 +39,7 @@ class SerializerProtectionTests
             Manager = founder
         };
 
-        CsonSerializer.Serialize(founder)
+        Serializer.Serialize(founder)
             .ShouldBe("""
                       {
                         Name = "Morgan",
@@ -47,7 +47,7 @@ class SerializerProtectionTests
                       }
                       """);
 
-        CsonSerializer.Serialize(supervisor)
+        Serializer.Serialize(supervisor)
             .ShouldBe("""
                       {
                         Name = "Riley",
@@ -64,7 +64,7 @@ class SerializerProtectionTests
             Manager = null
         };
 
-        CsonSerializer.Serialize(ouroboros)
+        Serializer.Serialize(ouroboros)
             .ShouldBe("""
                       {
                         Name = "Ouroboros",
@@ -75,7 +75,7 @@ class SerializerProtectionTests
         var exceedDepthLimitDueToCycle = () => {
             ouroboros.Manager = ouroboros;
 
-            CsonSerializer.Serialize(ouroboros);
+            Serializer.Serialize(ouroboros);
         };
 
         exceedDepthLimitDueToCycle
@@ -100,7 +100,7 @@ class SerializerProtectionTests
                       }
                       """);
 
-        CsonSerializer.Serialize(model)
+        Serializer.Serialize(model)
             .ShouldBe("""
                       {
                         JsonIgnored = "Property Value From JsonIgnored",
