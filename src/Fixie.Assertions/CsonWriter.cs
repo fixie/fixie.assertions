@@ -144,6 +144,15 @@ class CsonWriter(StringBuilder output)
             typeof(T)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(property => property.GetIndexParameters().Length == 0)
+                .Where(property =>
+                {
+                    // property.CanRead is insufficient, because it is true
+                    // even for private get accessors on public properties.
+                    //
+                    // GetGetMethod() returns only public accessors by default.
+
+                    return property.GetGetMethod() != null;
+                })
                 .Select(property => (property.Name, Value: property.GetValue(value)));
 
         WriteItems('{', fields.Concat(properties), '}', property =>

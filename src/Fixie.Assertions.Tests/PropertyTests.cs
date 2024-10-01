@@ -1,4 +1,4 @@
-namespace Tests;
+﻿namespace Tests;
 
 class PropertyTests
 {
@@ -24,6 +24,28 @@ class PropertyTests
         Serialize(new StatefulViaPrimaryConstructor("A")).ShouldBe("{}");
         Serialize(new FieldStatefulButStructurallyOpaque()).ShouldBe("{}");
         Serialize(new PropertyStatefulButStructurallyOpaque()).ShouldBe("{}");
+    }
+
+    public void ShouldSerializeTreatingPrivateAccessorsAsStructurallyOpaque()
+    {
+        Serialize(new PublicStateAllAccessorsPrivate()).ShouldBe("{}");
+        Serialize(new PublicStateSomeAccessorsPrivate())
+            .ShouldBe("""
+                      {
+                        StructuralProperty = 4
+                      }
+                      """);
+    }
+
+    public void ShouldSerializeTreatingMissingAccessorsAsStructurallyOpaque()
+    {
+        Serialize(new PublicStateAllAccessorsMissing()).ShouldBe("{}");
+        Serialize(new PublicStateSomeAccessorsMissing())
+            .ShouldBe("""
+                      {
+                        StructuralProperty = 4
+                      }
+                      """);
     }
 
     public void ShouldSerializeObjectState()
@@ -593,4 +615,40 @@ class PropertyTests
         private int Property { get; set; } = 1;
     }
 
+    class PublicStateAllAccessorsPrivate
+    {
+        // These get accessors appear to reflection on this type as
+        // present but private, but appear to reflection on inherited
+        // types as missing.
+
+        public int OpaquePropertyA { private get; set; } = 1;
+        public int OpaquePropertyB { private get; set; } = 2;
+    }
+
+    class PublicStateSomeAccessorsPrivate : PublicStateAllAccessorsPrivate
+    {
+        // Inherited private accessors appear to reflection on this
+        // type as missing, so we also include a private accessor at
+        // this level to demonstrate the full inspection.
+
+        public int OpaquePropertyC { private get; set; } = 3;
+        public int StructuralProperty { get; set; } = 4;
+    }
+
+    class PublicStateAllAccessorsMissing
+    {
+        int fieldA = 1;
+        int fieldB = 2;
+
+        public int OpaquePropertyA { set { fieldA = value; } }
+        public int OpaquePropertyB { set { fieldB = value; } }
+    }
+
+    class PublicStateSomeAccessorsMissing : PublicStateAllAccessorsMissing
+    {
+        int fieldC = 3;
+
+        public int OpaquePropertyC { set { fieldC = value; } }
+        public int StructuralProperty { get; set; } = 4;
+    }
 }
