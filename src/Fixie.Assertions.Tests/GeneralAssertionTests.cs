@@ -2,85 +2,10 @@
 
 class GeneralAssertionTests
 {
-    public void ShouldAssertObjects()
-    {
-        var objectA = new SampleA();
-        var objectB = new SampleB();
-        object nonNullObjectWithNullToString = new SampleNullToString();
-
-        objectA.ShouldBe(objectA);
-        objectB.ShouldBe(objectB);
-        nonNullObjectWithNullToString.ShouldBe(nonNullObjectWithNullToString);
-
-        Contradiction(objectB, x => x.ShouldBe((object?)null),
-            """
-            x should be
-            
-                null
-            
-            but was
-            
-                {}
-            """);
-        Contradiction(objectB, x => x.ShouldBe((SampleB?)null),
-            """
-            x should be
-            
-                null
-            
-            but was
-            
-                {}
-            """);
-
-        var trivialSimilarity =
-            """
-            x should be
-            
-                {}
-            
-            but was
-            
-                {}
-
-            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
-            """;
-
-        Contradiction((object)objectB, x => x.ShouldBe((object)objectA), trivialSimilarity);
-        Contradiction((object)objectA, x => x.ShouldBe((object)objectB), trivialSimilarity);
-
-        Contradiction(nonNullObjectWithNullToString, x => x.ShouldBe(objectB), trivialSimilarity);
-    }
-
-    public void ShouldAssertReferenceTypesByTheirNaturalEqualityComparer()
-    {
-        var uniqueInstanceA = new string("abc");
-        var uniqueInstanceB = new string("abc");
-
-        ReferenceEquals(uniqueInstanceA, uniqueInstanceB).ShouldBe(false);
-        uniqueInstanceA.ShouldBe(uniqueInstanceB);
-
-        HttpMethod.Post.ShouldBe(HttpMethod.Post);
-        Contradiction(HttpMethod.Post, x => x.ShouldBe(HttpMethod.Get),
-            """
-            x should be
-
-                {
-                  Method = "GET"
-                }
-            
-            but was
-
-                {
-                  Method = "POST"
-                }
-            """);
-    }
-
     public void ShouldAssertNulls()
     {
         object? nullObject = null;
-        object nonNullObject = new SampleA();
+        object nonNullObject = new EmptyReferenceA();
 
         nullObject.ShouldBe(null);
         nonNullObject.ShouldNotBeNull();
@@ -160,8 +85,8 @@ class GeneralAssertionTests
                 3
             """);
 
-        var a1 = new SampleA();
-        var a2 = new SampleA();
+        var a1 = new EmptyReferenceA();
+        var a2 = new EmptyReferenceA();
 
         a1.Should(x => x == a1);
         Contradiction(a1, value => value.Should(x => x == a2),
@@ -192,11 +117,5 @@ class GeneralAssertionTests
             "expectationBody should not be null but was null.");
     }
 
-    class SampleA;
-    class SampleB;
-
-    class SampleNullToString
-    {
-        public override string? ToString() => null;
-    }
+    class EmptyReferenceA;
 }

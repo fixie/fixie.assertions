@@ -271,13 +271,33 @@ class PropertyTests
         properties.ShouldBe(new(1,2));
         properties.ShouldMatch(new(1,2));
 
-        ((object)properties).ShouldMatch(fields);
-        ((object)fields).ShouldMatch(properties);
+        var trivialSimilarity =
+            """
+            x should be
+            
+                {
+                  X = 1,
+                  Y = 2
+                }
+            
+            but was
+            
+                {
+                  X = 1,
+                  Y = 2
+                }
+
+            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+            """;
+        Contradiction((object)properties, x => x.ShouldBe((object)fields), trivialSimilarity);
+        Contradiction((object)fields, x => x.ShouldBe((object)properties), trivialSimilarity);
+        ((object)properties).ShouldMatch((object)fields);
+        ((object)fields).ShouldMatch((object)properties);
 
         PointFieldsValue? nullablePoint = null;
         nullablePoint.ShouldBe(null);
         nullablePoint.ShouldMatch(null);
-        Contradiction(nullablePoint, x => x.ShouldBe(new()),
+        Contradiction(nullablePoint, x => x.ShouldBe((object?)new PointFieldsValue()),
             """
             x should be
             
@@ -290,7 +310,33 @@ class PropertyTests
             
                 null
             """);
-        Contradiction(nullablePoint, x => x.ShouldMatch(new()),
+        Contradiction(nullablePoint, x => x.ShouldBe((PointFieldsValue?)new()),
+            """
+            x should be
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            
+            but was
+            
+                null
+            """);
+        Contradiction(nullablePoint, x => x.ShouldMatch((object?)new PointFieldsValue()),
+            """
+            x should match
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            
+            but was
+            
+                null
+            """);
+        Contradiction(nullablePoint, x => x.ShouldMatch((PointFieldsValue?)new()),
             """
             x should match
             
@@ -305,7 +351,7 @@ class PropertyTests
             """);
         
         nullablePoint = new();
-        Contradiction(nullablePoint, x => x.ShouldBe(null),
+        Contradiction(nullablePoint, x => x.ShouldBe((object?)null),
             """
             x should be
             
@@ -318,7 +364,33 @@ class PropertyTests
                   Y = 0
                 }
             """);
-        Contradiction(nullablePoint, x => x.ShouldMatch(null),
+        Contradiction(nullablePoint, x => x.ShouldBe((PointFieldsValue?)null),
+            """
+            x should be
+            
+                null
+            
+            but was
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            """);
+        Contradiction(nullablePoint, x => x.ShouldMatch((object?)null),
+            """
+            x should match
+            
+                null
+            
+            but was
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            """);
+        Contradiction(nullablePoint, x => x.ShouldMatch((PointFieldsValue?)null),
             """
             x should match
             
@@ -423,13 +495,33 @@ class PropertyTests
             """);
         properties.ShouldMatch(new(1,2));
 
-        ((object)properties).ShouldMatch(fields);
-        ((object)fields).ShouldMatch(properties);
+        var trivialSimilarity =
+            """
+            x should be
+            
+                {
+                  X = 1,
+                  Y = 2
+                }
+            
+            but was
+            
+                {
+                  X = 1,
+                  Y = 2
+                }
+
+            These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
+            """;
+        Contradiction((object)properties, x => x.ShouldBe((object)fields), trivialSimilarity);
+        Contradiction((object)fields, x => x.ShouldBe((object)properties), trivialSimilarity);
+        ((object)properties).ShouldMatch((object)fields);
+        ((object)fields).ShouldMatch((object)properties);
 
         PointFieldsReference? nullablePoint = null;
         nullablePoint.ShouldBe(null);
         nullablePoint.ShouldMatch(null);
-        Contradiction(nullablePoint, x => x.ShouldBe(new()),
+        Contradiction(nullablePoint, x => x.ShouldBe((object?)new PointFieldsReference()),
             """
             x should be
             
@@ -442,7 +534,33 @@ class PropertyTests
             
                 null
             """);
-        Contradiction(nullablePoint, x => x.ShouldMatch(new()),
+        Contradiction(nullablePoint, x => x.ShouldBe((PointFieldsReference?)new()),
+            """
+            x should be
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            
+            but was
+            
+                null
+            """);
+        Contradiction(nullablePoint, x => x.ShouldMatch((object?)new PointFieldsReference()),
+            """
+            x should match
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            
+            but was
+            
+                null
+            """);
+        Contradiction(nullablePoint, x => x.ShouldMatch((PointFieldsReference?)new()),
             """
             x should match
             
@@ -457,7 +575,7 @@ class PropertyTests
             """);
         
         nullablePoint = new();
-        Contradiction(nullablePoint, x => x.ShouldBe(null),
+        Contradiction(nullablePoint, x => x.ShouldBe((object?)null),
             """
             x should be
             
@@ -470,7 +588,33 @@ class PropertyTests
                   Y = 0
                 }
             """);
-        Contradiction(nullablePoint, x => x.ShouldMatch(null),
+        Contradiction(nullablePoint, x => x.ShouldBe((PointFieldsReference?)null),
+            """
+            x should be
+            
+                null
+            
+            but was
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            """);
+        Contradiction(nullablePoint, x => x.ShouldMatch((object?)null),
+            """
+            x should match
+            
+                null
+            
+            but was
+            
+                {
+                  X = 0,
+                  Y = 0
+                }
+            """);
+        Contradiction(nullablePoint, x => x.ShouldMatch((PointFieldsReference?)null),
             """
             x should match
             
