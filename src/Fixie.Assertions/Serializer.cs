@@ -13,14 +13,14 @@ class Serializer
     public static string Serialize<TValue>(TValue value)
     {
         var output = new StringBuilder();
-        var writer = new CsonWriter(output);
+        var writer = new Writer(output);
 
         SerializeInternal(writer, value);
 
         return output.ToString();
     }
 
-    public static void SerializeInternal<TValue>(CsonWriter writer, TValue value)
+    public static void SerializeInternal<TValue>(Writer writer, TValue value)
     {
         if (value is null)
         {
@@ -72,15 +72,15 @@ class Serializer
     static MethodInfo GetDynamicConverter(Type type)
     {
         if (IsPairType(type, out var keyType, out var valueType))
-            return GetDynamicWriter(nameof(CsonWriter.WritePairs), keyType, valueType);
+            return GetDynamicWriter(nameof(Writer.WritePairs), keyType, valueType);
 
         if (IsEnumerableType(type, out var itemType))
-            return GetDynamicWriter(nameof(CsonWriter.WriteList), itemType);
+            return GetDynamicWriter(nameof(Writer.WriteList), itemType);
 
         return GetDynamicWriter(
             type.IsEnum
-                ? nameof(CsonWriter.WriteEnum)
-                : nameof(CsonWriter.WriteProperties), type);
+                ? nameof(Writer.WriteEnum)
+                : nameof(Writer.WriteProperties), type);
     }
 
     static bool IsPairType(Type typeToConvert,
@@ -122,13 +122,13 @@ class Serializer
 
     static MethodInfo GetDynamicWriter(string method, params Type[] typeArguments)
     {
-        return typeof(CsonWriter)
+        return typeof(Writer)
             .GetMethod(method, BindingFlags.Instance | BindingFlags.Public)?
             .MakeGenericMethod(typeArguments)
             ?? throw new UnreachableException();
     }
 
-    static void WriteViaReflection<TValue>(MethodInfo converter, CsonWriter writer, TValue value)
+    static void WriteViaReflection<TValue>(MethodInfo converter, Writer writer, TValue value)
     {
         try
         {
@@ -141,7 +141,7 @@ class Serializer
         }
     }
 
-    static void SerializeViaReflection(Type type, CsonWriter writer, object value)
+    static void SerializeViaReflection(Type type, Writer writer, object value)
     {
         try
         {

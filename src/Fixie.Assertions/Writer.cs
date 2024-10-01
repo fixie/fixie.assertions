@@ -5,7 +5,7 @@ using static Fixie.Assertions.StringUtilities;
 
 namespace Fixie.Assertions;
 
-class CsonWriter(StringBuilder output)
+class Writer(StringBuilder output)
 {
     readonly StringBuilder output = output;
     int indentation = 0;
