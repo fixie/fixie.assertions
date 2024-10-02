@@ -1,15 +1,6 @@
-﻿using System.Text;
-using static Fixie.Assertions.StringUtilities;
-using static System.Environment;
+﻿using static System.Environment;
 
 namespace Fixie.Assertions;
-
-public enum AssertionKind
-{
-    Equality,
-    StructuralEquality,
-    Predicate
-}
 
 public class AssertException : Exception
 {
@@ -17,91 +8,14 @@ public class AssertException : Exception
     public string Expected { get; }
     public string Actual { get; }
     public bool HasMultilineRepresentation { get; }
-    readonly string message;
 
-    public AssertException(string expression, string expected, string actual, string? message = null, AssertionKind? kind = null)
+    public AssertException(string expression, string expected, string actual, string message, bool hasMultilineRepresentation)
+        : base(message)
     {
         Expression = expression;
         Expected = expected;
         Actual = actual;
-
-        if (message == null)
-        {
-            this.message = WriteMessage(Expression, Expected, Actual, kind, out bool isMultiline);
-            HasMultilineRepresentation = isMultiline;
-        }
-        else
-        {
-            this.message = message;
-        }
-    }
-
-    public override string Message => message;
-
-    static string WriteMessage(string expression, string expected, string actual, AssertionKind? kind, out bool isMultiline)
-    {
-        isMultiline = !IsTrivial(expected) || !IsTrivial(actual);
-
-        var content = new StringBuilder();
-
-        content.Append(expression);
-
-        content.Append(" should ");
-
-        content.Append(kind switch
-        {
-            AssertionKind.StructuralEquality => "match",
-            AssertionKind.Predicate => "satisfy",
-            AssertionKind.Equality or _ => "be"
-        });
-
-        if (isMultiline)
-        {
-            content.AppendLine();
-            content.AppendLine();
-            content.Append(Indent(expected));
-            content.AppendLine();
-            content.AppendLine();
-        }
-        else
-        {
-            content.Append(' ');
-            content.Append(expected);
-            content.Append(' ');
-        }
-
-        content.Append("but was");
-
-        if (isMultiline)
-        {
-            content.AppendLine();
-            content.AppendLine();
-            content.Append(Indent(actual));
-        }
-        else
-        {
-            content.Append(' ');
-            content.Append(actual);
-        }
-
-        if (expected == actual)
-        {
-            content.AppendLine();
-            content.AppendLine();
-            content.Append(
-                "These serialized values are identical. Did you mean to perform " +
-                "a structural comparison with `ShouldMatch` instead?");
-        }
-
-        return content.ToString();
-    }
-
-    static bool IsTrivial(string value)
-    {
-        return
-            value == "null" || value == "true" || value == "false" ||
-            value.StartsWith('\'') ||
-            (value.Length > 0 && char.IsDigit(value[0]));
+        HasMultilineRepresentation = hasMultilineRepresentation;
     }
 
     public override string? StackTrace => FilterStackTrace(base.StackTrace);

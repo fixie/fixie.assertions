@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using static Fixie.Assertions.Serializer;
 using static Fixie.Assertions.StringUtilities;
@@ -38,7 +39,7 @@ public static class AssertionExtensions
     public static void ShouldNotBeNull([NotNull] this object? actual, [CallerArgumentExpression(nameof(actual))] string expression = default!)
     {
         if (actual == null)
-            throw new AssertException(expression, "not null", "null", $"{expression} should not be null but was null.");
+            throw new AssertException(expression, "not null", "null", $"{expression} should not be null but was null.", false);
     }
 
     /// <summary>
@@ -108,7 +109,7 @@ public static class AssertionExtensions
                          but instead the message was
              
                          {Indent(Serialize(actual.Message))}
-                         """);
+                         """, false);
 
             return typed;
         }
@@ -125,7 +126,7 @@ public static class AssertionExtensions
              but instead it threw {actualType.FullName} with message
 
              {Indent(Serialize(actual.Message))}
-             """);
+             """, false);
     }
 
     static void ShouldHaveThrown<TException>(string expression) where TException : Exception
@@ -133,7 +134,7 @@ public static class AssertionExtensions
         var expectedType = typeof(TException).FullName!;
 
         throw new AssertException(expression, expectedType, "no exception was thrown",
-            $"{expression} should have thrown {expectedType} but did not.");
+            $"{expression} should have thrown {expectedType} but did not.", false);
     }
 
     /// <summary>
@@ -166,11 +167,72 @@ public static class AssertionExtensions
     }
 
     static AssertException EqualityFailure<T>(string expression, T expected, T actual)
-        => new(expression, Serialize(expected), Serialize(actual));
+        => Failure(expression, Serialize(expected), Serialize(actual), "be");
 
     static AssertException StructuralEqualityFailure(string expression, string expectedStructure, string actualStructure)
-        => new(expression, expectedStructure, actualStructure, kind: AssertionKind.StructuralEquality);
+        => Failure(expression, expectedStructure, actualStructure, "match");
 
     static AssertException ExpectationFailure<T>(string expression, string expectationBody, T actual)
-        => new(expression, expectationBody, Serialize(actual), kind: AssertionKind.Predicate);
+        => Failure(expression, expectationBody, Serialize(actual), "satisfy");
+
+    static AssertException Failure(string expression, string expected, string actual, string shouldVerb)
+    {
+        bool isMultiline = !IsTrivial(expected) || !IsTrivial(actual);
+
+        var content = new StringBuilder();
+
+        content.Append(expression);
+        content.Append(" should ");
+        content.Append(shouldVerb);
+
+        if (isMultiline)
+        {
+            content.AppendLine();
+            content.AppendLine();
+            content.Append(Indent(expected));
+            content.AppendLine();
+            content.AppendLine();
+        }
+        else
+        {
+            content.Append(' ');
+            content.Append(expected);
+            content.Append(' ');
+        }
+
+        content.Append("but was");
+
+        if (isMultiline)
+        {
+            content.AppendLine();
+            content.AppendLine();
+            content.Append(Indent(actual));
+        }
+        else
+        {
+            content.Append(' ');
+            content.Append(actual);
+        }
+
+        if (expected == actual)
+        {
+            content.AppendLine();
+            content.AppendLine();
+            content.Append(
+                "These serialized values are identical. Did you mean to perform " +
+                "a structural comparison with `ShouldMatch` instead?");
+        }
+
+        var message = content.ToString();
+
+        return new(expression, expected, actual, message, isMultiline);
+    }
+
+    static bool IsTrivial(string value)
+    {
+        return
+            value == "null" || value == "true" || value == "false" ||
+            value.StartsWith('\'') ||
+            (value.Length > 0 && char.IsDigit(value[0]));
+    }
 }
