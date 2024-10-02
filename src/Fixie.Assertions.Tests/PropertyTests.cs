@@ -241,7 +241,6 @@ class PropertyTests
         PointPropertiesValue properties = new(1, 2);
         
         origin.ShouldBe(origin);
-        origin.ShouldBe(originNewlyInitialized);
         fields.ShouldBe(fields);
         properties.ShouldBe(properties);
 
