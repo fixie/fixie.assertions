@@ -2,37 +2,26 @@
 
 class GeneralAssertionTests
 {
-    public void ShouldAssertNulls()
+    public void ShouldAssertNullVsNotNull()
     {
-        object? nullObject = null;
-        object nonNullObject = new EmptyReferenceA();
-
-        nullObject.ShouldBe(null);
-        nonNullObject.ShouldNotBeNull();
-
-        Contradiction((object?)null, x => x.ShouldBe(nonNullObject),
-            """
-            x should be
-            
-                {}
-            
-            but was
-            
-                null
-            """);
-        Contradiction(nonNullObject, x => x.ShouldBe(null),
-            """
-            x should be
-            
-                null
-            
-            but was
-            
-                {}
-            """);
-        Contradiction((object?)null, x => x.ShouldNotBeNull(),
+        object? o = null;
+        o.ShouldBe(null);
+        Contradiction(o, x => x.ShouldNotBeNull(),
             """
             x should not be null but was null.
+            """);
+
+        o = new object();
+        o.ShouldNotBeNull();
+        Contradiction(o, x => x.ShouldBe(null),
+            """
+            x should be
+            
+                null
+            
+            but was
+
+                {}
             """);
     }
 
@@ -85,8 +74,8 @@ class GeneralAssertionTests
                 3
             """);
 
-        var a1 = new EmptyReferenceA();
-        var a2 = new EmptyReferenceA();
+        var a1 = new object();
+        var a2 = new object();
 
         a1.Should(x => x == a1);
         Contradiction(a1, value => value.Should(x => x == a2),
@@ -116,6 +105,4 @@ class GeneralAssertionTests
         Contradiction('x', value => value.Should(_ => _ != 'x', expectationBody: null!),
             "expectationBody should not be null but was null.");
     }
-
-    class EmptyReferenceA;
 }
