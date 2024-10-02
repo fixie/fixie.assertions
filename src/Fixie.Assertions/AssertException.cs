@@ -4,6 +4,13 @@ using static System.Environment;
 
 namespace Fixie.Assertions;
 
+public enum AssertionKind
+{
+    Equality,
+    StructuralEquality,
+    Predicate
+}
+
 public class AssertException : Exception
 {
     public string Expression { get; }
@@ -12,7 +19,7 @@ public class AssertException : Exception
     public bool HasMultilineRepresentation { get; }
     readonly string message;
 
-    public AssertException(string expression, string expected, string actual, string? message = null, bool structural = false)
+    public AssertException(string expression, string expected, string actual, string? message = null, AssertionKind? kind = null)
     {
         Expression = expression;
         Expected = expected;
@@ -20,7 +27,7 @@ public class AssertException : Exception
 
         if (message == null)
         {
-            this.message = WriteMessage(Expression, Expected, Actual, structural, out bool isMultiline);
+            this.message = WriteMessage(Expression, Expected, Actual, kind, out bool isMultiline);
             HasMultilineRepresentation = isMultiline;
         }
         else
@@ -31,17 +38,22 @@ public class AssertException : Exception
 
     public override string Message => message;
 
-    static string WriteMessage(string expression, string expected, string actual, bool structural, out bool isMultiline)
+    static string WriteMessage(string expression, string expected, string actual, AssertionKind? kind, out bool isMultiline)
     {
         isMultiline = !IsTrivial(expected) || !IsTrivial(actual);
 
         var content = new StringBuilder();
 
         content.Append(expression);
-        if (structural)
-            content.Append(" should match");
-        else
-            content.Append(" should be");
+
+        content.Append(" should ");
+
+        content.Append(kind switch
+        {
+            AssertionKind.StructuralEquality => "match",
+            AssertionKind.Predicate => "satisfy",
+            AssertionKind.Equality or _ => "be"
+        });
 
         if (isMultiline)
         {

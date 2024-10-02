@@ -27,9 +27,9 @@ class GeneralAssertionTests
 
     public void ShouldAssertExpressions()
     {
-        Contradiction(3, value => value.Should(x => x > 4),
+        Contradiction(3, value => value.ShouldSatisfy(x => x > 4),
             """
-            value should be
+            value should satisfy
             
                 > 4
             
@@ -37,9 +37,9 @@ class GeneralAssertionTests
             
                 3
             """);
-        Contradiction(4, value => value.Should(y => y > 4),
+        Contradiction(4, value => value.ShouldSatisfy(y => y > 4),
             """
-            value should be
+            value should satisfy
             
                 > 4
             
@@ -47,11 +47,11 @@ class GeneralAssertionTests
             
                 4
             """);
-        5.Should(x => x > 4);
+        5.ShouldSatisfy(x => x > 4);
 
-        Contradiction(3, value => value.Should(abc => abc >= 4),
+        Contradiction(3, value => value.ShouldSatisfy(abc => abc >= 4),
             """
-            value should be
+            value should satisfy
             
                 >= 4
             
@@ -59,13 +59,13 @@ class GeneralAssertionTests
             
                 3
             """);
-        4.Should(x => x >= 4);
-        5.Should(x => x >= 4);
+        4.ShouldSatisfy(x => x >= 4);
+        5.ShouldSatisfy(x => x >= 4);
 
         Func<int, bool> someExpression = x => x >= 4;
-        Contradiction(3, value => value.Should(someExpression),
+        Contradiction(3, value => value.ShouldSatisfy(someExpression),
             """
-            value should be
+            value should satisfy
             
                 someExpression
             
@@ -77,10 +77,10 @@ class GeneralAssertionTests
         var a1 = new object();
         var a2 = new object();
 
-        a1.Should(x => x == a1);
-        Contradiction(a1, value => value.Should(x => x == a2),
+        a1.ShouldSatisfy(x => x == a1);
+        Contradiction(a1, value => value.ShouldSatisfy(x => x == a2),
             """
-            value should be
+            value should satisfy
             
                 == a2
             
@@ -90,10 +90,10 @@ class GeneralAssertionTests
             """);
 
         object? nullObject = null;
-        nullObject.Should(_ => _ == null);
-        Contradiction(nullObject, value => value.Should(_ => _ != null),
+        nullObject.ShouldSatisfy(_ => _ == null);
+        Contradiction(nullObject, value => value.ShouldSatisfy(_ => _ != null),
             """
-            value should be
+            value should satisfy
             
                 != null
             
@@ -101,8 +101,5 @@ class GeneralAssertionTests
             
                 null
             """);
-
-        Contradiction('x', value => value.Should(_ => _ != 'x', expectationBody: null!),
-            "expectationBody should not be null but was null.");
     }
 }

@@ -140,11 +140,10 @@ public static class AssertionExtensions
     /// Assert that this object satisfies some expectation.
     /// </summary>
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
-    public static void Should<T>(this T actual, Func<T, bool> expectation, [CallerArgumentExpression(nameof(actual))] string expression = default!, [CallerArgumentExpression(nameof(expectation))] string expectationBody = default!)
+    public static void ShouldSatisfy<T>(this T actual, Func<T, bool> expectation, [CallerArgumentExpression(nameof(actual))] string expression = default!, [CallerArgumentExpression(nameof(expectation))] string expectationBody = default!)
     {
         if (!expectation(actual))
         {
-            expectationBody.ShouldNotBeNull();
             expectationBody = DropTrivialLambdaPrefix(expectationBody);
 
             throw ExpectationFailure(expression, expectationBody, actual);
@@ -170,8 +169,8 @@ public static class AssertionExtensions
         => new(expression, Serialize(expected), Serialize(actual));
 
     static AssertException StructuralEqualityFailure(string expression, string expectedStructure, string actualStructure)
-        => new(expression, expectedStructure, actualStructure, structural: true);
+        => new(expression, expectedStructure, actualStructure, kind: AssertionKind.StructuralEquality);
 
-    static AssertException ExpectationFailure<T>(string expression, string expectation, T actual)
-        => new(expression, expectation, Serialize(actual));
+    static AssertException ExpectationFailure<T>(string expression, string expectationBody, T actual)
+        => new(expression, expectationBody, Serialize(actual), kind: AssertionKind.Predicate);
 }
