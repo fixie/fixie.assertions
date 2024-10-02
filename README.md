@@ -193,17 +193,17 @@ await divideByZero.ShouldThrow<DivideByZeroException>("Divided By Zero");
 
 ```
 
-## Idiomatic `Should`
+## `ShouldSatisfy`
 
-Most assertion libraries tend to accrete 1000 `ShouldXyz` methods for every conceivable situation. This library refuses to boil the ocean. The `Should(expectation)` assertion reduces the need for things like `ShouldBeGreaterThan`, `ShouldBeGreaterThanOrEqualTo`, and similar nonidiomatic assertions.
+Most assertion libraries tend to accrete 1000 `ShouldXyz` methods for every conceivable situation. This library refuses to boil the ocean. The `ShouldSatisfy(expectation)` assertion reduces the need for things like `ShouldBeGreaterThan`, `ShouldBeGreaterThanOrEqualTo`, and similar nonidiomatic assertions.
 
 ```cs
 var value = 4;
-value.Should(x => x > 4);
+value.ShouldSatisfy(x => x > 4);
 ```
 
 ```
-value should be
+value should satisfy
 
     > 4
 
@@ -214,11 +214,11 @@ but was
 
 ```cs
 var value = 3;
-value.Should(x => x >= 4);
+value.ShouldSatisfy(x => x >= 4);
 ```
 
 ```
-value should be
+value should satisfy
 
     >= 4
 
