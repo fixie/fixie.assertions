@@ -21,7 +21,7 @@ public static class AssertionExtensions
     }
 
     /// <summary>
-    /// Assert that this object is an instance of the specified type.
+    /// Assert that this object matches the type pattern: <c>(actual is T)</c>
     /// </summary>
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static T ShouldBe<T>(this object? actual, [CallerArgumentExpression(nameof(actual))] string expression = default!)
@@ -29,7 +29,7 @@ public static class AssertionExtensions
         if (actual is T typed)
             return typed;
 
-        throw EqualityFailure(expression, typeof(T), actual?.GetType());
+        throw TypeFailure(expression, typeof(T), actual?.GetType());
     }
 
     /// <summary>
@@ -168,6 +168,9 @@ public static class AssertionExtensions
 
     static AssertException EqualityFailure<T>(string expression, T expected, T actual)
         => Failure(expression, Serialize(expected), Serialize(actual), "be");
+
+    static AssertException TypeFailure(string expression, Type expected, Type? actual)
+        => Failure(expression, $"is {TypeName(expected)}", actual == null ? "null" : TypeName(actual), "match the type pattern");
 
     static AssertException StructuralEqualityFailure(string expression, string expectedStructure, string actualStructure)
         => Failure(expression, expectedStructure, actualStructure, "match");

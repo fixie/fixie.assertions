@@ -98,49 +98,49 @@ class TypeTests
         ((Type?)null).ShouldBe(null);
     }
 
-    public void ShouldAssertValueHasType()
+    public void ShouldAssertValueMatchesTypePattern()
     {
         1.ShouldBe<int>();
 
         Contradiction(new Sample(), x => x.ShouldBe<GeneralAssertionTests>(),
             $"""
-             x should be
+             x should match the type pattern
              
-                 typeof({FullName<GeneralAssertionTests>()})
+                 is {FullName<GeneralAssertionTests>()}
              
              but was
              
-                 typeof({FullName<Sample>()})
+                 {FullName<Sample>()}
              """);
         Contradiction(true, x => x.ShouldBe<GeneralAssertionTests>(),
             $"""
-             x should be
+             x should match the type pattern
              
-                 typeof({FullName<GeneralAssertionTests>()})
+                 is {FullName<GeneralAssertionTests>()}
              
              but was
              
-                 typeof(bool)
+                 bool
              """);
         
         Contradiction(new object(), x => x.ShouldBe<GeneralAssertionTests>(),
             $"""
-             x should be
+             x should match the type pattern
              
-                 typeof({FullName<GeneralAssertionTests>()})
+                 is {FullName<GeneralAssertionTests>()}
              
              but was
              
-                 typeof(object)
+                 object
              """);
         new GeneralAssertionTests().ShouldBe<object>();
 
         // Just like with the `is` keyword, although expressions may have some known compile time type, null values do not have a type.
         Contradiction((int?)null, x => x.ShouldBe<GeneralAssertionTests>(),
             $"""
-             x should be
+             x should match the type pattern
              
-                 typeof({FullName<GeneralAssertionTests>()})
+                 is {FullName<GeneralAssertionTests>()}
              
              but was
              
@@ -148,9 +148,9 @@ class TypeTests
              """);
         Contradiction((Exception?)null, x => x.ShouldBe<GeneralAssertionTests>(),
             $"""
-             x should be
+             x should match the type pattern
 
-                 typeof({FullName<GeneralAssertionTests>()})
+                 is {FullName<GeneralAssertionTests>()}
              
              but was
 
@@ -158,9 +158,9 @@ class TypeTests
              """);
         Contradiction((GeneralAssertionTests?)null, x => x.ShouldBe<GeneralAssertionTests>(),
             $"""
-             x should be
+             x should match the type pattern
 
-                 typeof({FullName<GeneralAssertionTests>()})
+                 is {FullName<GeneralAssertionTests>()}
 
              but was
 

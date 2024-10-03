@@ -113,7 +113,7 @@ but was
     ]
 ```
 
-## Type Assertions
+## Type Pattern Assertions
 
 ```cs
 object o = "ABC";
@@ -123,13 +123,13 @@ o.ShouldBe<int>(); // Fails.
 ```
 
 ```
-o should be
+o should match the type pattern
 
-    typeof(int)
+    is int
 
 but was
 
-    typeof(string)
+    string
 ```
 
 ## Nulls
