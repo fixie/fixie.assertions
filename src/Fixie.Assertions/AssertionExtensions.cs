@@ -58,8 +58,9 @@ public static class AssertionExtensions
     /// <summary>
     /// Assert that this operation throws an exception of the specified type with some expected message.
     /// </summary>
+    /// <param name="expectedMessage">When provided, assert that the exception message matches the given string.</param>
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
-    public static TException ShouldThrow<TException>(this Action shouldThrow, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrow))] string expression = default!) where TException : Exception
+    public static TException ShouldThrow<TException>(this Action shouldThrow, string? expectedMessage = null, [CallerArgumentExpression(nameof(shouldThrow))] string expression = default!) where TException : Exception
     {
         try
         {
@@ -78,8 +79,9 @@ public static class AssertionExtensions
     /// <summary>
     /// Assert that this async operation throws an exception of the specified type with some expected message.
     /// </summary>
+    /// <param name="expectedMessage">When provided, assert that the exception message matches the given string.</param>
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
-    public static async Task<TException> ShouldThrow<TException>(this Func<Task> shouldThrowAsync, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrowAsync))] string expression = default!) where TException : Exception
+    public static async Task<TException> ShouldThrow<TException>(this Func<Task> shouldThrowAsync, string? expectedMessage = null, [CallerArgumentExpression(nameof(shouldThrowAsync))] string expression = default!) where TException : Exception
     {
         try
         {
@@ -95,11 +97,11 @@ public static class AssertionExtensions
         throw new UnreachableException();
     }
 
-    static TException ShouldBeException<TException>(string expectedMessage, string expression, Exception actual) where TException : Exception
+    static TException ShouldBeException<TException>(string? expectedMessage, string expression, Exception actual) where TException : Exception
     {
         if (actual is TException typed)
         {
-            if (actual.Message != expectedMessage)
+            if (expectedMessage != null && actual.Message != expectedMessage)
                 throw new AssertException(expression, expectedMessage, actual.Message,
                         $"""
                          {expression} should have thrown {typeof(TException).FullName} with message
@@ -114,16 +116,28 @@ public static class AssertionExtensions
             return typed;
         }
 
-        var expectedType = typeof(TException);
-        var actualType = actual.GetType();
+        var expectedType = typeof(TException).FullName!;
+        var actualType = actual.GetType().FullName!;
+
+        if (expectedMessage == null)
+        {
+            throw new AssertException(expression, expectedType, actualType,
+                $"""
+                 {expression} should have thrown {expectedType}
+
+                 but instead it threw {actualType} with message
+
+                 {Indent(Serialize(actual.Message))}
+                 """, false);
+        }
 
         throw new AssertException(expression, expectedMessage, actual.Message,
             $"""
-             {expression} should have thrown {expectedType.FullName} with message
+             {expression} should have thrown {expectedType} with message
 
              {Indent(Serialize(expectedMessage))}
 
-             but instead it threw {actualType.FullName} with message
+             but instead it threw {actualType} with message
 
              {Indent(Serialize(actual.Message))}
              """, false);

@@ -151,6 +151,7 @@ possiblyNull.Property.ShouldBe(7); // No warning here.
 ```cs
 Action divideByZero = () => OperationThatDividesByZero();
 
+divideByZero.ShouldThrow<DivideByZeroException>(); //Allow any message.
 divideByZero.ShouldThrow<DivideByZeroException>("Divided By Zero");
 ```
 
@@ -172,7 +173,17 @@ but instead the message was
     "Attempted to divide by zero."
 ```
 
-If your operation throws the wrong exception type:
+If your operation throws the wrong exception type, and you do not specify a message:
+
+```
+divideByZero should have thrown System.DivideByZeroException
+
+but instead it threw System.ArgumentNullException with message
+
+    "Value cannot be null. (Parameter \'divisor\')"
+```
+
+If your operation throws the wrong exception type, and you do specify a message:
 
 ```
 divideByZero should have thrown System.DivideByZeroException with message
