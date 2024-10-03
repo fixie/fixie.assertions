@@ -77,6 +77,30 @@ public static class AssertionExtensions
     }
 
     /// <summary>
+    /// Assert that this operation throws an exception of the specified type with some expected message.
+    /// </summary>
+    /// <param name="expectedMessage">When provided, assert that the exception message matches the given string.</param>
+    /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
+    public static TException ShouldThrow<TException>(this Func<object?> shouldThrow, string? expectedMessage = null, [CallerArgumentExpression(nameof(shouldThrow))] string expression = default!) where TException : Exception
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Assert that this operation throws an exception of the specified type with some expected message.
+    /// 
+    /// <para>This overload works around limitations of the type system, and is intended for delegate types equivalent to <c>Func&lt;T&gt;</c> satisfying the constraint <c>where T : struct</c>.</para>
+    /// 
+    /// <para>If any other delegate type is provided, the assertion will fail with an explanation.</para>
+    /// </summary>
+    /// <param name="expectedMessage">When provided, assert that the exception message matches the given string.</param>
+    /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
+    public static TException ShouldThrow<TException>(this Delegate shouldThrow, string? expectedMessage = null, [CallerArgumentExpression(nameof(shouldThrow))] string expression = default!) where TException : Exception
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
     /// Assert that this async operation throws an exception of the specified type with some expected message.
     /// </summary>
     /// <param name="expectedMessage">When provided, assert that the exception message matches the given string.</param>
