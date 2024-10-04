@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using static Fixie.Assertions.Serializer;
@@ -83,7 +85,13 @@ public static class AssertionExtensions
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static TException ShouldThrow<TException>(this Func<object?> shouldThrow, string? expectedMessage = null, [CallerArgumentExpression(nameof(shouldThrow))] string expression = default!) where TException : Exception
     {
-        throw new NotImplementedException();
+        // To be absolutely clear that we are always working with an
+        // Action here, never apply `var` type inference on this variable,
+        // and never inline this variable.
+
+        Action actionShouldThrow = () => shouldThrow();
+
+        return actionShouldThrow.ShouldThrow<TException>(expectedMessage, expression);
     }
 
     /// <summary>
@@ -97,7 +105,40 @@ public static class AssertionExtensions
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static TException ShouldThrow<TException>(this Delegate shouldThrow, string? expectedMessage = null, [CallerArgumentExpression(nameof(shouldThrow))] string expression = default!) where TException : Exception
     {
-        throw new NotImplementedException();
+        if (shouldThrow is Func<Task> shouldThrowAsync)
+        {
+            throw new AssertException(expression, "A non-async delegate.", shouldThrowAsync.ToString()!,
+                $"""
+                 {expression} should be a delegate compatible with
+                 
+                     Func<T> where T: struct
+
+                 but instead the function type was
+
+                     {shouldThrowAsync}
+                 
+                 Be sure to consider the async overload of ShouldThrow<TException>(...).
+                 """, false);
+        }
+
+        // To be absolutely clear that we are always working with an
+        // Action here, never apply `var` type inference on this variable,
+        // and never inline this variable.
+
+        Action actionShouldThrow = () =>
+        {
+            try
+            {
+                shouldThrow.DynamicInvoke();
+            }
+            catch (TargetInvocationException exception)
+            {
+                ExceptionDispatchInfo.Capture(exception.InnerException!).Throw();
+                throw; // Unreachable.
+            }
+        };
+
+        return actionShouldThrow.ShouldThrow<TException>(expectedMessage, expression);
     }
 
     /// <summary>
