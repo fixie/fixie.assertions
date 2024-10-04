@@ -1,6 +1,4 @@
-﻿using static Fixie.Assertions.StringUtilities;
-
-namespace Tests;
+﻿namespace Tests;
 
 // WARNING: All changes to this file must respect the intended duplication
 // described here. Although it is tempting to reduce duplication here, the
@@ -202,8 +200,8 @@ class ThrownExceptionTests
 
         {
             Func<object> getReferenceThrows = () => GetReferenceThrows();
-            Func<int?> getNullableThrows = () => GetNullableThrows();
-            Func<int> getValueThrows = () => GetValueThrows();
+            Func<Value?> getNullableThrows = () => GetNullableThrows();
+            Func<Value> getValueThrows = () => GetValueThrows();
 
             getReferenceThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
             getNullableThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
@@ -290,8 +288,8 @@ class ThrownExceptionTests
 
         {
             Func<Task<object>> getReferenceThrows = async () => await GetReferenceThrowsAsync();
-            Func<Task<int?>> getNullableThrows = async () => await GetNullableThrowsAsync();
-            Func<Task<int>> getValueThrows = async () => await GetValueThrowsAsync();
+            Func<Task<Value?>> getNullableThrows = async () => await GetNullableThrowsAsync();
+            Func<Task<Value>> getValueThrows = async () => await GetValueThrowsAsync();
 
             (await getReferenceThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
             (await getNullableThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
@@ -378,8 +376,8 @@ class ThrownExceptionTests
 
         {
             Func<object> getReference = () => GetReference();
-            Func<int?> getNullable = () => GetNullable();
-            Func<int> getValue = () => GetValue();
+            Func<Value?> getNullable = () => GetNullable();
+            Func<Value> getValue = () => GetValue();
 
             Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), didNotThrow);
             Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(), didNotThrow);
@@ -450,8 +448,8 @@ class ThrownExceptionTests
 
         {
             Func<Task<object>> getReference = async () => await GetReferenceAsync();
-            Func<Task<int?>> getNullable = async () => await GetNullableAsync();
-            Func<Task<int>> getValue = async () => await GetValueAsync();
+            Func<Task<Value?>> getNullable = async () => await GetNullableAsync();
+            Func<Task<Value>> getValue = async () => await GetValueAsync();
 
             await Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), didNotThrow);
             await Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(), didNotThrow);
@@ -556,8 +554,8 @@ class ThrownExceptionTests
 
         {
             Func<object> getReferenceThrows = () => GetReferenceThrows();
-            Func<int?> getNullableThrows = () => GetNullableThrows();
-            Func<int> getValueThrows = () => GetValueThrows();
+            Func<Value?> getNullableThrows = () => GetNullableThrows();
+            Func<Value> getValueThrows = () => GetValueThrows();
 
             Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(), wrongTypeNoMessage);
             Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(), wrongTypeNoMessage);
@@ -628,8 +626,8 @@ class ThrownExceptionTests
 
         {
             Func<Task<object>> getReferenceThrows = async () => await GetReferenceThrowsAsync();
-            Func<Task<int?>> getNullableThrows = async () => await GetNullableThrowsAsync();
-            Func<Task<int>> getValueThrows = async () => await GetValueThrowsAsync();
+            Func<Task<Value?>> getNullableThrows = async () => await GetNullableThrowsAsync();
+            Func<Task<Value>> getValueThrows = async () => await GetValueThrowsAsync();
 
             await Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(), wrongTypeNoMessage);
             await Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(), wrongTypeNoMessage);
@@ -706,8 +704,8 @@ class ThrownExceptionTests
 
         {
             Func<object> getReferenceThrows = () => GetReferenceThrows();
-            Func<int?> getNullableThrows = () => GetNullableThrows();
-            Func<int> getValueThrows = () => GetValueThrows();
+            Func<Value?> getNullableThrows = () => GetNullableThrows();
+            Func<Value> getValueThrows = () => GetValueThrows();
 
             Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
             Contradiction(getNullableThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
@@ -746,8 +744,8 @@ class ThrownExceptionTests
 
         {
             Func<Task<object>> getReferenceThrows = async () => await GetReferenceThrowsAsync();
-            Func<Task<int?>> getNullableThrows = async () => await GetNullableThrowsAsync();
-            Func<Task<int>> getValueThrows = async () => await GetValueThrowsAsync();
+            Func<Task<Value?>> getNullableThrows = async () => await GetNullableThrowsAsync();
+            Func<Task<Value>> getValueThrows = async () => await GetValueThrowsAsync();
 
             await Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
             await Contradiction(getNullableThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
@@ -794,16 +792,16 @@ class ThrownExceptionTests
     }
 
     static string GetReference() => "A";
-    static int? GetNullable() => 1;
-    static int GetValue() => 1;
+    static Value? GetNullable() => new();
+    static Value GetValue() => new();
 
     static string GetReferenceThrows() => throw new DivideByZeroException(expected);
-    static int? GetNullableThrows() => throw new DivideByZeroException(expected);
-    static int GetValueThrows() => throw new DivideByZeroException(expected);
+    static Value? GetNullableThrows() => throw new DivideByZeroException(expected);
+    static Value GetValueThrows() => throw new DivideByZeroException(expected);
 
     static async Task<string> GetReferenceAsync() => await Task.FromResult<string>("A");
-    static async Task<int?> GetNullableAsync() => await Task.FromResult<int?>(1);
-    static async Task<int> GetValueAsync() => await Task.FromResult<int>(1);
+    static async Task<Value?> GetNullableAsync() => await Task.FromResult<Value?>(new());
+    static async Task<Value> GetValueAsync() => await Task.FromResult<Value>(new());
 
     static async Task<string> GetReferenceThrowsAsync()
     {
@@ -811,13 +809,13 @@ class ThrownExceptionTests
         throw new DivideByZeroException(expected);
     }
 
-    static async Task<int?> GetNullableThrowsAsync()
+    static async Task<Value?> GetNullableThrowsAsync()
     {
         await Task.CompletedTask;
         throw new DivideByZeroException(expected);
     }
 
-    static async Task<int> GetValueThrowsAsync()
+    static async Task<Value> GetValueThrowsAsync()
     {
         await Task.CompletedTask;
         throw new DivideByZeroException(expected);
@@ -851,6 +849,8 @@ class ThrownExceptionTests
     }
 
     static string DelegateMisusedReferenceAsync = DelegateMisusedAsync<string>();
-    static string DelegateMisusedNullableAsync = DelegateMisusedAsync<int?>();
-    static string DelegateMisusedValueAsync = DelegateMisusedAsync<int>();
+    static string DelegateMisusedNullableAsync = DelegateMisusedAsync<Value?>();
+    static string DelegateMisusedValueAsync = DelegateMisusedAsync<Value>();
+
+    struct Value;
 }
