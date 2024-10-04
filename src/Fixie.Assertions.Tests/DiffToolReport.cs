@@ -19,19 +19,25 @@ class DiffToolReport : IHandler<TestFailed>, IHandler<ExecutionCompleted>
 
     public async Task Handle(ExecutionCompleted message)
     {
-        if (singleFailure is AssertException exception)
-            if (exception.HasMultilineRepresentation)
-                await LaunchDiffTool(exception);
+        if (singleFailure is AssertException failure)
+        {
+            if (failure.HasMultilineRepresentation)
+                await LaunchDiffTool(failure.Expected, failure.Actual);
+        }
+        else if (singleFailure is ContradictionException contradiction)
+        {
+            await LaunchDiffTool(contradiction.Expected, contradiction.Actual);
+        }
     }
 
-    static async Task LaunchDiffTool(AssertException exception)
+    static async Task LaunchDiffTool(string expected, string actual)
     {
         var tempPath = Path.GetTempPath();
         var expectedPath = Path.Combine(tempPath, "expected.txt");
         var actualPath = Path.Combine(tempPath, "actual.txt");
 
-        File.WriteAllText(expectedPath, exception.Expected);
-        File.WriteAllText(actualPath, exception.Actual);
+        File.WriteAllText(expectedPath, expected);
+        File.WriteAllText(actualPath, actual);
 
         await DiffRunner.LaunchAsync(expectedPath, actualPath);
     }

@@ -53,7 +53,9 @@ static class Utility
         if (exception is AssertException)
         {
             if (exception.Message != expectedMessage)
-                throw new Exception(
+                throw new ContradictionException(
+                    expectedMessage,
+                    exception.Message,
                     $"An example assertion failed as expected, but with the wrong message.{Line}" +
                     $"Expected Message:{Line}{Indent(expectedMessage)}{Line}" +
                     $"Actual Message:{Line}{Indent(exception.Message)}");
@@ -62,7 +64,7 @@ static class Utility
         }
 
         throw new Exception(
-            $"An example assertion failed as expected, but with the wrong type.{Line}" +
+            $"An example assertion failed when expected, but with the wrong type.{Line}" +
             $"\t{assertion}{Line}" +
             $"The actual value in question was:{Line}" +
             $"\t{actual}{Line}" +
