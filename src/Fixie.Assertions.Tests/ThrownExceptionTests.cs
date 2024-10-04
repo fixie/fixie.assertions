@@ -204,33 +204,6 @@ class ThrownExceptionTests
         }
 
         {
-            Func<object> getObjectThrows = () => GetObjectThrows();
-            Func<string> getReferenceThrows = () => GetReferenceThrows();
-            Func<Value?> getNullableThrows = () => GetNullableThrows();
-            Func<Value> getValueThrows = () => GetValueThrows();
-
-            getObjectThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getReferenceThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getNullableThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getValueThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-
-            getObjectThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getReferenceThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getNullableThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getValueThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-
-            getObjectThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-            getReferenceThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-            getNullableThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-            getValueThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-
-            getObjectThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-            getReferenceThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-            getNullableThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-            getValueThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-        }
-
-        {
             var getObjectThrows = () => GetObjectThrows();
             var getReferenceThrows = () => GetReferenceThrows();
             var getNullableThrows = () => GetNullableThrows();
@@ -400,28 +373,6 @@ class ThrownExceptionTests
             Action getReference = () => GetReference();
             Action getNullable = () => GetNullable();
             Action getValue = () => GetValue();
-
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(), didNotThrow);
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), didNotThrow);
-            Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(), didNotThrow);
-            Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(), didNotThrow);
-
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(misspelled), didNotThrow);
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(misspelled), didNotThrow);
-            Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(misspelled), didNotThrow);
-            Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(misspelled), didNotThrow);
-
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(expected), didNotThrow);
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(expected), didNotThrow);
-            Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(expected), didNotThrow);
-            Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(expected), didNotThrow);
-        }
-
-        {
-            Func<object> getObject = () => GetObject();
-            Func<string> getReference = () => GetReference();
-            Func<Value?> getNullable = () => GetNullable();
-            Func<Value> getValue = () => GetValue();
 
             Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(), didNotThrow);
             Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), didNotThrow);
@@ -628,28 +579,6 @@ class ThrownExceptionTests
         }
 
         {
-            Func<object> getObjectThrows = () => GetObjectThrows();
-            Func<string> getReferenceThrows = () => GetReferenceThrows();
-            Func<Value?> getNullableThrows = () => GetNullableThrows();
-            Func<Value> getValueThrows = () => GetValueThrows();
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(), wrongTypeNoMessage);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(), wrongTypeNoMessage);
-            Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(), wrongTypeNoMessage);
-            Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(), wrongTypeNoMessage);
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), wrongTypeMisspelledMessage);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), wrongTypeMisspelledMessage);
-            Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), wrongTypeMisspelledMessage);
-            Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), wrongTypeMisspelledMessage);
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), wrongTypeExpectedMessage);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), wrongTypeExpectedMessage);
-            Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), wrongTypeExpectedMessage);
-            Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), wrongTypeExpectedMessage);
-        }
-
-        {
             var getObjectThrows = () => GetObjectThrows();
             var getReferenceThrows = () => GetReferenceThrows();
             var getNullableThrows = () => GetNullableThrows();
@@ -800,18 +729,6 @@ class ThrownExceptionTests
             Action getReferenceThrows = () => GetReferenceThrows();
             Action getNullableThrows = () => GetNullableThrows();
             Action getValueThrows = () => GetValueThrows();
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
-            Contradiction(getNullableThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
-            Contradiction(getValueThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
-        }
-
-        {
-            Func<object> getObjectThrows = () => GetObjectThrows();
-            Func<string> getReferenceThrows = () => GetReferenceThrows();
-            Func<Value?> getNullableThrows = () => GetNullableThrows();
-            Func<Value> getValueThrows = () => GetValueThrows();
 
             Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
             Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
