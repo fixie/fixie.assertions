@@ -130,11 +130,19 @@ public static class AssertionExtensions
 
         // To be absolutely clear that we are always working with an
         // Action here, never apply `var` type inference on this variable,
-        // never inline this variable, and never unwrap the dynamic.
+        // and never inline this variable.
 
         Action actionShouldThrow = () =>
         {
-            ((dynamic)shouldThrow)();
+            try
+            {
+                shouldThrow.DynamicInvoke();
+            }
+            catch (TargetInvocationException exception)
+            {
+                ExceptionDispatchInfo.Capture(exception.InnerException!).Throw();
+                throw; // Unreachable.
+            }
         };
 
         return actionShouldThrow.ShouldThrow<TException>(expectedMessage, expression);
