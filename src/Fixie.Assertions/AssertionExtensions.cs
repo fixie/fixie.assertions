@@ -105,19 +105,26 @@ public static class AssertionExtensions
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static TException ShouldThrow<TException>(this Delegate shouldThrow, string? expectedMessage = null, [CallerArgumentExpression(nameof(shouldThrow))] string expression = default!) where TException : Exception
     {
-        if (shouldThrow is Func<Task> shouldThrowAsync)
+        var function = shouldThrow.Method;
+        var returnType = function.ReturnType;
+        var returnsValueType = returnType != typeof(void) && returnType.IsValueType;
+
+        if (!returnsValueType || function.GetParameters().Length > 0)
         {
-            throw new AssertException(expression, "A non-async delegate.", shouldThrowAsync.ToString()!,
+            var expectedSignature = "Func<T> where T : struct";
+            var actualSignature = Signature(function);
+
+            throw new AssertException(expression, expectedSignature, actualSignature,
                 $"""
-                 {expression} should be a delegate compatible with
-                 
-                     Func<T> where T: struct
+                 {expression} should be a function compatible with
 
-                 but instead the function type was
+                     {expectedSignature}
 
-                     {shouldThrowAsync}
-                 
-                 Be sure to consider the async overload of ShouldThrow<TException>(...).
+                 but instead the function has the incompatible type
+
+                     {actualSignature}
+
+                 Be sure to consider the overloads of ShouldThrow<TException>.
                  """, false);
         }
 
@@ -139,6 +146,23 @@ public static class AssertionExtensions
         };
 
         return actionShouldThrow.ShouldThrow<TException>(expectedMessage, expression);
+    }
+
+    static string Signature(MethodInfo function)
+    {
+        var typeParameters =
+            function
+                .GetParameters()
+                .Select(x => x.ParameterType)
+                .ToList();
+
+        if (function.ReturnType == typeof(void))
+            return typeParameters.Count == 0
+                ? "System.Action"
+                : $"System.Action`{typeParameters.Count}[{string.Join(",", typeParameters)}]";
+
+        typeParameters.Add(function.ReturnType);
+        return $"System.Func`{typeParameters.Count}[{string.Join(",", typeParameters)}]";
     }
 
     /// <summary>
