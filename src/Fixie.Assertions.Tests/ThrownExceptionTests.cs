@@ -354,31 +354,81 @@ class ThrownExceptionTests
         }
     }
 
-    public void ShouldPassWhenThrowsAsExpected()
+    public void ShouldAssertExceptionsForForFuncReturningReference()
     {
+        // Pass when target throws as expected.
         {
             var getObjectThrows = () => GetObjectThrows();
             var getReferenceThrows = () => GetReferenceThrows();
-            var getNullableStructThrows = () => GetNullableStructThrows();
-            var getStructThrows = () => GetStructThrows();
 
             getObjectThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
             getReferenceThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getNullableStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
 
             getObjectThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
             getReferenceThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getNullableStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
 
             getObjectThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
             getReferenceThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
+
+            getObjectThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
+            getReferenceThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
+        }
+
+        // Fail when target does not throw.
+        {
+            var getObject = () => GetObject();
+            var getReference = () => GetReference();
+
+            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
+            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
+
+            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
+            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
+
+            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+        }
+
+        // Fail when target throws the wrong exception type.
+        {
+            var getObjectThrows = () => GetObjectThrows();
+            var getReferenceThrows = () => GetReferenceThrows();
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
+        }
+
+        // Fail when target throws the right exception type with the wrong message.
+        {
+            var getObjectThrows = () => GetObjectThrows();
+            var getReferenceThrows = () => GetReferenceThrows();
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
+        }
+    }
+
+    public void ShouldPassWhenThrowsAsExpected()
+    {
+        {
+            var getNullableStructThrows = () => GetNullableStructThrows();
+            var getStructThrows = () => GetStructThrows();
+            
+            getNullableStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
+            getStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
+            
+            getNullableStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
+            getStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
+            
             getNullableStructThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
             getStructThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
 
-            getObjectThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-            getReferenceThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
             getNullableStructThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
             getStructThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
         }
@@ -387,23 +437,16 @@ class ThrownExceptionTests
     public void ShouldFailWhenDoesNotThrow()
     {
         {
-            var getObject = () => GetObject();
-            var getReference = () => GetReference();
+            
             var getNullableStruct = () => GetNullableStruct();
             var getStruct = () => GetStruct();
-
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
+            
             Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
             Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
+            
             Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
             Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
 
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
             Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
             Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
         }
@@ -412,23 +455,15 @@ class ThrownExceptionTests
     public void ShouldFailWhenThrowsWrongExceptionType()
     {
         {
-            var getObjectThrows = () => GetObjectThrows();
-            var getReferenceThrows = () => GetReferenceThrows();
             var getNullableStructThrows = () => GetNullableStructThrows();
             var getStructThrows = () => GetStructThrows();
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
+            
             Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
             Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
+            
             Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
             Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
+            
             Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
             Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
         }
@@ -437,13 +472,9 @@ class ThrownExceptionTests
     public void ShouldFailWhenThrowsWrongExceptionMessage()
     {
         {
-            var getObjectThrows = () => GetObjectThrows();
-            var getReferenceThrows = () => GetReferenceThrows();
             var getNullableStructThrows = () => GetNullableStructThrows();
             var getStructThrows = () => GetStructThrows();
 
-            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
             Contradiction(getNullableStructThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
             Contradiction(getStructThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
         }
