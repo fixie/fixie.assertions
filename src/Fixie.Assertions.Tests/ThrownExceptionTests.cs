@@ -211,26 +211,26 @@ class ThrownExceptionTests
 
     public async Task ShouldAssertExceptionsForAsyncFunc()
     {
-        await AssertExceptionsForAsyncFuncWithResult(NoResultAsync, NoResultThrowsAsync);
-        await AssertExceptionsForAsyncFuncWithResult(GetObjectAsync, GetObjectThrowsAsync);
-        await AssertExceptionsForAsyncFuncWithResult(GetReferenceAsync, GetReferenceThrowsAsync);
-        await AssertExceptionsForAsyncFuncWithResult(GetNullableStructAsync, GetNullableStructThrowsAsync);
-        await AssertExceptionsForAsyncFuncWithResult(GetStructAsync, GetStructThrowsAsync);
+        await AsyncFunc(NoResultAsync, NoResultThrowsAsync);
+        await AsyncFunc(GetObjectAsync, GetObjectThrowsAsync);
+        await AsyncFunc(GetReferenceAsync, GetReferenceThrowsAsync);
+        await AsyncFunc(GetNullableStructAsync, GetNullableStructThrowsAsync);
+        await AsyncFunc(GetStructAsync, GetStructThrowsAsync);
     }
 
-    public void ShouldAssertExceptionsForForFuncReturningReference()
+    public void ShouldAssertExceptionsForFuncReturningReferenceType()
     {
-        AssertExceptionsForForFuncReturningReference(GetObject, GetObjectThrows);
-        AssertExceptionsForForFuncReturningReference(GetReference, GetReferenceThrows);
+        FuncReturningReferenceType(GetObject, GetObjectThrows);
+        FuncReturningReferenceType(GetReference, GetReferenceThrows);
     }
 
-    public void ShouldAssertExceptionsForFuncReturningValue()
+    public void ShouldAssertExceptionsForFuncReturningValueType()
     {
-        AssertExceptionsForFuncReturningValue(GetStruct, GetStructThrows);
-        AssertExceptionsForFuncReturningValue(GetNullableStruct, GetNullableStructThrows);
+        FuncReturningValueType(GetStruct, GetStructThrows);
+        FuncReturningValueType(GetNullableStruct, GetNullableStructThrows);
     }
 
-    async Task AssertExceptionsForAsyncFuncWithResult(Func<Task> returns, Func<Task> throws)
+    async Task AsyncFunc(Func<Task> returns, Func<Task> throws)
     {
         // Pass when target throws as expected.
         {
@@ -260,7 +260,7 @@ class ThrownExceptionTests
         }
     }
 
-    void AssertExceptionsForForFuncReturningReference(Func<object?> returns, Func<object?> throws)
+    void FuncReturningReferenceType(Func<object?> returns, Func<object?> throws)
     {
         // Pass when target throws as expected.
         {
@@ -290,7 +290,7 @@ class ThrownExceptionTests
         }
     }
 
-    void AssertExceptionsForFuncReturningValue(Delegate returns, Delegate throws)
+    void FuncReturningValueType(Delegate returns, Delegate throws)
     {
         // Pass when target throws as expected.
         {
