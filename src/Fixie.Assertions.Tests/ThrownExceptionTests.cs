@@ -231,33 +231,6 @@ class ThrownExceptionTests
         }
 
         {
-            Delegate getObjectThrows = () => GetObjectThrows();
-            Delegate getReferenceThrows = () => GetReferenceThrows();
-            Delegate getNullableThrows = () => GetNullableThrows();
-            Delegate getValueThrows = () => GetValueThrows();
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>(), DelegateMisused<Func<object>>());
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>(), DelegateMisused<Func<string>>());
-            getNullableThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getValueThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>(), DelegateMisused<Func<object>>());
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>(), DelegateMisused<Func<string>>());
-            getNullableThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getValueThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            
-            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>(), DelegateMisused<Func<object>>());
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>(), DelegateMisused<Func<string>>());
-            getNullableThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-            getValueThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-            
-            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>(), DelegateMisused<Func<object>>());
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>(), DelegateMisused<Func<string>>());
-            getNullableThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-            getValueThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-        }
-
-        {
             var getObjectThrows = async () => await GetObjectThrowsAsync();
             var getReferenceThrows = async () => await GetReferenceThrowsAsync();
             var getNullableThrows = async () => await GetNullableThrowsAsync();
@@ -282,28 +255,6 @@ class ThrownExceptionTests
             (await getReferenceThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
             (await getNullableThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
             (await getValueThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
-        }
-
-        {
-            Delegate getObjectThrows = async () => await GetObjectThrowsAsync();
-            Delegate getReferenceThrows = async () => await GetReferenceThrowsAsync();
-            Delegate getNullableThrows = async () => await GetNullableThrowsAsync();
-            Delegate getValueThrows = async () => await GetValueThrowsAsync();
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedObjectAsync);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedReferenceAsync);
-            Contradiction(getNullableThrows, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedNullableAsync);
-            Contradiction(getValueThrows, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedValueAsync);
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedObjectAsync);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedReferenceAsync);
-            Contradiction(getNullableThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedNullableAsync);
-            Contradiction(getValueThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedValueAsync);
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedObjectAsync);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedReferenceAsync);
-            Contradiction(getNullableThrows, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedNullableAsync);
-            Contradiction(getValueThrows, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedValueAsync);
         }
     }
 
@@ -359,28 +310,6 @@ class ThrownExceptionTests
         }
 
         {
-            Delegate getObject = () => GetObject();
-            Delegate getReference = () => GetReference();
-            Delegate getNullable = () => GetNullable();
-            Delegate getValue = () => GetValue();
-
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisused<Func<object>>());
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisused<Func<string>>());
-            Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(), didNotThrow);
-            Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(), didNotThrow);
-
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisused<Func<object>>());
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisused<Func<string>>());
-            Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(misspelled), didNotThrow);
-            Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(misspelled), didNotThrow);
-
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisused<Func<object>>());
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisused<Func<string>>());
-            Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(expected), didNotThrow);
-            Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(expected), didNotThrow);
-        }
-
-        {
             var getObject = async () => await GetObjectAsync();
             var getReference = async () => await GetReferenceAsync();
             var getNullable = async () => await GetNullableAsync();
@@ -400,28 +329,6 @@ class ThrownExceptionTests
             await Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(expected), didNotThrow);
             await Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(expected), didNotThrow);
             await Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(expected), didNotThrow);
-        }
-
-        {
-            Delegate getObject = async () => await GetObjectAsync();
-            Delegate getReference = async () => await GetReferenceAsync();
-            Delegate getNullable = async () => await GetNullableAsync();
-            Delegate getValue = async () => await GetValueAsync();
-
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedObjectAsync);
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedReferenceAsync);
-            Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedNullableAsync);
-            Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedValueAsync);
-
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedObjectAsync);
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedReferenceAsync);
-            Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedNullableAsync);
-            Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedValueAsync);
-
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedObjectAsync);
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedReferenceAsync);
-            Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedNullableAsync);
-            Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedValueAsync);
         }
     }
 
@@ -503,28 +410,6 @@ class ThrownExceptionTests
         }
 
         {
-            Delegate getObjectThrows = () => GetObjectThrows();
-            Delegate getReferenceThrows = () => GetReferenceThrows();
-            Delegate getNullableThrows = () => GetNullableThrows();
-            Delegate getValueThrows = () => GetValueThrows();
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(), DelegateMisused<Func<object>>());
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(), DelegateMisused<Func<string>>());
-            Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(), wrongTypeNoMessage);
-            Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(), wrongTypeNoMessage);
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), DelegateMisused<Func<object>>());
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), DelegateMisused<Func<string>>());
-            Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), wrongTypeMisspelledMessage);
-            Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), wrongTypeMisspelledMessage);
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), DelegateMisused<Func<object>>());
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), DelegateMisused<Func<string>>());
-            Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), wrongTypeExpectedMessage);
-            Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), wrongTypeExpectedMessage);
-        }
-
-        {
             var getObjectThrows = async () => await GetObjectThrowsAsync();
             var getReferenceThrows = async () => await GetReferenceThrowsAsync();
             var getNullableThrows = async () => await GetNullableThrowsAsync();
@@ -544,28 +429,6 @@ class ThrownExceptionTests
             await Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), wrongTypeExpectedMessage);
             await Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), wrongTypeExpectedMessage);
             await Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), wrongTypeExpectedMessage);
-        }
-
-        {
-            Delegate getObjectThrows = async () => await GetObjectThrowsAsync();
-            Delegate getReferenceThrows = async () => await GetReferenceThrowsAsync();
-            Delegate getNullableThrows = async () => await GetNullableThrowsAsync();
-            Delegate getValueThrows = async () => await GetValueThrowsAsync();
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(), DelegateMisusedObjectAsync);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(), DelegateMisusedReferenceAsync);
-            Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(), DelegateMisusedNullableAsync);
-            Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(), DelegateMisusedValueAsync);
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), DelegateMisusedObjectAsync);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), DelegateMisusedReferenceAsync);
-            Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), DelegateMisusedNullableAsync);
-            Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), DelegateMisusedValueAsync);
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), DelegateMisusedObjectAsync);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), DelegateMisusedReferenceAsync);
-            Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), DelegateMisusedNullableAsync);
-            Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), DelegateMisusedValueAsync);
         }
     }
 
@@ -607,18 +470,6 @@ class ThrownExceptionTests
         }
 
         {
-            Delegate getObjectThrows = () => GetObjectThrows();
-            Delegate getReferenceThrows = () => GetReferenceThrows();
-            Delegate getNullableThrows = () => GetNullableThrows();
-            Delegate getValueThrows = () => GetValueThrows();
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisused<Func<object>>());
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisused<Func<string>>());
-            Contradiction(getNullableThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
-            Contradiction(getValueThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
-        }
-
-        {
             var getObjectThrows = async () => await GetObjectThrowsAsync();
             var getReferenceThrows = async () => await GetReferenceThrowsAsync();
             var getNullableThrows = async () => await GetNullableThrowsAsync();
@@ -628,18 +479,6 @@ class ThrownExceptionTests
             await Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
             await Contradiction(getNullableThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
             await Contradiction(getValueThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
-        }
-
-        {
-            Delegate getObjectThrows = async () => await GetObjectThrowsAsync();
-            Delegate getReferenceThrows = async () => await GetReferenceThrowsAsync();
-            Delegate getNullableThrows = async () => await GetNullableThrowsAsync();
-            Delegate getValueThrows = async () => await GetValueThrowsAsync();
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedObjectAsync);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedReferenceAsync);
-            Contradiction(getNullableThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedNullableAsync);
-            Contradiction(getValueThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedValueAsync);
         }
     }
 
@@ -659,6 +498,217 @@ class ThrownExceptionTests
         Contradiction((Delegate)funcWithInputs, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<int, string, int>>());
         Contradiction((Delegate)funcReturningReference, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<string>>());
         Contradiction((Delegate)funcAsync, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<Task>>());
+    }
+
+    public void ShouldHandleArbitraryDelegate()
+    {
+        var didNotThrow =
+            """
+            x should have thrown System.DivideByZeroException but did not.
+            """;
+
+        var wrongTypeNoMessage =
+            """
+            x should have thrown System.OutOfMemoryException
+
+            but instead it threw System.DivideByZeroException with message
+
+                "Simulated Failure"
+            """;
+
+        var wrongTypeMisspelledMessage =
+            """
+            x should have thrown System.OutOfMemoryException with message
+
+                "Simulatd Failre (Misspelled)"
+
+            but instead it threw System.DivideByZeroException with message
+
+                "Simulated Failure"
+            """;
+
+        var wrongTypeExpectedMessage =
+            """
+            x should have thrown System.OutOfMemoryException with message
+
+                "Simulated Failure"
+
+            but instead it threw System.DivideByZeroException with message
+
+                "Simulated Failure"
+            """;
+
+        var wrongMessage =
+            """
+            x should have thrown System.DivideByZeroException with message
+
+                "Simulatd Failre (Misspelled)"
+
+            but instead the message was
+
+                "Simulated Failure"
+            """;
+
+        {
+            Delegate getObjectThrows = () => GetObjectThrows();
+            Delegate getReferenceThrows = () => GetReferenceThrows();
+            Delegate getNullableThrows = () => GetNullableThrows();
+            Delegate getValueThrows = () => GetValueThrows();
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>(), DelegateMisused<Func<object>>());
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>(), DelegateMisused<Func<string>>());
+            getNullableThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
+            getValueThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>(), DelegateMisused<Func<object>>());
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>(), DelegateMisused<Func<string>>());
+            getNullableThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
+            getValueThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
+            
+            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>(), DelegateMisused<Func<object>>());
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>(), DelegateMisused<Func<string>>());
+            getNullableThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
+            getValueThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
+            
+            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>(), DelegateMisused<Func<object>>());
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>(), DelegateMisused<Func<string>>());
+            getNullableThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
+            getValueThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
+        }
+
+        {
+            Delegate getObject = () => GetObject();
+            Delegate getReference = () => GetReference();
+            Delegate getNullable = () => GetNullable();
+            Delegate getValue = () => GetValue();
+
+            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisused<Func<object>>());
+            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisused<Func<string>>());
+            Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(), didNotThrow);
+            Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(), didNotThrow);
+
+            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisused<Func<object>>());
+            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisused<Func<string>>());
+            Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(misspelled), didNotThrow);
+            Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(misspelled), didNotThrow);
+
+            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisused<Func<object>>());
+            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisused<Func<string>>());
+            Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(expected), didNotThrow);
+            Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(expected), didNotThrow);
+        }
+
+        {
+            Delegate getObjectThrows = () => GetObjectThrows();
+            Delegate getReferenceThrows = () => GetReferenceThrows();
+            Delegate getNullableThrows = () => GetNullableThrows();
+            Delegate getValueThrows = () => GetValueThrows();
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(), DelegateMisused<Func<object>>());
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(), DelegateMisused<Func<string>>());
+            Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(), wrongTypeNoMessage);
+            Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(), wrongTypeNoMessage);
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), DelegateMisused<Func<object>>());
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), DelegateMisused<Func<string>>());
+            Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), wrongTypeMisspelledMessage);
+            Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), wrongTypeMisspelledMessage);
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), DelegateMisused<Func<object>>());
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), DelegateMisused<Func<string>>());
+            Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), wrongTypeExpectedMessage);
+            Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), wrongTypeExpectedMessage);
+        }
+
+        {
+            Delegate getObjectThrows = () => GetObjectThrows();
+            Delegate getReferenceThrows = () => GetReferenceThrows();
+            Delegate getNullableThrows = () => GetNullableThrows();
+            Delegate getValueThrows = () => GetValueThrows();
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisused<Func<object>>());
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisused<Func<string>>());
+            Contradiction(getNullableThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
+            Contradiction(getValueThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), wrongMessage);
+        }
+
+        {
+            Delegate getObjectThrows = async () => await GetObjectThrowsAsync();
+            Delegate getReferenceThrows = async () => await GetReferenceThrowsAsync();
+            Delegate getNullableThrows = async () => await GetNullableThrowsAsync();
+            Delegate getValueThrows = async () => await GetValueThrowsAsync();
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedObjectAsync);
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedReferenceAsync);
+            Contradiction(getNullableThrows, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedNullableAsync);
+            Contradiction(getValueThrows, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedValueAsync);
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedObjectAsync);
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedReferenceAsync);
+            Contradiction(getNullableThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedNullableAsync);
+            Contradiction(getValueThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedValueAsync);
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedObjectAsync);
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedReferenceAsync);
+            Contradiction(getNullableThrows, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedNullableAsync);
+            Contradiction(getValueThrows, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedValueAsync);
+        }
+
+        {
+            Delegate getObject = async () => await GetObjectAsync();
+            Delegate getReference = async () => await GetReferenceAsync();
+            Delegate getNullable = async () => await GetNullableAsync();
+            Delegate getValue = async () => await GetValueAsync();
+
+            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedObjectAsync);
+            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedReferenceAsync);
+            Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedNullableAsync);
+            Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisusedValueAsync);
+
+            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedObjectAsync);
+            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedReferenceAsync);
+            Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedNullableAsync);
+            Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedValueAsync);
+
+            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedObjectAsync);
+            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedReferenceAsync);
+            Contradiction(getNullable, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedNullableAsync);
+            Contradiction(getValue, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisusedValueAsync);
+        }
+
+        {
+            Delegate getObjectThrows = async () => await GetObjectThrowsAsync();
+            Delegate getReferenceThrows = async () => await GetReferenceThrowsAsync();
+            Delegate getNullableThrows = async () => await GetNullableThrowsAsync();
+            Delegate getValueThrows = async () => await GetValueThrowsAsync();
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(), DelegateMisusedObjectAsync);
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(), DelegateMisusedReferenceAsync);
+            Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(), DelegateMisusedNullableAsync);
+            Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(), DelegateMisusedValueAsync);
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), DelegateMisusedObjectAsync);
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), DelegateMisusedReferenceAsync);
+            Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), DelegateMisusedNullableAsync);
+            Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), DelegateMisusedValueAsync);
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), DelegateMisusedObjectAsync);
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), DelegateMisusedReferenceAsync);
+            Contradiction(getNullableThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), DelegateMisusedNullableAsync);
+            Contradiction(getValueThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), DelegateMisusedValueAsync);
+        }
+
+        {
+            Delegate getObjectThrows = async () => await GetObjectThrowsAsync();
+            Delegate getReferenceThrows = async () => await GetReferenceThrowsAsync();
+            Delegate getNullableThrows = async () => await GetNullableThrowsAsync();
+            Delegate getValueThrows = async () => await GetValueThrowsAsync();
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedObjectAsync);
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedReferenceAsync);
+            Contradiction(getNullableThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedNullableAsync);
+            Contradiction(getValueThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisusedValueAsync);
+        }
     }
 
     static object GetObject() => new();
