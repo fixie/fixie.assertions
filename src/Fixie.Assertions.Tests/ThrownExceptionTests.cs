@@ -414,8 +414,9 @@ class ThrownExceptionTests
         }
     }
 
-    public void ShouldPassWhenThrowsAsExpected()
+    public void ShouldAssertExceptionsForFuncReturningValue()
     {
+        // Pass when target throws as expected.
         {
             var getNullableStructThrows = () => GetNullableStructThrows();
             var getStructThrows = () => GetStructThrows();
@@ -432,12 +433,9 @@ class ThrownExceptionTests
             getNullableStructThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
             getStructThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
         }
-    }
 
-    public void ShouldFailWhenDoesNotThrow()
-    {
+        // Fail when target does not throw.
         {
-            
             var getNullableStruct = () => GetNullableStruct();
             var getStruct = () => GetStruct();
             
@@ -450,10 +448,8 @@ class ThrownExceptionTests
             Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
             Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
         }
-    }
 
-    public void ShouldFailWhenThrowsWrongExceptionType()
-    {
+        // Fail when target throws the wrong exception type.
         {
             var getNullableStructThrows = () => GetNullableStructThrows();
             var getStructThrows = () => GetStructThrows();
@@ -467,10 +463,8 @@ class ThrownExceptionTests
             Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
             Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
         }
-    }
 
-    public void ShouldFailWhenThrowsWrongExceptionMessage()
-    {
+        // Fail when target throws the right exception type with the wrong message.
         {
             var getNullableStructThrows = () => GetNullableStructThrows();
             var getStructThrows = () => GetStructThrows();
