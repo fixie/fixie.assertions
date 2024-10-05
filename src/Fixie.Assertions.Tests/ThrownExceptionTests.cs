@@ -60,11 +60,17 @@ class ThrownExceptionTests
 
         Contradiction(doNothing, noop => noop.ShouldThrow<DivideByZeroException>(),
             """
-            noop should have thrown System.DivideByZeroException but no exception was thrown.
+            noop should have thrown System.DivideByZeroException
+            
+            but no exception was thrown.
             """);
         Contradiction(doNothing, noop => noop.ShouldThrow<DivideByZeroException>("Divided By Zero"),
             """
-            noop should have thrown System.DivideByZeroException but no exception was thrown.
+            noop should have thrown System.DivideByZeroException with message
+
+                "Divided By Zero"
+            
+            but no exception was thrown.
             """);
 
         divideByZero.ShouldThrow<DivideByZeroException>();
@@ -116,11 +122,17 @@ class ThrownExceptionTests
 
         await Contradiction(doNothing, noop => noop.ShouldThrow<DivideByZeroException>(),
             """
-            noop should have thrown System.DivideByZeroException but no exception was thrown.
+            noop should have thrown System.DivideByZeroException
+            
+            but no exception was thrown.
             """);
         await Contradiction(doNothing, noop => noop.ShouldThrow<DivideByZeroException>("Divided By Zero"),
             """
-            noop should have thrown System.DivideByZeroException but no exception was thrown.
+            noop should have thrown System.DivideByZeroException with message
+
+                "Divided By Zero"
+            
+            but no exception was thrown.
             """);
 
         await divideByZero.ShouldThrow<DivideByZeroException>();
@@ -215,8 +227,8 @@ class ThrownExceptionTests
 
         // Fail when target does not throw.
         {
-            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrowWhileNotExpectingMessage);
+            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrowWhileExpectingMessage);
         }
 
         // Fail when target throws the wrong exception type.
@@ -245,8 +257,8 @@ class ThrownExceptionTests
 
         // Fail when target does not throw.
         {
-            await Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-            await Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+            await Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrowWhileNotExpectingMessage);
+            await Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrowWhileExpectingMessage);
         }
 
         // Fail when target throws the wrong exception type.
@@ -275,8 +287,8 @@ class ThrownExceptionTests
 
         // Fail when target does not throw.
         {
-            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrowWhileNotExpectingMessage);
+            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrowWhileExpectingMessage);
         }
 
         // Fail when target throws the wrong exception type.
@@ -305,8 +317,8 @@ class ThrownExceptionTests
 
         // Fail when target does not throw.
         {
-            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrowWhileNotExpectingMessage);
+            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrowWhileExpectingMessage);
         }
 
         // Fail when target throws the wrong exception type.
@@ -377,18 +389,13 @@ class ThrownExceptionTests
 
             Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisused<Func<object>>());
             Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), DelegateMisused<Func<string>>());
-            Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-            Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisused<Func<object>>());
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(misspelled), DelegateMisused<Func<string>>());
-            Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
-            Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
+            Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrowWhileNotExpectingMessage);
+            Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrowWhileNotExpectingMessage);
 
             Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisused<Func<object>>());
             Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(expected), DelegateMisused<Func<string>>());
-            Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
-            Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+            Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrowWhileExpectingMessage);
+            Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrowWhileExpectingMessage);
         }
 
         {
@@ -555,9 +562,20 @@ class ThrownExceptionTests
     const string misspelled = "Simulatd Failre (Misspelled)";
     const string expected = "Simulated Failure";
 
-    const string DidNotThrow =
+    const string DidNotThrowWhileNotExpectingMessage =
         """
-        x should have thrown System.DivideByZeroException but no exception was thrown.
+        x should have thrown System.DivideByZeroException
+        
+        but no exception was thrown.
+        """;
+
+    const string DidNotThrowWhileExpectingMessage =
+        """
+        x should have thrown System.DivideByZeroException with message
+        
+            "Simulated Failure"
+
+        but no exception was thrown.
         """;
 
     const string WrongTypeNoMessage =

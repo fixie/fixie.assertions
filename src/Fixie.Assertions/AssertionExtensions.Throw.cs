@@ -25,7 +25,7 @@ public static partial class AssertionExtensions
             return ShouldBeException<TException>(expectedMessage, expression, actual);
         }
 
-        ShouldHaveThrown<TException>(expression);
+        ShouldHaveThrown<TException>(expression, expectedMessage);
 
         throw new UnreachableException();
     }
@@ -46,7 +46,7 @@ public static partial class AssertionExtensions
             return ShouldBeException<TException>(expectedMessage, expression, actual);
         }
 
-        ShouldHaveThrown<TException>(expression);
+        ShouldHaveThrown<TException>(expression, expectedMessage);
         
         throw new UnreachableException();
     }
@@ -184,11 +184,27 @@ public static partial class AssertionExtensions
              """, false);
     }
 
-    static void ShouldHaveThrown<TException>(string expression) where TException : Exception
+    static void ShouldHaveThrown<TException>(string expression, string? expectedMessage) where TException : Exception
     {
         var expectedType = typeof(TException).FullName!;
 
+        if (expectedMessage == null)
+        {
+            throw new AssertException(expression, expectedType, "no exception was thrown",
+                $"""
+                 {expression} should have thrown {expectedType}
+
+                 but no exception was thrown.
+                 """, false);
+        }
+
         throw new AssertException(expression, expectedType, "no exception was thrown",
-            $"{expression} should have thrown {expectedType} but no exception was thrown.", false);
+            $"""
+             {expression} should have thrown {expectedType} with message
+
+             {Indent(Serialize(expectedMessage))}
+             
+             but no exception was thrown.
+             """, false);
     }
 }
