@@ -188,15 +188,15 @@ class ThrownExceptionTests
             getNullableStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
             getStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
 
-            getObjectThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getReferenceThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getNullableStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
+            getObjectThrows.ShouldThrow<Exception>(expected).ShouldBe<DivideByZeroException>();
+            getReferenceThrows.ShouldThrow<Exception>(expected).ShouldBe<DivideByZeroException>();
+            getNullableStructThrows.ShouldThrow<Exception>(expected).ShouldBe<DivideByZeroException>();
+            getStructThrows.ShouldThrow<Exception>(expected).ShouldBe<DivideByZeroException>();
 
-            getObjectThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-            getReferenceThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-            getNullableStructThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-            getStructThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
+            getObjectThrows.ShouldThrow<DivideByZeroException>().ShouldBe<DivideByZeroException>();
+            getReferenceThrows.ShouldThrow<DivideByZeroException>().ShouldBe<DivideByZeroException>();
+            getNullableStructThrows.ShouldThrow<DivideByZeroException>().ShouldBe<DivideByZeroException>();
+            getStructThrows.ShouldThrow<DivideByZeroException>().ShouldBe<DivideByZeroException>();
 
             getObjectThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
             getReferenceThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
@@ -278,15 +278,15 @@ class ThrownExceptionTests
             (await getNullableStructThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
             (await getStructThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
 
-            (await getObjectThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
-            (await getReferenceThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
-            (await getNullableStructThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
-            (await getStructThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
+            (await getObjectThrows.ShouldThrow<Exception>(expected)).ShouldBe<DivideByZeroException>();
+            (await getReferenceThrows.ShouldThrow<Exception>(expected)).ShouldBe<DivideByZeroException>();
+            (await getNullableStructThrows.ShouldThrow<Exception>(expected)).ShouldBe<DivideByZeroException>();
+            (await getStructThrows.ShouldThrow<Exception>(expected)).ShouldBe<DivideByZeroException>();
 
-            (await getObjectThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
-            (await getReferenceThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
-            (await getNullableStructThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
-            (await getStructThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
+            (await getObjectThrows.ShouldThrow<DivideByZeroException>()).ShouldBe<DivideByZeroException>();
+            (await getReferenceThrows.ShouldThrow<DivideByZeroException>()).ShouldBe<DivideByZeroException>();
+            (await getNullableStructThrows.ShouldThrow<DivideByZeroException>()).ShouldBe<DivideByZeroException>();
+            (await getStructThrows.ShouldThrow<DivideByZeroException>()).ShouldBe<DivideByZeroException>();
 
             (await getObjectThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
             (await getReferenceThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
@@ -364,11 +364,11 @@ class ThrownExceptionTests
             getObjectThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
             getReferenceThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
 
-            getObjectThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getReferenceThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
+            getObjectThrows.ShouldThrow<Exception>(expected).ShouldBe<DivideByZeroException>();
+            getReferenceThrows.ShouldThrow<Exception>(expected).ShouldBe<DivideByZeroException>();
 
-            getObjectThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-            getReferenceThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
+            getObjectThrows.ShouldThrow<DivideByZeroException>().ShouldBe<DivideByZeroException>();
+            getReferenceThrows.ShouldThrow<DivideByZeroException>().ShouldBe<DivideByZeroException>();
 
             getObjectThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
             getReferenceThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
@@ -424,11 +424,11 @@ class ThrownExceptionTests
             getNullableStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
             getStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
             
-            getNullableStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getStructThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
+            getNullableStructThrows.ShouldThrow<Exception>(expected).ShouldBe<DivideByZeroException>();
+            getStructThrows.ShouldThrow<Exception>(expected).ShouldBe<DivideByZeroException>();
             
-            getNullableStructThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-            getStructThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
+            getNullableStructThrows.ShouldThrow<DivideByZeroException>().ShouldBe<DivideByZeroException>();
+            getStructThrows.ShouldThrow<DivideByZeroException>().ShouldBe<DivideByZeroException>();
 
             getNullableStructThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
             getStructThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
