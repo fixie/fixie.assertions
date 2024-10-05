@@ -174,8 +174,9 @@ class ThrownExceptionTests
             "to type 'System.Func`1[System.Object]'.");
     }
 
-    public async Task ShouldPassWhenThrowsAsExpected()
+    public void ShouldAssertExceptionsForAction()
     {
+        // Pass when target throws as expected.
         {
             Action getObjectThrows = () => GetObjectThrows();
             Action getReferenceThrows = () => GetReferenceThrows();
@@ -203,6 +204,68 @@ class ThrownExceptionTests
             getStructThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
         }
 
+        // Fail when target does not throw.
+        {
+            Action getObject = () => GetObject();
+            Action getReference = () => GetReference();
+            Action getNullableStruct = () => GetNullableStruct();
+            Action getStruct = () => GetStruct();
+
+            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
+            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
+            Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
+            Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
+
+            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
+            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
+            Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
+            Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
+
+            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+            Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+            Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+        }
+
+        // Fail when target throws the wrong exception type.
+        {
+            Action getObjectThrows = () => GetObjectThrows();
+            Action getReferenceThrows = () => GetReferenceThrows();
+            Action getNullableStructThrows = () => GetNullableStructThrows();
+            Action getStructThrows = () => GetStructThrows();
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
+            Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
+            Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
+            Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
+            Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
+            Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
+            Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
+        }
+
+        // Fail when target throws the right exception type with the wrong message.
+        {
+            Action getObjectThrows = () => GetObjectThrows();
+            Action getReferenceThrows = () => GetReferenceThrows();
+            Action getNullableStructThrows = () => GetNullableStructThrows();
+            Action getStructThrows = () => GetStructThrows();
+
+            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
+            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
+            Contradiction(getNullableStructThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
+            Contradiction(getStructThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
+        }
+    }
+
+    public async Task ShouldPassWhenThrowsAsExpected()
+    {
         {
             var getObjectThrows = () => GetObjectThrows();
             var getReferenceThrows = () => GetReferenceThrows();
@@ -261,28 +324,6 @@ class ThrownExceptionTests
     public async Task ShouldFailWhenDoesNotThrow()
     {
         {
-            Action getObject = () => GetObject();
-            Action getReference = () => GetReference();
-            Action getNullableStruct = () => GetNullableStruct();
-            Action getStruct = () => GetStruct();
-
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-            Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-            Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
-            Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
-            Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
-
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
-            Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
-            Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
-        }
-
-        {
             var getObject = () => GetObject();
             var getReference = () => GetReference();
             var getNullableStruct = () => GetNullableStruct();
@@ -330,28 +371,6 @@ class ThrownExceptionTests
     public async Task ShouldFailWhenThrowsWrongExceptionType()
     {
         {
-            Action getObjectThrows = () => GetObjectThrows();
-            Action getReferenceThrows = () => GetReferenceThrows();
-            Action getNullableStructThrows = () => GetNullableStructThrows();
-            Action getStructThrows = () => GetStructThrows();
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
-            Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
-            Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
-            Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
-            Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
-            Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
-            Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
-        }
-
-        {
             var getObjectThrows = () => GetObjectThrows();
             var getReferenceThrows = () => GetReferenceThrows();
             var getNullableStructThrows = () => GetNullableStructThrows();
@@ -398,18 +417,6 @@ class ThrownExceptionTests
 
     public async Task ShouldFailWhenThrowsWrongExceptionMessage()
     {
-        {
-            Action getObjectThrows = () => GetObjectThrows();
-            Action getReferenceThrows = () => GetReferenceThrows();
-            Action getNullableStructThrows = () => GetNullableStructThrows();
-            Action getStructThrows = () => GetStructThrows();
-
-            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
-            Contradiction(getNullableStructThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
-            Contradiction(getStructThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
-        }
-
         {
             var getObjectThrows = () => GetObjectThrows();
             var getReferenceThrows = () => GetReferenceThrows();
