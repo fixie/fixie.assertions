@@ -178,35 +178,7 @@ class ThrownExceptionTests
 
     public void ShouldAssertExceptionsForAction()
     {
-        Action @void = Void;
-        Action voidThrows = VoidThrows;
-
-        // Pass when target throws as expected.
-        {
-            voidThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            voidThrows.ShouldThrow<Exception>(expected).ShouldBe<DivideByZeroException>();
-
-            voidThrows.ShouldThrow<DivideByZeroException>().ShouldBe<DivideByZeroException>();
-            voidThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-        }
-
-        // Fail when target does not throw.
-        {
-            Contradiction(@void, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-            Contradiction(@void, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
-        }
-
-        // Fail when target throws the wrong exception type.
-        {
-            Contradiction(voidThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
-            Contradiction(voidThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
-            Contradiction(voidThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
-        }
-
-        // Fail when target throws the right exception type with the wrong message.
-        {
-            Contradiction(voidThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
-        }
+        ActionOverload(Void, VoidThrows);
     }
 
     public async Task ShouldAssertExceptionsForAsyncFunc()
@@ -228,6 +200,36 @@ class ThrownExceptionTests
     {
         FuncReturningValueType(GetStruct, GetStructThrows);
         FuncReturningValueType(GetNullableStruct, GetNullableStructThrows);
+    }
+
+    void ActionOverload(Action returns, Action throws)
+    {
+        // Pass when target throws as expected.
+        {
+            throws.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
+            throws.ShouldThrow<Exception>(expected).ShouldBe<DivideByZeroException>();
+
+            throws.ShouldThrow<DivideByZeroException>().ShouldBe<DivideByZeroException>();
+            throws.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
+        }
+
+        // Fail when target does not throw.
+        {
+            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
+            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+        }
+
+        // Fail when target throws the wrong exception type.
+        {
+            Contradiction(throws, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
+            Contradiction(throws, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
+            Contradiction(throws, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
+        }
+
+        // Fail when target throws the right exception type with the wrong message.
+        {
+            Contradiction(throws, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
+        }
     }
 
     async Task AsyncFunc(Func<Task> returns, Func<Task> throws)
