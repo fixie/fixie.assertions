@@ -183,23 +183,23 @@ class ThrownExceptionTests
 
     public async Task ShouldAssertExceptionsForAsyncFunc()
     {
-        await AsyncFunc(NoResultAsync, NoResultThrowsAsync);
-        await AsyncFunc(GetObjectAsync, GetObjectThrowsAsync);
-        await AsyncFunc(GetReferenceAsync, GetReferenceThrowsAsync);
-        await AsyncFunc(GetNullableStructAsync, GetNullableStructThrowsAsync);
-        await AsyncFunc(GetStructAsync, GetStructThrowsAsync);
+        await AsyncFuncOverload(NoResultAsync, NoResultThrowsAsync);
+        await AsyncFuncOverload(GetObjectAsync, GetObjectThrowsAsync);
+        await AsyncFuncOverload(GetReferenceAsync, GetReferenceThrowsAsync);
+        await AsyncFuncOverload(GetNullableStructAsync, GetNullableStructThrowsAsync);
+        await AsyncFuncOverload(GetStructAsync, GetStructThrowsAsync);
     }
 
-    public void ShouldAssertExceptionsForFuncReturningReferenceType()
+    public void ShouldAssertExceptionsForFuncReturningReference()
     {
-        FuncReturningReferenceType(GetObject, GetObjectThrows);
-        FuncReturningReferenceType(GetReference, GetReferenceThrows);
+        FuncReturningReferenceOverload(GetObject, GetObjectThrows);
+        FuncReturningReferenceOverload(GetReference, GetReferenceThrows);
     }
 
-    public void ShouldAssertExceptionsForFuncReturningValueType()
+    public void ShouldAssertExceptionsForFuncReturningValue()
     {
-        FuncReturningValueType(GetStruct, GetStructThrows);
-        FuncReturningValueType(GetNullableStruct, GetNullableStructThrows);
+        FuncReturningValueOverload(GetStruct, GetStructThrows);
+        FuncReturningValueOverload(GetNullableStruct, GetNullableStructThrows);
     }
 
     void ActionOverload(Action returns, Action throws)
@@ -232,7 +232,7 @@ class ThrownExceptionTests
         }
     }
 
-    async Task AsyncFunc(Func<Task> returns, Func<Task> throws)
+    async Task AsyncFuncOverload(Func<Task> returns, Func<Task> throws)
     {
         // Pass when target throws as expected.
         {
@@ -262,7 +262,7 @@ class ThrownExceptionTests
         }
     }
 
-    void FuncReturningReferenceType(Func<object?> returns, Func<object?> throws)
+    void FuncReturningReferenceOverload(Func<object?> returns, Func<object?> throws)
     {
         // Pass when target throws as expected.
         {
@@ -292,7 +292,7 @@ class ThrownExceptionTests
         }
     }
 
-    void FuncReturningValueType(Delegate returns, Delegate throws)
+    void FuncReturningValueOverload(Delegate returns, Delegate throws)
     {
         // Pass when target throws as expected.
         {
