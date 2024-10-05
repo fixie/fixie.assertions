@@ -264,7 +264,97 @@ class ThrownExceptionTests
         }
     }
 
-    public async Task ShouldPassWhenThrowsAsExpected()
+    public async Task ShouldAssertExceptionsForAsyncFunc()
+    {
+        // Pass when target throws as expected.
+        {
+            var getObjectThrows = async () => await GetObjectThrowsAsync();
+            var getReferenceThrows = async () => await GetReferenceThrowsAsync();
+            var getNullableStructThrows = async () => await GetNullableStructThrowsAsync();
+            var getStructThrows = async () => await GetStructThrowsAsync();
+
+            (await getObjectThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
+            (await getReferenceThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
+            (await getNullableStructThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
+            (await getStructThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
+
+            (await getObjectThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
+            (await getReferenceThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
+            (await getNullableStructThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
+            (await getStructThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
+
+            (await getObjectThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
+            (await getReferenceThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
+            (await getNullableStructThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
+            (await getStructThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
+
+            (await getObjectThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
+            (await getReferenceThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
+            (await getNullableStructThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
+            (await getStructThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
+        }
+
+        // Fail when target does not throw.
+        {
+            var getObject = async () => await GetObjectAsync();
+            var getReference = async () => await GetReferenceAsync();
+            var getNullableStruct = async () => await GetNullableStructAsync();
+            var getStruct = async () => await GetStructAsync();
+
+            await Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
+            await Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
+            await Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
+            await Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
+
+            await Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
+            await Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
+            await Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
+            await Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
+
+            await Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+            await Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+            await Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+            await Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+        }
+
+        // Fail when target throws the wrong exception type.
+        {
+            var getObjectThrows = async () => await GetObjectThrowsAsync();
+            var getReferenceThrows = async () => await GetReferenceThrowsAsync();
+            var getNullableStructThrows = async () => await GetNullableStructThrowsAsync();
+            var getStructThrows = async () => await GetStructThrowsAsync();
+
+            await Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
+            await Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
+            await Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
+            await Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
+
+            await Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
+            await Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
+            await Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
+            await Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
+
+            await Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
+            await Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
+            await Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
+            await Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
+        }
+
+        // Fail when target throws the right exception type with the wrong message.
+        {
+            var getObjectThrows = async () => await GetObjectThrowsAsync();
+            var getReferenceThrows = async () => await GetReferenceThrowsAsync();
+            var getNullableStructThrows = async () => await GetNullableStructThrowsAsync();
+            var getStructThrows = async () => await GetStructThrowsAsync();
+
+            await Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
+            await Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
+            await Contradiction(getNullableStructThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
+            await Contradiction(getStructThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
+        }
+    }
+
+    public void ShouldPassWhenThrowsAsExpected()
     {
         {
             var getObjectThrows = () => GetObjectThrows();
@@ -292,36 +382,9 @@ class ThrownExceptionTests
             getNullableStructThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
             getStructThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
         }
-
-        {
-            var getObjectThrows = async () => await GetObjectThrowsAsync();
-            var getReferenceThrows = async () => await GetReferenceThrowsAsync();
-            var getNullableStructThrows = async () => await GetNullableStructThrowsAsync();
-            var getStructThrows = async () => await GetStructThrowsAsync();
-
-            (await getObjectThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
-            (await getReferenceThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
-            (await getNullableStructThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
-            (await getStructThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
-
-            (await getObjectThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
-            (await getReferenceThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
-            (await getNullableStructThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
-            (await getStructThrows.ShouldThrow<Exception>()).ShouldBe<DivideByZeroException>();
-
-            (await getObjectThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
-            (await getReferenceThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
-            (await getNullableStructThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
-            (await getStructThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
-
-            (await getObjectThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
-            (await getReferenceThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
-            (await getNullableStructThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
-            (await getStructThrows.ShouldThrow<DivideByZeroException>(expected)).ShouldBe<DivideByZeroException>();
-        }
     }
 
-    public async Task ShouldFailWhenDoesNotThrow()
+    public void ShouldFailWhenDoesNotThrow()
     {
         {
             var getObject = () => GetObject();
@@ -344,31 +407,9 @@ class ThrownExceptionTests
             Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
             Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
         }
-
-        {
-            var getObject = async () => await GetObjectAsync();
-            var getReference = async () => await GetReferenceAsync();
-            var getNullableStruct = async () => await GetNullableStructAsync();
-            var getStruct = async () => await GetStructAsync();
-
-            await Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-            await Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-            await Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-            await Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-
-            await Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
-            await Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
-            await Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
-            await Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(misspelled), DidNotThrow);
-
-            await Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
-            await Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
-            await Contradiction(getNullableStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
-            await Contradiction(getStruct, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
-        }
     }
 
-    public async Task ShouldFailWhenThrowsWrongExceptionType()
+    public void ShouldFailWhenThrowsWrongExceptionType()
     {
         {
             var getObjectThrows = () => GetObjectThrows();
@@ -391,31 +432,9 @@ class ThrownExceptionTests
             Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
             Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
         }
-
-        {
-            var getObjectThrows = async () => await GetObjectThrowsAsync();
-            var getReferenceThrows = async () => await GetReferenceThrowsAsync();
-            var getNullableStructThrows = async () => await GetNullableStructThrowsAsync();
-            var getStructThrows = async () => await GetStructThrowsAsync();
-
-            await Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
-            await Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
-            await Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
-            await Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
-
-            await Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
-            await Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
-            await Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
-            await Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
-
-            await Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
-            await Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
-            await Contradiction(getNullableStructThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
-            await Contradiction(getStructThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
-        }
     }
 
-    public async Task ShouldFailWhenThrowsWrongExceptionMessage()
+    public void ShouldFailWhenThrowsWrongExceptionMessage()
     {
         {
             var getObjectThrows = () => GetObjectThrows();
@@ -427,18 +446,6 @@ class ThrownExceptionTests
             Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
             Contradiction(getNullableStructThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
             Contradiction(getStructThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
-        }
-
-        {
-            var getObjectThrows = async () => await GetObjectThrowsAsync();
-            var getReferenceThrows = async () => await GetReferenceThrowsAsync();
-            var getNullableStructThrows = async () => await GetNullableStructThrowsAsync();
-            var getStructThrows = async () => await GetStructThrowsAsync();
-
-            await Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
-            await Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
-            await Contradiction(getNullableStructThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
-            await Contradiction(getStructThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
         }
     }
 
