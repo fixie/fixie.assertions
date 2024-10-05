@@ -332,51 +332,37 @@ class ThrownExceptionTests
 
     public void ShouldAssertExceptionsForForFuncReturningReference()
     {
-        var getObject = GetObject;
-        var getObjectThrows = GetObjectThrows;
+        AssertExceptionsForForFuncReturningReference(GetObject, GetObjectThrows);
+        AssertExceptionsForForFuncReturningReference(GetReference, GetReferenceThrows);
+    }
 
-        var getReference = GetReference;
-        var getReferenceThrows = GetReferenceThrows;
-
+    private void AssertExceptionsForForFuncReturningReference(Func<object?> returns, Func<object?> throws)
+    {
         // Pass when target throws as expected.
         {
-            getObjectThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getObjectThrows.ShouldThrow<Exception>(expected).ShouldBe<DivideByZeroException>();
+            throws.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
+            throws.ShouldThrow<Exception>(expected).ShouldBe<DivideByZeroException>();
 
-            getObjectThrows.ShouldThrow<DivideByZeroException>().ShouldBe<DivideByZeroException>();
-            getObjectThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
-
-            getReferenceThrows.ShouldThrow<Exception>().ShouldBe<DivideByZeroException>();
-            getReferenceThrows.ShouldThrow<Exception>(expected).ShouldBe<DivideByZeroException>();
-
-            getReferenceThrows.ShouldThrow<DivideByZeroException>().ShouldBe<DivideByZeroException>();
-            getReferenceThrows.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
+            throws.ShouldThrow<DivideByZeroException>().ShouldBe<DivideByZeroException>();
+            throws.ShouldThrow<DivideByZeroException>(expected).ShouldBe<DivideByZeroException>();
         }
 
         // Fail when target does not throw.
         {
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-            Contradiction(getObject, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
-
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
-            Contradiction(getReference, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
+            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(), DidNotThrow);
+            Contradiction(returns, x => x.ShouldThrow<DivideByZeroException>(expected), DidNotThrow);
         }
 
         // Fail when target throws the wrong exception type.
         {
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
-            Contradiction(getObjectThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
-
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
+            Contradiction(throws, x => x.ShouldThrow<OutOfMemoryException>(), WrongTypeNoMessage);
+            Contradiction(throws, x => x.ShouldThrow<OutOfMemoryException>(misspelled), WrongTypeMisspelledMessage);
+            Contradiction(throws, x => x.ShouldThrow<OutOfMemoryException>(expected), WrongTypeExpectedMessage);
         }
 
         // Fail when target throws the right exception type with the wrong message.
         {
-            Contradiction(getObjectThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
-            Contradiction(getReferenceThrows, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
+            Contradiction(throws, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
         }
     }
 
