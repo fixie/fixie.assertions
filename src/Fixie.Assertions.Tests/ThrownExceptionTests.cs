@@ -60,11 +60,11 @@ class ThrownExceptionTests
 
         Contradiction(doNothing, noop => noop.ShouldThrow<DivideByZeroException>(),
             """
-            noop should have thrown System.DivideByZeroException but did not.
+            noop should have thrown System.DivideByZeroException but no exception was thrown.
             """);
         Contradiction(doNothing, noop => noop.ShouldThrow<DivideByZeroException>("Divided By Zero"),
             """
-            noop should have thrown System.DivideByZeroException but did not.
+            noop should have thrown System.DivideByZeroException but no exception was thrown.
             """);
 
         divideByZero.ShouldThrow<DivideByZeroException>();
@@ -116,11 +116,11 @@ class ThrownExceptionTests
 
         await Contradiction(doNothing, noop => noop.ShouldThrow<DivideByZeroException>(),
             """
-            noop should have thrown System.DivideByZeroException but did not.
+            noop should have thrown System.DivideByZeroException but no exception was thrown.
             """);
         await Contradiction(doNothing, noop => noop.ShouldThrow<DivideByZeroException>("Divided By Zero"),
             """
-            noop should have thrown System.DivideByZeroException but did not.
+            noop should have thrown System.DivideByZeroException but no exception was thrown.
             """);
 
         await divideByZero.ShouldThrow<DivideByZeroException>();
@@ -557,7 +557,7 @@ class ThrownExceptionTests
 
     const string DidNotThrow =
         """
-        x should have thrown System.DivideByZeroException but did not.
+        x should have thrown System.DivideByZeroException but no exception was thrown.
         """;
 
     const string WrongTypeNoMessage =

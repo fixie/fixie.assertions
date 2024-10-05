@@ -189,6 +189,6 @@ public static partial class AssertionExtensions
         var expectedType = typeof(TException).FullName!;
 
         throw new AssertException(expression, expectedType, "no exception was thrown",
-            $"{expression} should have thrown {expectedType} but did not.", false);
+            $"{expression} should have thrown {expectedType} but no exception was thrown.", false);
     }
 }
