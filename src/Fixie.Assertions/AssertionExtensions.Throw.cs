@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.ExceptionServices;
 using static Fixie.Assertions.Serializer;
 using static Fixie.Assertions.StringUtilities;
 
@@ -58,10 +57,6 @@ public static partial class AssertionExtensions
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static TException ShouldThrow<TException>(this Func<object?> shouldThrow, string? expectedMessage = null, [CallerArgumentExpression(nameof(shouldThrow))] string expression = default!) where TException : Exception
     {
-        // To be absolutely clear that we are always working with an
-        // Action here, never apply `var` type inference on this variable,
-        // and never inline this variable.
-
         Action actionShouldThrow = () => shouldThrow();
 
         return actionShouldThrow.ShouldThrow<TException>(expectedMessage, expression);
@@ -70,55 +65,75 @@ public static partial class AssertionExtensions
     /// <summary>
     /// Assert that this operation throws an exception of the specified type with some expected message.
     /// 
-    /// <para>This overload works around limitations of the type system, and is intended for delegate types equivalent to <c>Func&lt;T&gt;</c> satisfying the constraint <c>where T : struct</c>.</para>
-    /// 
-    /// <para>If any other delegate type is provided, the assertion will fail with an explanation.</para>
+    /// <para>This overload always fails, to provide guidance around surprising compiler error messages.</para>
     /// </summary>
     /// <param name="expectedMessage">When provided, assert that the exception message matches the given string.</param>
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
     public static TException ShouldThrow<TException>(this Delegate shouldThrow, string? expectedMessage = null, [CallerArgumentExpression(nameof(shouldThrow))] string expression = default!) where TException : Exception
     {
-        var function = shouldThrow.Method;
-        var returnType = function.ReturnType;
-        var returnsValueType = returnType != typeof(void) && returnType.IsValueType;
+        // Consider attempting to call ShouldThrow on any of these:
+        //
+        //     var throwOrBool = () => true;
+        //     var throwOrNullableInt = () => (int?)1;
+        //     var throwOrCustomStruct = () => new CustomStruct();
+        //
+        // It is desirable that these function types would work with the
+        // Func<object?> overload of ShouldThrow, but the compiler cannot
+        // resolve to that overload when the return type is a value type.
+        // It is better to provide clear guidance than expose the user to
+        // a confusing compiler error message. Simply changing `var` to
+        // `Action` would be enough to resolve the issue, but that is not
+        // immediately clear from the compiler error you would face.
+        //
+        // Although it is tempting to honor these via DynamicInvoke of the
+        // Delegate, doing so exposes us to severe risk around Func<T> for
+        // unanticipated types T, such as when T is a Task, ValueTask or
+        // similar. The underlying code might never be exected, leaving the
+        // user confused about why their test is failing or why their
+        // breakpoint isn't reachable.
+        //
+        // Although it is tempting to special-case detection and rejection
+        // of Task and ValueTask, consider some unanticipated custom
+        // awaitable type. It is difficult to detect such a type as it
+        // relies more on a compiler-recognized pattern than on something
+        // simpler like a well-known base type.
+        //
+        // The only safe option to mitigate this situation would be to
+        // reduce the real world exposure to this overload by adding specific
+        // overloads for the most common value types and again for their
+        // nullable counterpart: Func<int>, Func<int?>, etc. Test coverage
+        // for such types would grow large, so we can only consider doing so
+        // for the most common value types.
+        //
+        // Note that the single async overload for Func<Task> is sufficient
+        // for all Func<Task<T>>, even value types T. This is because the
+        // compiler can handle the equivalence of Func<Task<T>> to Func<Task>
+        // as Task<T> inherits Task and because all Task<T> are reference
+        // types regardless of the result T.
 
-        if (!returnsValueType || function.GetParameters().Length > 0)
-        {
-            var expectedSignature = "Func<T> where T : struct";
-            var actualSignature = Signature(function);
+        var actualSignature = Signature( shouldThrow.Method);
 
-            throw new AssertException(expression, expectedSignature, actualSignature,
-                $"""
-                 {expression} should be a function compatible with
+        throw new AssertException(expression, "Action or Func<Task>", actualSignature,
+            $"""
+             {expression} has a function type compatible with
 
-                     {expectedSignature}
+                 {actualSignature}
 
-                 but instead the function has the incompatible type
+             but ShouldThrow<TException> has no corresponding overload.
 
-                     {actualSignature}
+             You're getting this message because you're hitting a catch-all
+             overload of ShouldThrow<TException> that exists only to provide
+             the following guidance. Without this overload, you would have
+             faced a confusing compiler error message.
 
-                 Be sure to consider the overloads of ShouldThrow<TException>.
-                 """, false);
-        }
+             The most likely problem is that you intended to call the
+             Func<object?> overload for a function compatible with
+             Func<T> where T : struct, but the compiler cannot safely treat
+             that as Func<object?> even though all such types T are objects.
 
-        // To be absolutely clear that we are always working with an
-        // Action here, never apply `var` type inference on this variable,
-        // and never inline this variable.
-
-        Action actionShouldThrow = () =>
-        {
-            try
-            {
-                shouldThrow.DynamicInvoke();
-            }
-            catch (TargetInvocationException exception)
-            {
-                ExceptionDispatchInfo.Capture(exception.InnerException!).Throw();
-                throw; // Unreachable.
-            }
-        };
-
-        return actionShouldThrow.ShouldThrow<TException>(expectedMessage, expression);
+             You may need to cast the target to either Action or Func<Task>,
+             or wrap it in an equivalent lambda expression.
+             """, false);
     }
 
     static string Signature(MethodInfo function)
