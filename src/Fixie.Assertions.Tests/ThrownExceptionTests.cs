@@ -62,6 +62,58 @@ class ThrownExceptionTests
         ActionOverload(getNullableStruct, getNullableStructThrows);
     }
 
+    public void ShouldFailWithClearGuidanceForUnsupportedDelegateTypes()
+    {
+        // The motivating case for the opaque Delegate overload is that
+        // the natural types of these lambda expressions are surprisingly
+        // not compatible with the Func<object?> overload, and the resulting
+        // compiler error is too confusing. It is better to provide real
+        // guidance in these cases with an overload that always fails with
+        // a message explaining what to do.
+
+        var funcReturingBool = () => true;
+        var funcReturingNullableInt = () => (int?)1;
+        var funcReturningStruct = () => new Struct();
+
+        Contradiction(funcReturingBool, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<bool>>());
+        Contradiction(funcReturingNullableInt, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<int?>>());
+        Contradiction(funcReturningStruct, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<Struct>>());
+
+
+        // Valid overloads for these function types exist, so if we encounter them as
+        // some opaque Delegate we need to provide clear guidance directing them to
+        // the proper overloads.
+
+        Action action = () => { };
+        Func<string> funcReturningReference = () => "A";
+        Func<Task> funcTaskAsync = async () => await Task.CompletedTask;
+        Func<Task<int>> funcTaskResultAsync = async () => await Task.FromResult(1);
+
+        Contradiction((Delegate)action, x => x.ShouldThrow<Exception>(), DelegateMisused<Action>());
+        Contradiction((Delegate)funcReturningReference, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<string>>());
+        Contradiction((Delegate)funcTaskAsync, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<Task>>());
+        Contradiction((Delegate)funcTaskResultAsync, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<Task<int>>>());
+
+
+        // We'd prefer to just let the user encounter a simple compiler error
+        // when attempting to call ShouldThrow on delegates like these, but
+        // the more vital scenarios above open the door to the possibility
+        // that someone will make an attempt, and so we need to provide clear
+        // guidance.
+
+        Action<int> actionWithInput = (int x) => { };
+        Action<int, string> actionWithInputs = (int x, string y) => { };
+        Func<int, int> funcWithInput = (int x) => x;
+        Func<int, string, int> funcWithInputs = (int x, string y) => x;
+        Func<ValueTask> funcValueTaskAsync = async () => await Task.CompletedTask;
+
+        Contradiction(actionWithInput, x => x.ShouldThrow<Exception>(), DelegateMisused<Action<int>>());
+        Contradiction(actionWithInputs, x => x.ShouldThrow<Exception>(), DelegateMisused<Action<int, string>>());
+        Contradiction(funcWithInput, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<int, int>>());
+        Contradiction(funcWithInputs, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<int, string, int>>());
+        Contradiction(funcValueTaskAsync, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<ValueTask>>());
+    }
+
     static void ActionOverload(Action returns, Action throws)
     {
         // Pass when target throws as expected.
@@ -150,58 +202,6 @@ class ThrownExceptionTests
         {
             Contradiction(throws, x => x.ShouldThrow<DivideByZeroException>(misspelled), WrongMessage);
         }
-    }
-
-    public void ShouldFailWithClearGuidanceForUnsupportedDelegateTypes()
-    {
-        // The motivating case for the opaque Delegate overload is that
-        // the natural types of these lambda expressions are surprisingly
-        // not compatible with the Func<object?> overload, and the resulting
-        // compiler error is too confusing. It is better to provide real
-        // guidance in these cases with an overload that always fails with
-        // a message explaining what to do.
-
-        var funcReturingBool = () => true;
-        var funcReturingNullableInt = () => (int?)1;
-        var funcReturningStruct = () => new Struct();
-
-        Contradiction(funcReturingBool, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<bool>>());
-        Contradiction(funcReturingNullableInt, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<int?>>());
-        Contradiction(funcReturningStruct, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<Struct>>());
-
-
-        // Valid overloads for these function types exist, so if we encounter them as
-        // some opaque Delegate we need to provide clear guidance directing them to
-        // the proper overloads.
-
-        Action action = () => { };
-        Func<string> funcReturningReference = () => "A";
-        Func<Task> funcTaskAsync = async () => await Task.CompletedTask;
-        Func<Task<int>> funcTaskResultAsync = async () => await Task.FromResult(1);
-
-        Contradiction((Delegate)action, x => x.ShouldThrow<Exception>(), DelegateMisused<Action>());
-        Contradiction((Delegate)funcReturningReference, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<string>>());
-        Contradiction((Delegate)funcTaskAsync, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<Task>>());
-        Contradiction((Delegate)funcTaskResultAsync, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<Task<int>>>());
-
-
-        // We'd prefer to just let the user encounter a simple compiler error
-        // when attempting to call ShouldThrow on delegates like these, but
-        // the more vital scenarios above open the door to the possibility
-        // that someone will make an attempt, and so we need to provide clear
-        // guidance.
-
-        Action<int> actionWithInput = (int x) => { };
-        Action<int, string> actionWithInputs = (int x, string y) => { };
-        Func<int, int> funcWithInput = (int x) => x;
-        Func<int, string, int> funcWithInputs = (int x, string y) => x;
-        Func<ValueTask> funcValueTaskAsync = async () => await Task.CompletedTask;
-
-        Contradiction(actionWithInput, x => x.ShouldThrow<Exception>(), DelegateMisused<Action<int>>());
-        Contradiction(actionWithInputs, x => x.ShouldThrow<Exception>(), DelegateMisused<Action<int, string>>());
-        Contradiction(funcWithInput, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<int, int>>());
-        Contradiction(funcWithInputs, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<int, string, int>>());
-        Contradiction(funcValueTaskAsync, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<ValueTask>>());
     }
 
     static void Void() { }
