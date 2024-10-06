@@ -2,27 +2,6 @@
 
 class ThrownExceptionTests
 {
-    public void DetectPotentialForSimplification()
-    {
-        // If the compiler ever gains support for casting Func<T> to Func<object?>
-        // for value types T, this canary test will start to fail. We may be able
-        // to eliminate the `Delegate`-accepting overload in that case.
-
-        Func<string> getString = () => "A";
-        Func<char> getChar = () => 'A';
-
-        Func<object?> castedForReferenceType = getString;
-
-        Action performInvalidCast = () =>
-        {
-            Func<object?> castedForValueType = (Func<object?>)(object)getChar;
-        };
-
-        performInvalidCast.ShouldThrow<InvalidCastException>(
-            "Unable to cast object of type 'System.Func`1[System.Char]' " +
-            "to type 'System.Func`1[System.Object]'.");
-    }
-
     public void ShouldAssertExceptionsForAction()
     {
         ActionOverload(Void, VoidThrows);
@@ -112,6 +91,27 @@ class ThrownExceptionTests
         Contradiction(funcWithInput, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<int, int>>());
         Contradiction(funcWithInputs, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<int, string, int>>());
         Contradiction(funcValueTaskAsync, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<ValueTask>>());
+    }
+
+    public void DetectPotentialForSimplification()
+    {
+        // If the compiler ever gains support for casting Func<T> to Func<object?>
+        // for value types T, this canary test will start to fail. We may be able
+        // to eliminate the `Delegate`-accepting overload in that case.
+
+        Func<string> getString = () => "A";
+        Func<char> getChar = () => 'A';
+
+        Func<object?> castedForReferenceType = getString;
+
+        Action performInvalidCast = () =>
+        {
+            Func<object?> castedForValueType = (Func<object?>)(object)getChar;
+        };
+
+        performInvalidCast.ShouldThrow<InvalidCastException>(
+            "Unable to cast object of type 'System.Func`1[System.Char]' " +
+            "to type 'System.Func`1[System.Object]'.");
     }
 
     static void ActionOverload(Action returns, Action throws)
