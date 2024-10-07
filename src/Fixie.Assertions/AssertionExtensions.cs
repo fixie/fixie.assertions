@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using static Fixie.Assertions.Serializer;
 using static Fixie.Assertions.StringUtilities;
@@ -18,7 +17,23 @@ public static class AssertionExtensions
     public static void ShouldBe<T>(this T? actual, T? expected, [CallerArgumentExpression(nameof(actual))] string expression = default!)
     {
         if (!EqualityComparer<T>.Default.Equals(actual, expected))
-            throw EqualityFailure(expression, expected, actual);
+        {
+            string expectedStructure = Serialize(expected);
+            string actualStructure = Serialize(actual);
+
+            var failure = new Message()
+                .Write(expression, " should be")
+                .Block(expectedStructure)
+                .Write("but was")
+                .Block(actualStructure);
+
+            if (expectedStructure == actualStructure)
+                failure.Write(
+                    "These serialized values are identical. Did you mean to perform " +
+                    "a structural comparison with `ShouldMatch` instead?");
+
+            throw new AssertException(expression, expectedStructure, actualStructure, failure.ToString(), true);
+        }
     }
 
     /// <summary>
@@ -30,7 +45,16 @@ public static class AssertionExtensions
         if (actual is T typed)
             return typed;
 
-        throw TypeFailure(expression, typeof(T), actual?.GetType());
+        var expectedPattern = $"is {TypeName(typeof(T))}";
+        var actualTypeName = actual == null ? "null" : TypeName(actual.GetType());
+
+        throw new AssertException(expression, expectedPattern, actualTypeName,
+            new Message()
+                .Write(expression, " should match the type pattern")
+                .Block(expectedPattern)
+                .Write("but was")
+                .Block(actualTypeName)
+                .ToString(), true);
     }
 
     /// <summary>
@@ -53,7 +77,13 @@ public static class AssertionExtensions
         var expectedStructure = Serialize(expected);
 
         if (actualStructure != expectedStructure)
-            throw StructuralEqualityFailure(expression, expectedStructure, actualStructure);
+            throw new AssertException(expression, expectedStructure, actualStructure,
+                new Message()
+                    .Write(expression, " should match")
+                    .Block(expectedStructure)
+                    .Write("but was")
+                    .Block(actualStructure)
+                    .ToString(), true);
     }
 
     /// <summary>
@@ -207,15 +237,11 @@ public static class AssertionExtensions
         {
             if (expectedMessage != null && actual.Message != expectedMessage)
                 throw new AssertException(expression, expectedMessage, actual.Message,
-                        $"""
-                         {expression} should have thrown {typeof(TException).FullName} with message
-             
-                         {Indent(Serialize(expectedMessage))}
-             
-                         but instead the message was
-             
-                         {Indent(Serialize(actual.Message))}
-                         """, false);
+                    new Message()
+                        .ShouldHaveThrown<TException>(expression, expectedMessage)
+                        .Write("but instead the message was")
+                        .Serialize(actual.Message)
+                        .ToString(), false);
 
             return typed;
         }
@@ -223,52 +249,27 @@ public static class AssertionExtensions
         var expectedType = typeof(TException).FullName!;
         var actualType = actual.GetType().FullName!;
 
+        var failure =
+            new Message()
+                .ShouldHaveThrown<TException>(expression, expectedMessage)
+                .Write("but instead it threw ", actualType, " with message")
+                .Serialize(actual.Message);
+
         if (expectedMessage == null)
-        {
-            throw new AssertException(expression, expectedType, actualType,
-                $"""
-                 {expression} should have thrown {expectedType}
+            throw new AssertException(expression, expectedType, actualType, failure.ToString(), false);
 
-                 but instead it threw {actualType} with message
-
-                 {Indent(Serialize(actual.Message))}
-                 """, false);
-        }
-
-        throw new AssertException(expression, expectedMessage, actual.Message,
-            $"""
-             {expression} should have thrown {expectedType} with message
-
-             {Indent(Serialize(expectedMessage))}
-
-             but instead it threw {actualType} with message
-
-             {Indent(Serialize(actual.Message))}
-             """, false);
+        throw new AssertException(expression, expectedMessage, actual.Message, failure.ToString(), false);
     }
 
     static void ShouldHaveThrown<TException>(string expression, string? expectedMessage) where TException : Exception
     {
         var expectedType = typeof(TException).FullName!;
 
-        if (expectedMessage == null)
-        {
-            throw new AssertException(expression, expectedType, "no exception was thrown",
-                $"""
-                 {expression} should have thrown {expectedType}
-
-                 but no exception was thrown.
-                 """, false);
-        }
-
         throw new AssertException(expression, expectedType, "no exception was thrown",
-            $"""
-             {expression} should have thrown {expectedType} with message
-
-             {Indent(Serialize(expectedMessage))}
-             
-             but no exception was thrown.
-             """, false);
+            new Message()
+                .ShouldHaveThrown<TException>(expression, expectedMessage)
+                .Write("but no exception was thrown.")
+                .ToString(), false);
     }
 
     /// <summary>
@@ -281,7 +282,15 @@ public static class AssertionExtensions
         {
             expectationBody = DropTrivialLambdaPrefix(expectationBody);
 
-            throw ExpectationFailure(expression, expectationBody, actual);
+            var actualStructure = Serialize(actual);
+
+            var failure = new Message()
+                .Write(expression, " should satisfy")
+                .Block(expectationBody)
+                .Write("but was")
+                .Block(actualStructure);
+
+            throw new AssertException(expression, expectationBody, actualStructure, failure.ToString(), true);
         }
     }
 
@@ -299,54 +308,4 @@ public static class AssertionExtensions
 
         return expectationBody;
     }
-
-    static AssertException EqualityFailure<T>(string expression, T expected, T actual)
-        => Failure(expression, Serialize(expected), Serialize(actual), "be");
-
-    static AssertException TypeFailure(string expression, Type expected, Type? actual)
-        => Failure(expression, $"is {TypeName(expected)}", actual == null ? "null" : TypeName(actual), "match the type pattern");
-
-    static AssertException StructuralEqualityFailure(string expression, string expectedStructure, string actualStructure)
-        => Failure(expression, expectedStructure, actualStructure, "match");
-
-    static AssertException ExpectationFailure<T>(string expression, string expectationBody, T actual)
-        => Failure(expression, expectationBody, Serialize(actual), "satisfy");
-
-    static AssertException Failure(string expression, string expected, string actual, string shouldVerb)
-    {
-        var content = new StringBuilder();
-
-        content.Append(expression);
-        content.Append(" should ");
-        content.Append(shouldVerb);
-
-        content.AppendLine();
-        content.AppendLine();
-        content.Append(Indent(expected));
-        
-        content.AppendLine();
-        content.AppendLine();
-
-        content.Append("but was");
-
-        content.AppendLine();
-        content.AppendLine();
-        content.Append(Indent(actual));
-
-        if (expected == actual)
-        {
-            content.AppendLine();
-            content.AppendLine();
-            content.Append(
-                "These serialized values are identical. Did you mean to perform " +
-                "a structural comparison with `ShouldMatch` instead?");
-        }
-
-        var message = content.ToString();
-
-        return new(expression, expected, actual, message, true);
-    }
-
-    static string Indent(string multiline) =>
-        string.Join(Environment.NewLine, multiline.Split(Environment.NewLine).Select(x => $"    {x}"));
 }

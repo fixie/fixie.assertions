@@ -7,7 +7,6 @@ namespace Fixie.Assertions;
 
 class Writer(StringBuilder output)
 {
-    readonly StringBuilder output = output;
     int indentation = 0;
     int lengthAtLineStart = 0;
 
