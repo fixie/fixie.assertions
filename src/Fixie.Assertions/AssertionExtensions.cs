@@ -314,42 +314,24 @@ public static class AssertionExtensions
 
     static AssertException Failure(string expression, string expected, string actual, string shouldVerb)
     {
-        bool isMultiline = !IsTrivial(expected) || !IsTrivial(actual);
-
         var content = new StringBuilder();
 
         content.Append(expression);
         content.Append(" should ");
         content.Append(shouldVerb);
 
-        if (isMultiline)
-        {
-            content.AppendLine();
-            content.AppendLine();
-            content.Append(Indent(expected));
-            content.AppendLine();
-            content.AppendLine();
-        }
-        else
-        {
-            content.Append(' ');
-            content.Append(expected);
-            content.Append(' ');
-        }
+        content.AppendLine();
+        content.AppendLine();
+        content.Append(Indent(expected));
+        
+        content.AppendLine();
+        content.AppendLine();
 
         content.Append("but was");
 
-        if (isMultiline)
-        {
-            content.AppendLine();
-            content.AppendLine();
-            content.Append(Indent(actual));
-        }
-        else
-        {
-            content.Append(' ');
-            content.Append(actual);
-        }
+        content.AppendLine();
+        content.AppendLine();
+        content.Append(Indent(actual));
 
         if (expected == actual)
         {
@@ -362,14 +344,6 @@ public static class AssertionExtensions
 
         var message = content.ToString();
 
-        return new(expression, expected, actual, message, isMultiline);
-    }
-
-    static bool IsTrivial(string value)
-    {
-        return
-            value == "null" || value == "true" || value == "false" ||
-            value.StartsWith('\'') ||
-            (value.Length > 0 && char.IsDigit(value[0]));
+        return new(expression, expected, actual, message, true);
     }
 }

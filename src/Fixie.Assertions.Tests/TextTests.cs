@@ -441,11 +441,38 @@ class TextTests
     public void ShouldAssertChars()
     {
         'a'.ShouldBe('a');
-        Contradiction('a', x => x.ShouldBe('z'), "x should be 'z' but was 'a'");
+        Contradiction('a', x => x.ShouldBe('z'),
+            """
+            x should be
+            
+                'z'
+            
+            but was
+            
+                'a'
+            """);
 
         ((char?)null).ShouldBe(null);
-        Contradiction((char?)null, x => x.ShouldBe('z'), "x should be 'z' but was null");
-        Contradiction((char?)'a', x => x.ShouldBe(null), "x should be null but was 'a'");
+        Contradiction((char?)null, x => x.ShouldBe('z'),
+            """
+            x should be
+            
+                'z'
+            
+            but was
+            
+                null
+            """);
+        Contradiction((char?)'a', x => x.ShouldBe(null),
+            """
+            x should be
+            
+                null
+            
+            but was
+            
+                'a'
+            """);
     }
 
     public void ShouldAssertStrings()
