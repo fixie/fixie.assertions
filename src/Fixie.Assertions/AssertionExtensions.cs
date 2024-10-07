@@ -346,4 +346,7 @@ public static class AssertionExtensions
 
         return new(expression, expected, actual, message, true);
     }
+
+    static string Indent(string multiline) =>
+        string.Join(Environment.NewLine, multiline.Split(Environment.NewLine).Select(x => $"    {x}"));
 }

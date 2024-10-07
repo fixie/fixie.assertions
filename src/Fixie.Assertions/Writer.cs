@@ -42,6 +42,13 @@ class Writer(StringBuilder output)
 
     public void WriteString(string value)
     {
+        bool IsMultiline(string value)
+        {
+            var lines = value.Split(Environment.NewLine);
+
+            return lines.Length > 1 && lines.All(line => !line.Contains('\r') && !line.Contains('\n'));
+        }
+
         if (IsMultiline(value))
         {
             var lengthAtOpenTerminalStart = output.Length;
