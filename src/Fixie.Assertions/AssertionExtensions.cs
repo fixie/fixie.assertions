@@ -246,8 +246,8 @@ public static class AssertionExtensions
             return typed;
         }
 
-        var expectedType = typeof(TException).FullName!;
-        var actualType = actual.GetType().FullName!;
+        var expectedType = TypeName(typeof(TException));
+        var actualType = TypeName(actual.GetType());
 
         var failure =
             new Message()
@@ -263,7 +263,7 @@ public static class AssertionExtensions
 
     static void ShouldHaveThrown<TException>(string expression, string? expectedMessage) where TException : Exception
     {
-        var expectedType = typeof(TException).FullName!;
+        var expectedType = TypeName(typeof(TException));
 
         throw new AssertException(expression, expectedType, "no exception was thrown",
             new Message()

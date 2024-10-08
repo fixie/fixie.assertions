@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using static System.Environment;
+using static Fixie.Assertions.StringUtilities;
 
 namespace Tests;
 
@@ -62,7 +63,7 @@ static class Utility
             $"\t{assertion}{Line}" +
             $"The actual value in question was:{Line}" +
             $"\t{actual}{Line}" +
-            $"The assertion threw {exception.GetType().FullName} with message:{Line}" +
+            $"The assertion threw {TypeName(exception.GetType())} with message:{Line}" +
             $"\t{exception.Message}");
     }
 

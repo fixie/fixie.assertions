@@ -101,7 +101,7 @@ class Writer(StringBuilder output)
     {
         if (Enum.IsDefined(typeof(T), value))
         {
-            Append(typeof(T).FullName);
+            Append(TypeName(typeof(T)));
             Append('.');
             Append(value);
             return;
@@ -111,7 +111,7 @@ class Writer(StringBuilder output)
         bool negative = numeric.StartsWith('-');
 
         Append('(');
-        Append(typeof(T).FullName);
+        Append(TypeName(typeof(T)));
         Append(')');
 
         if (negative)

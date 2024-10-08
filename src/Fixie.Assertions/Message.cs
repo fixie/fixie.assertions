@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using static Fixie.Assertions.StringUtilities;
 
 namespace Fixie.Assertions;
 
@@ -49,7 +50,7 @@ class Message
 
     public Message ShouldHaveThrown<TException>(string expression, string? expectedMessage) where TException : Exception
     {
-        var expectedType = typeof(TException).FullName!;
+        var expectedType = TypeName(typeof(TException));
 
         Write(expression, " should have thrown ", expectedType);
 
