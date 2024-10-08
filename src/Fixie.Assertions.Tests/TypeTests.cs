@@ -52,6 +52,29 @@ class TypeTests
             .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1+Innermost`1[System.Boolean,Tests.TypeTests+Sample,System.String])");
         Serialize(typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Outermost<System.TimeSpan>.Inner<Tests.TypeTests.Sample>>.Inner<Tests.TypeTests.Outermost<bool>.Inner<Tests.TypeTests.Sample>.Innermost<TimeSpan>>.Innermost<Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<int>>))
             .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1+Innermost`1[Tests.TypeTests+Outermost`1+Inner`1[System.TimeSpan,Tests.TypeTests+Sample],Tests.TypeTests+Outermost`1+Inner`1+Innermost`1[System.Boolean,Tests.TypeTests+Sample,System.TimeSpan],Tests.TypeTests+Outermost`1+Inner`1[Tests.TypeTests+Sample,System.Int32]])");
+
+        Serialize(typeof(Tests.TypeTests.Outermost<>.InnerEnum))
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+InnerEnum[TOuter])");
+        Serialize(typeof(Tests.TypeTests.Outermost<int>.InnerEnum))
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+InnerEnum[System.Int32])");
+
+        Serialize(typeof(Tests.TypeTests.Outermost<>.InnerTwo<,>))
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+InnerTwo`2[TOuter,T1,T2])");
+        Serialize(typeof(Tests.TypeTests.Outermost<int>.InnerTwo<bool,string>))
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+InnerTwo`2[System.Int32,System.Boolean,System.String])");
+
+        // Somewhat surprising, but demonstrates we either have ALL generic
+        // type parameters or else ALL specified with concrete types.
+        var outerSpecified = typeof(Tests.TypeTests.Outermost<int>);
+        var innerTwoOpen = outerSpecified.GetNestedType("InnerTwo`2");
+        innerTwoOpen.ShouldNotBeNull();
+        Serialize(innerTwoOpen)
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+InnerTwo`2[TOuter,T1,T2])");
+
+        // MakeGenericType insists all three be provided.
+        var innerTwoSpecified = innerTwoOpen.MakeGenericType(typeof(int), typeof(bool), typeof(string));
+        Serialize(innerTwoSpecified)
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+InnerTwo`2[System.Int32,System.Boolean,System.String])");
     }
 
     public void ShouldAssertTypeEquality()
@@ -210,6 +233,14 @@ class TypeTests
             public class Innermost<TimeSpan>
             {
             }
+        }
+
+        public class InnerTwo<T1, T2>
+        {
+        }
+
+        public enum InnerEnum
+        {
         }
     }
 }
