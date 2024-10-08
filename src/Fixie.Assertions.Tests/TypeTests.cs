@@ -1,4 +1,4 @@
-﻿namespace Tests;
+namespace Tests;
 
 class TypeTests
 {
@@ -37,7 +37,7 @@ class TypeTests
             $"""
              x should be
 
-                 typeof({FullName<GeneralAssertionTests>()})
+                 typeof(Tests.GeneralAssertionTests)
              
              but was
              
@@ -47,7 +47,7 @@ class TypeTests
             $"""
              x should be
              
-                 typeof({FullName<GeneralAssertionTests>()})
+                 typeof(Tests.GeneralAssertionTests)
              
              but was
              
@@ -58,7 +58,7 @@ class TypeTests
             $"""
              x should be
              
-                 typeof({FullName<GeneralAssertionTests>()})
+                 typeof(Tests.GeneralAssertionTests)
              
              but was
              
@@ -72,7 +72,7 @@ class TypeTests
              
              but was
              
-                 typeof({FullName<GeneralAssertionTests>()})
+                 typeof(Tests.GeneralAssertionTests)
              """);
 
         Contradiction((Type?)null, x => x.ShouldBe(typeof(object)),
@@ -106,17 +106,17 @@ class TypeTests
             $"""
              x should match the type pattern
              
-                 is {FullName<GeneralAssertionTests>()}
+                 is Tests.GeneralAssertionTests
              
              but was
              
-                 {FullName<Sample>()}
+                 Tests.TypeTests+Sample
              """);
         Contradiction(true, x => x.ShouldBe<GeneralAssertionTests>(),
             $"""
              x should match the type pattern
              
-                 is {FullName<GeneralAssertionTests>()}
+                 is Tests.GeneralAssertionTests
              
              but was
              
@@ -127,7 +127,7 @@ class TypeTests
             $"""
              x should match the type pattern
              
-                 is {FullName<GeneralAssertionTests>()}
+                 is Tests.GeneralAssertionTests
              
              but was
              
@@ -140,7 +140,7 @@ class TypeTests
             $"""
              x should match the type pattern
              
-                 is {FullName<GeneralAssertionTests>()}
+                 is Tests.GeneralAssertionTests
              
              but was
              
@@ -150,7 +150,7 @@ class TypeTests
             $"""
              x should match the type pattern
 
-                 is {FullName<GeneralAssertionTests>()}
+                 is Tests.GeneralAssertionTests
              
              but was
 
@@ -160,7 +160,7 @@ class TypeTests
             $"""
              x should match the type pattern
 
-                 is {FullName<GeneralAssertionTests>()}
+                 is Tests.GeneralAssertionTests
 
              but was
 

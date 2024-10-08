@@ -8,12 +8,6 @@ static class Utility
 {
     static readonly string Line = NewLine + NewLine;
 
-    public static string FullName<T>()
-    {
-        return typeof(T).FullName ??
-               throw new Exception($"Expected type {typeof(T).Name} to have a non-null FullName.");
-    }
-
     public static void Contradiction<T>(T actual, Action<T> shouldThrow, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrow))] string assertion = default!)
     {
         try
