@@ -1,4 +1,4 @@
-namespace Tests;
+﻿namespace Tests;
 
 class TypeTests
 {
@@ -27,6 +27,31 @@ class TypeTests
 
         Serialize(typeof(Guid?)).ShouldBe("typeof(System.Guid?)");
         Serialize(typeof(int?)).ShouldBe("typeof(int?)");
+
+        Serialize(typeof(Sample)).ShouldBe("typeof(Tests.TypeTests+Sample)");
+        
+        Serialize(typeof(Tests.TypeTests.Outermost<>))
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1[TOuter])");
+        Serialize(typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>))
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1[Tests.TypeTests+Sample])");
+        Serialize(typeof(Tests.TypeTests.Outermost<int>))
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1[System.Int32])");
+
+        Serialize(typeof(Tests.TypeTests.Outermost<>.Inner<>))
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1[TOuter,TInner])");
+        Serialize(typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<int>))
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1[Tests.TypeTests+Sample,System.Int32])");
+        Serialize(typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<Outermost<Tests.TypeTests.Sample>.Inner<int>>))
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1[Tests.TypeTests+Sample,Tests.TypeTests+Outermost`1+Inner`1[Tests.TypeTests+Sample,System.Int32]])");
+
+        Serialize(typeof(Tests.TypeTests.Outermost<>.Inner<>.Innermost<>))
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1+Innermost`1[TOuter,TInner,TimeSpan])");
+        Serialize(typeof(Tests.TypeTests.Outermost<>.Inner<>.Innermost<>))
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1+Innermost`1[TOuter,TInner,TimeSpan])");
+        Serialize(typeof(Tests.TypeTests.Outermost<bool>.Inner<Tests.TypeTests.Sample>.Innermost<string>))
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1+Innermost`1[System.Boolean,Tests.TypeTests+Sample,System.String])");
+        Serialize(typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Outermost<System.TimeSpan>.Inner<Tests.TypeTests.Sample>>.Inner<Tests.TypeTests.Outermost<bool>.Inner<Tests.TypeTests.Sample>.Innermost<TimeSpan>>.Innermost<Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<int>>))
+            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1+Innermost`1[Tests.TypeTests+Outermost`1+Inner`1[System.TimeSpan,Tests.TypeTests+Sample],Tests.TypeTests+Outermost`1+Inner`1+Innermost`1[System.Boolean,Tests.TypeTests+Sample,System.TimeSpan],Tests.TypeTests+Outermost`1+Inner`1[Tests.TypeTests+Sample,System.Int32]])");
     }
 
     public void ShouldAssertTypeEquality()
@@ -175,4 +200,16 @@ class TypeTests
     }
 
     class Sample;
+
+    class Outermost<TOuter>
+    {
+        public class Inner<TInner>
+        {
+            // Deliberately confusing type parameter name to ensure it doesn't
+            // arrive in serialized output even while System.TimeSpan does.
+            public class Innermost<TimeSpan>
+            {
+            }
+        }
+    }
 }
