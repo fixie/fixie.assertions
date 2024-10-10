@@ -172,9 +172,13 @@ class PropertyTests
                 },
                 NestedList = (HttpMethod[])[HttpMethod.Get, HttpMethod.Post],
                 NestedPairs = (KeyValuePair<string, string>[]) [
-                    new KeyValuePair<string, string>("A", "1"),
-                    new KeyValuePair<string, string>("B", "2")
+                    new("A", "1"),
+                    new("B", "2")
                 ],
+                NestedDictionary = new SortedDictionary<string, string> {
+                    ["A"] = "1",
+                    ["B"] = "2"
+                },
                 NestedDynamic =  (dynamic) new {
                     Name = "Dynamic",
                     Age = -1
@@ -200,7 +204,17 @@ class PropertyTests
                             Method = "POST"
                           }
                         ],
-                        NestedPairs = {
+                        NestedPairs = [
+                          {
+                            Key = "A",
+                            Value = "1"
+                          },
+                          {
+                            Key = "B",
+                            Value = "2"
+                          }
+                        ],
+                        NestedDictionary = {
                           ["A"] = "1",
                           ["B"] = "2"
                         },

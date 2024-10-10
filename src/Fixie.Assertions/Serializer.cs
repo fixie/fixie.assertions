@@ -71,54 +71,75 @@ class Serializer
 
     static MethodInfo GetDynamicConverter(Type type)
     {
-        if (IsPairType(type, out var keyType, out var valueType))
-            return GetDynamicWriter(nameof(Writer.WritePairs), keyType, valueType);
+        if (HasDictionaryRepresentation(type, out var keyType, out var valueType))
+            return GetDynamicWriter(nameof(Writer.WriteDictionary), keyType, valueType);
 
-        if (IsEnumerableType(type, out var itemType))
+        if (HasListRepresentation(type, out var itemType))
             return GetDynamicWriter(nameof(Writer.WriteList), itemType);
 
-        return GetDynamicWriter(
-            type.IsEnum
-                ? nameof(Writer.WriteEnum)
-                : nameof(Writer.WriteProperties), type);
+        if (type.IsEnum)
+            return GetDynamicWriter(nameof(Writer.WriteEnum), type);
+
+        return GetDynamicWriter(nameof(Writer.WriteProperties), type);
     }
 
-    static bool IsPairType(Type typeToConvert,
+    static bool HasDictionaryRepresentation(Type typeToConvert,
         [NotNullWhen(true)] out Type? keyType,
         [NotNullWhen(true)] out Type? valueType)
     {
-        if (IsEnumerableType(typeToConvert, out var itemType))
-        {
-            if (itemType.IsGenericType &&
-                itemType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
-            {
-                var typeArguments = itemType.GetGenericArguments();
+        var interfaceType =
+            IsDictionaryInterface(typeToConvert)
+                ? typeToConvert
+                : typeToConvert.GetInterfaces().FirstOrDefault(IsDictionaryInterface);
 
-                keyType = typeArguments[0];
-                valueType = typeArguments[1];
-                return true;
-            }
+        if (interfaceType == null)
+        {
+            keyType = null;
+            valueType = null;
+            
+            return false;
         }
 
-        keyType = null;
-        valueType = null;
-        return false;
+        var typeArguments = interfaceType.GetGenericArguments();
+        
+        keyType = typeArguments[0];
+        valueType = typeArguments[1];
+        
+        return true;
     }
 
-    static bool IsEnumerableType(Type typeToConvert, [NotNullWhen(true)] out Type? itemType)
+    static bool HasListRepresentation(Type typeToConvert, [NotNullWhen(true)] out Type? itemType)
     {
-        var enumerableType =
-            IsEnumerableT(typeToConvert)
+        var interfaceType =
+            IsEnumerableInterface(typeToConvert)
                 ? typeToConvert
-                : typeToConvert.GetInterfaces().FirstOrDefault(IsEnumerableT);
+                : typeToConvert.GetInterfaces().FirstOrDefault(IsEnumerableInterface);
 
-        itemType = enumerableType?.GetGenericArguments()[0];
+        if (interfaceType == null)
+        {
+            itemType = null;
 
-        return itemType != null;
+            return false;
+        }
+
+        itemType = interfaceType.GetGenericArguments()[0];
+
+        return true;
     }
 
-    static bool IsEnumerableT(Type type)
+    static bool IsEnumerableInterface(Type type)
         => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+
+    static bool IsDictionaryInterface(Type type)
+    {
+        if (!type.IsGenericType)
+            return false;
+
+        var definition = type.GetGenericTypeDefinition();
+
+        return definition == typeof(IDictionary<,>)
+            || definition == typeof(IReadOnlyDictionary<,>);
+    }
 
     static MethodInfo GetDynamicWriter(string method, params Type[] typeArguments)
     {
