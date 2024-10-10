@@ -6,6 +6,18 @@ static class StringUtilities
 {
    public static string TypeName(Type type)
     {
+        if (type.IsGenericTypeParameter)
+            return "";
+
+        bool nullable = false;
+        var underlyingType = Nullable.GetUnderlyingType(type);
+
+        if (underlyingType != null)
+        {
+            type = underlyingType;
+            nullable = true;
+        }
+
         var keyword = type switch
         {
             _ when type == typeof(bool) => "bool",
@@ -29,10 +41,10 @@ static class StringUtilities
         };
 
         if (keyword != null)
-            return keyword;
+        {
+            return nullable ? keyword + "?" : keyword;
+        }
 
-        if (type.IsGenericTypeParameter)
-            return "";
 
         // When we have a combination of generics and nesting, where we may have 0..N generic type parameters
         // introduced at each nesting level, the behavior of Type is surprising. At each level, GetGenericArguments()
@@ -82,8 +94,13 @@ static class StringUtilities
                     if (!first)
                         result.Append(',');
 
-                    if (!type.IsGenericTypeParameter)
+                    if (!argument.IsGenericTypeParameter)
+                    {
+                        if (!first)
+                            result.Append(' ');
+
                         result.Append(TypeName(argument));
+                    }
 
                     first = false;
                 }
@@ -93,6 +110,9 @@ static class StringUtilities
                 
             skip += take;
         }
+
+        if (nullable)
+            result.Append('?');
 
         return result.ToString();
     }

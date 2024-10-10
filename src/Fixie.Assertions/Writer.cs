@@ -78,22 +78,8 @@ class Writer(StringBuilder output)
 
     public void WriteType(Type value)
     {
-        bool nullable = false;
-        var underlyingType = Nullable.GetUnderlyingType(value);
-
         Append("typeof(");
-
-        if (underlyingType != null)
-        {
-            value = underlyingType;
-            nullable = true;
-        }
-
         Append(TypeName(value));
-
-        if (nullable)
-            Append('?');
-        
         Append(')');
     }
 

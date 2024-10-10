@@ -58,15 +58,15 @@ class TypeTests
 
         Serialize(typeof(Tests.TypeTests.Outermost<>.InnerTwo<,>))
             .ShouldBe("typeof(Tests.TypeTests.Outermost<>.InnerTwo<,>)");
-        Serialize(typeof(Tests.TypeTests.Outermost<int>.InnerTwo<bool,string>))
-            .ShouldBe("typeof(Tests.TypeTests.Outermost<int>.InnerTwo<bool,string>)");
+        Serialize(typeof(Tests.TypeTests.Outermost<int>.InnerTwo<bool?,string>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<int>.InnerTwo<bool?, string>)");
 
         Serialize(typeof(Tests.TypeTests.Outermost<>.Nongeneric))
             .ShouldBe("typeof(Tests.TypeTests.Outermost<>.Nongeneric)");
         Serialize(typeof(Tests.TypeTests.Outermost<>.Nongeneric.MoreGeneric<>))
             .ShouldBe("typeof(Tests.TypeTests.Outermost<>.Nongeneric.MoreGeneric<>)");
-        Serialize(typeof(Tests.TypeTests.Outermost<string>.Nongeneric.MoreGeneric<int>))
-            .ShouldBe("typeof(Tests.TypeTests.Outermost<string>.Nongeneric.MoreGeneric<int>)");            
+        Serialize(typeof(Tests.TypeTests.Outermost<string>.Nongeneric.MoreGeneric<int?>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<string>.Nongeneric.MoreGeneric<int?>)");            
 
         // Somewhat surprising, but demonstrates we either have ALL generic
         // type parameters or else ALL specified with concrete types.
@@ -79,7 +79,7 @@ class TypeTests
         // MakeGenericType insists all three be provided.
         var innerTwoSpecified = innerTwoOpen.MakeGenericType(typeof(int), typeof(bool), typeof(string));
         Serialize(innerTwoSpecified)
-            .ShouldBe("typeof(Tests.TypeTests.Outermost<int>.InnerTwo<bool,string>)");
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<int>.InnerTwo<bool, string>)");
     }
 
     public void ShouldAssertTypeEquality()
