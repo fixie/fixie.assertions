@@ -54,9 +54,9 @@ class ThrownExceptionTests
         var funcReturingNullableInt = () => (int?)1;
         var funcReturningStruct = () => new Struct();
 
-        Contradiction(funcReturingBool, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<bool>>());
-        Contradiction(funcReturingNullableInt, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<int?>>());
-        Contradiction(funcReturningStruct, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<Struct>>());
+        Contradiction(funcReturingBool, x => x.ShouldThrow<Exception>(), DelegateMisused("Func<bool>"));
+        Contradiction(funcReturingNullableInt, x => x.ShouldThrow<Exception>(), DelegateMisused("Func<int?>"));
+        Contradiction(funcReturningStruct, x => x.ShouldThrow<Exception>(), DelegateMisused("Func<Tests.ThrownExceptionTests.Struct>"));
 
 
         // Valid overloads for these function types exist, so if we encounter them as
@@ -68,10 +68,10 @@ class ThrownExceptionTests
         Func<Task> funcTaskAsync = async () => await Task.CompletedTask;
         Func<Task<int>> funcTaskResultAsync = async () => await Task.FromResult(1);
 
-        Contradiction((Delegate)action, x => x.ShouldThrow<Exception>(), DelegateMisused<Action>());
-        Contradiction((Delegate)funcReturningReference, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<string>>());
-        Contradiction((Delegate)funcTaskAsync, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<Task>>());
-        Contradiction((Delegate)funcTaskResultAsync, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<Task<int>>>());
+        Contradiction((Delegate)action, x => x.ShouldThrow<Exception>(), DelegateMisused("Action"));
+        Contradiction((Delegate)funcReturningReference, x => x.ShouldThrow<Exception>(), DelegateMisused("Func<string>"));
+        Contradiction((Delegate)funcTaskAsync, x => x.ShouldThrow<Exception>(), DelegateMisused("Func<System.Threading.Tasks.Task>"));
+        Contradiction((Delegate)funcTaskResultAsync, x => x.ShouldThrow<Exception>(), DelegateMisused("Func<System.Threading.Tasks.Task<int>>"));
 
 
         // We'd prefer to just let the user encounter a simple compiler error
@@ -86,11 +86,11 @@ class ThrownExceptionTests
         Func<int, string, int> funcWithInputs = (int x, string y) => x;
         Func<ValueTask> funcValueTaskAsync = async () => await Task.CompletedTask;
 
-        Contradiction(actionWithInput, x => x.ShouldThrow<Exception>(), DelegateMisused<Action<int>>());
-        Contradiction(actionWithInputs, x => x.ShouldThrow<Exception>(), DelegateMisused<Action<int, string>>());
-        Contradiction(funcWithInput, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<int, int>>());
-        Contradiction(funcWithInputs, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<int, string, int>>());
-        Contradiction(funcValueTaskAsync, x => x.ShouldThrow<Exception>(), DelegateMisused<Func<ValueTask>>());
+        Contradiction(actionWithInput, x => x.ShouldThrow<Exception>(), DelegateMisused("Action<int>"));
+        Contradiction(actionWithInputs, x => x.ShouldThrow<Exception>(), DelegateMisused("Action<int, string>"));
+        Contradiction(funcWithInput, x => x.ShouldThrow<Exception>(), DelegateMisused("Func<int, int>"));
+        Contradiction(funcWithInputs, x => x.ShouldThrow<Exception>(), DelegateMisused("Func<int, string, int>"));
+        Contradiction(funcValueTaskAsync, x => x.ShouldThrow<Exception>(), DelegateMisused("Func<System.Threading.Tasks.ValueTask>"));
     }
 
     public void DetectPotentialForSimplification()
@@ -313,11 +313,11 @@ class ThrownExceptionTests
             "Simulated Failure"
         """;
 
-    static string DelegateMisused<TResult>() =>
+    static string DelegateMisused(string expectedFunctionType) =>
         $"""
          x has a function type compatible with
 
-             {typeof(TResult)}
+             {expectedFunctionType}
 
          but ShouldThrow<TException> has no corresponding overload.
 

@@ -224,11 +224,11 @@ public static class AssertionExtensions
 
         if (function.ReturnType == typeof(void))
             return typeParameters.Count == 0
-                ? "System.Action"
-                : $"System.Action`{typeParameters.Count}[{string.Join(",", typeParameters)}]";
+                ? "Action"
+                : $"Action<{string.Join(", ", typeParameters.Select(TypeName))}>";
 
         typeParameters.Add(function.ReturnType);
-        return $"System.Func`{typeParameters.Count}[{string.Join(",", typeParameters)}]";
+        return $"Func<{string.Join(", ", typeParameters.Select(TypeName))}>";
     }
 
     static TException ShouldBeException<TException>(string? expectedMessage, string expression, Exception actual) where TException : Exception
