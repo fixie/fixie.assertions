@@ -5,7 +5,7 @@ namespace Tests;
 
 class KeyValueTests
 {
-    public void ShouldSerializeKeyValuePairs()
+    public void ShouldSerializeDictionaryUsingKeyValuePairSyntax()
     {
         Serialize((Dictionary<string, string>)[]).ShouldBe("{}");
         Serialize(new Dictionary<string, string>
@@ -20,7 +20,10 @@ class KeyValueTests
                       ["Third Key"] = "Third Value"
                     }
                     """);
+    }
 
+    public void ShouldSerializeIDictionaryAndSubtypesUsingKeyValuePairSyntax()
+    {
         Serialize(new CustomDictionary(0)).ShouldBe("{}");
         Serialize(new CustomDictionary(1))
             .ShouldBe("""
@@ -30,11 +33,48 @@ class KeyValueTests
                       """);
         Serialize(new CustomDictionary(3)).ShouldBe(Dictionary123);
         Serialize((ICustomDictionary)new CustomDictionary(3)).ShouldBe(Dictionary123);
+        Serialize((IDictionary<int, string>)new CustomDictionary(3)).ShouldBe(Dictionary123);
+    }
 
-        //Once it is unclear whether we are interacting with dictionary semantics,
-        //the list must be presented as an ordered list of pair objects.
+    public void ShouldSerializeAmbiguousCollectionsOfKeyValuePairsAsLists()
+    {
+        // Once it is unclear whether or not we are interacting with dictionary semantics,
+        // the collection must be presented as an ordered list of pair objects.
+        //
+        // The publicly declared structural surface of a type might include a property
+        // declared as IEnumerable<KeyValuePair<int, string>>, and for the purposes of
+        // structural presentation and structural equality, we do not want to inspect the
+        // runtime type for IDictionary<int, string>. That would leak hidden implementation
+        // details in a way that substantively breaks a structural comparison where the
+        // comparison object happens to use some other concrete type.
+
+        Serialize((IEnumerable<KeyValuePair<string, string>>)new Dictionary<string, string>
+        {
+            ["First Key"] = "First Value",
+            ["Second Key"] = "Second Value",
+            ["Third Key"] = "Third Value"
+        }).ShouldBe("""
+                    [
+                      {
+                        Key = "First Key",
+                        Value = "First Value"
+                      },
+                      {
+                        Key = "Second Key",
+                        Value = "Second Value"
+                      },
+                      {
+                        Key = "Third Key",
+                        Value = "Third Value"
+                      }
+                    ]
+                    """);
+
         Serialize((IEnumerable<KeyValuePair<int,string>>)new CustomDictionary(3)).ShouldBe(List123);
+    }
 
+    public void ShouldSerializeNestedDictioniesRecursively()
+    {
         Serialize((Dictionary<string, SortedDictionary<int, bool>>)[]).ShouldBe("{}");
         Serialize(new Dictionary<string, SortedDictionary<int, bool>>
         {
@@ -75,12 +115,15 @@ class KeyValueTests
                       }
                     }
                     """);
+    }
 
-        Serialize((IEnumerable<KeyValuePair<int, string>>?)null).ShouldBe("null");
+    public void ShouldSerializeNullCollections()
+    {
+        Serialize((Dictionary<string, object>?)null).ShouldBe("null");
+        Serialize((IDictionary<string, object>?)null).ShouldBe("null");
         Serialize((CustomDictionary?)null).ShouldBe("null");
         Serialize((ICustomDictionary?)null).ShouldBe("null");
-        Serialize((Dictionary<string, object>?)null).ShouldBe("null");
-        Serialize((Dictionary<string, object>?)[]).ShouldBe("{}");
+        Serialize((IEnumerable<KeyValuePair<int, string>>?)null).ShouldBe("null");
     }
 
     public void ShouldAssertKeyValuePairs()
