@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics;
 
 namespace Tests;
 
@@ -6,14 +7,6 @@ class KeyValueTests
 {
     public void ShouldSerializeKeyValuePairs()
     {
-        var dictionary123 = """
-                            {
-                              [1] = "*",
-                              [2] = "**",
-                              [3] = "***"
-                            }
-                            """;
-
         Serialize((Dictionary<string, string>)[]).ShouldBe("{}");
         Serialize(new Dictionary<string, string>
         {
@@ -28,17 +21,19 @@ class KeyValueTests
                     }
                     """);
 
-        Serialize(new Custom(0)).ShouldBe("{}");
-        Serialize(new Custom(1))
+        Serialize(new CustomDictionary(0)).ShouldBe("{}");
+        Serialize(new CustomDictionary(1))
             .ShouldBe("""
                       {
                         [1] = "*"
                       }
                       """);
-        Serialize(new Custom(3)).ShouldBe(dictionary123);
-        Serialize((ICustom)new Custom(3)).ShouldBe(dictionary123);
+        Serialize(new CustomDictionary(3)).ShouldBe(Dictionary123);
+        Serialize((ICustomDictionary)new CustomDictionary(3)).ShouldBe(Dictionary123);
 
-        Serialize((IEnumerable<KeyValuePair<int,string>>)new Custom(3)).ShouldBe(dictionary123);
+        //Once it is unclear whether we are interacting with dictionary semantics,
+        //the list must be presented as an ordered list of pair objects.
+        Serialize((IEnumerable<KeyValuePair<int,string>>)new CustomDictionary(3)).ShouldBe(List123);
 
         Serialize((Dictionary<string, SortedDictionary<int, bool>>)[]).ShouldBe("{}");
         Serialize(new Dictionary<string, SortedDictionary<int, bool>>
@@ -82,8 +77,8 @@ class KeyValueTests
                     """);
 
         Serialize((IEnumerable<KeyValuePair<int, string>>?)null).ShouldBe("null");
-        Serialize((Custom?)null).ShouldBe("null");
-        Serialize((ICustom?)null).ShouldBe("null");
+        Serialize((CustomDictionary?)null).ShouldBe("null");
+        Serialize((ICustomDictionary?)null).ShouldBe("null");
         Serialize((Dictionary<string, object>?)null).ShouldBe("null");
         Serialize((Dictionary<string, object>?)[]).ShouldBe("{}");
     }
@@ -298,7 +293,7 @@ class KeyValueTests
         nullablePairs.ShouldMatch([]);
     }
 
-    class Custom(byte size) : ICustom
+    class CustomDictionary(byte size) : ICustomDictionary
     {
         public IEnumerator<KeyValuePair<int, string>> GetEnumerator()
             => new Enumerator(size);
@@ -326,9 +321,60 @@ class KeyValueTests
 
             public void Dispose() { }
         }
+
+        #region Members Irrelevant to the Serializer
+
+        string IDictionary<int, string>.this[int key]
+        {
+            get => throw new UnreachableException();
+            set => throw new UnreachableException();
+        }
+
+        public ICollection<int> Keys => throw new UnreachableException();
+        public ICollection<string> Values => throw new UnreachableException();
+        public int Count => throw new UnreachableException();
+        public bool IsReadOnly => throw new UnreachableException();
+        public void Add(int key, string value) => throw new UnreachableException();
+        public void Add(KeyValuePair<int, string> item) => throw new UnreachableException();
+        public void Clear() => throw new UnreachableException();
+        public bool Contains(KeyValuePair<int, string> item) => throw new UnreachableException();
+        public bool ContainsKey(int key) => throw new UnreachableException();
+        public void CopyTo(KeyValuePair<int, string>[] array, int arrayIndex) => throw new UnreachableException();
+        public bool Remove(int key) => throw new UnreachableException();
+        public bool Remove(KeyValuePair<int, string> item) => throw new UnreachableException();
+        public bool TryGetValue(int key, out string value) => throw new UnreachableException();
+
+        #endregion
     }
 
-    interface ICustom : IEnumerable<KeyValuePair<int, string>>
+    interface ICustomDictionary : IDictionary<int, string>
     {
     }
+
+    const string Dictionary123 =
+        """
+        {
+          [1] = "*",
+          [2] = "**",
+          [3] = "***"
+        }
+        """;
+
+    const string List123 =
+        """
+        [
+          {
+            Key = 1,
+            Value = "*"
+          },
+          {
+            Key = 2,
+            Value = "**"
+          },
+          {
+            Key = 3,
+            Value = "***"
+          }
+        ]
+        """;
 }

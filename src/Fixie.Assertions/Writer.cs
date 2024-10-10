@@ -114,7 +114,7 @@ class Writer(StringBuilder output)
         WriteItems('[', items, ']', WriteSerialized);
     }
 
-    public void WritePairs<TKey, TValue>(IEnumerable<KeyValuePair<TKey, TValue>> pairs)
+    public void WriteDictionary<TKey, TValue>(IEnumerable<KeyValuePair<TKey, TValue>> pairs)
     {
         WriteItems('{', pairs, '}', pair =>
         {
