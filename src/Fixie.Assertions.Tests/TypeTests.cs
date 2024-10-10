@@ -28,40 +28,45 @@ class TypeTests
         Serialize(typeof(Guid?)).ShouldBe("typeof(System.Guid?)");
         Serialize(typeof(int?)).ShouldBe("typeof(int?)");
 
-        Serialize(typeof(Sample)).ShouldBe("typeof(Tests.TypeTests+Sample)");
+        Serialize(typeof(Sample)).ShouldBe("typeof(Tests.TypeTests.Sample)");
         
         Serialize(typeof(Tests.TypeTests.Outermost<>))
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1[TOuter])");
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>)");
         Serialize(typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>))
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1[Tests.TypeTests+Sample])");
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>)");
         Serialize(typeof(Tests.TypeTests.Outermost<int>))
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1[System.Int32])");
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<int>)");
 
         Serialize(typeof(Tests.TypeTests.Outermost<>.Inner<>))
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1[TOuter,TInner])");
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>.Inner<>)");
         Serialize(typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<int>))
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1[Tests.TypeTests+Sample,System.Int32])");
-        Serialize(typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<Outermost<Tests.TypeTests.Sample>.Inner<int>>))
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1[Tests.TypeTests+Sample,Tests.TypeTests+Outermost`1+Inner`1[Tests.TypeTests+Sample,System.Int32]])");
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<int>)");
+        Serialize(typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<int>>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<int>>)");
 
         Serialize(typeof(Tests.TypeTests.Outermost<>.Inner<>.Innermost<>))
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1+Innermost`1[TOuter,TInner,TimeSpan])");
-        Serialize(typeof(Tests.TypeTests.Outermost<>.Inner<>.Innermost<>))
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1+Innermost`1[TOuter,TInner,TimeSpan])");
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>.Inner<>.Innermost<>)");
         Serialize(typeof(Tests.TypeTests.Outermost<bool>.Inner<Tests.TypeTests.Sample>.Innermost<string>))
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1+Innermost`1[System.Boolean,Tests.TypeTests+Sample,System.String])");
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<bool>.Inner<Tests.TypeTests.Sample>.Innermost<string>)");
         Serialize(typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Outermost<System.TimeSpan>.Inner<Tests.TypeTests.Sample>>.Inner<Tests.TypeTests.Outermost<bool>.Inner<Tests.TypeTests.Sample>.Innermost<TimeSpan>>.Innermost<Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<int>>))
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+Inner`1+Innermost`1[Tests.TypeTests+Outermost`1+Inner`1[System.TimeSpan,Tests.TypeTests+Sample],Tests.TypeTests+Outermost`1+Inner`1+Innermost`1[System.Boolean,Tests.TypeTests+Sample,System.TimeSpan],Tests.TypeTests+Outermost`1+Inner`1[Tests.TypeTests+Sample,System.Int32]])");
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Outermost<System.TimeSpan>.Inner<Tests.TypeTests.Sample>>.Inner<Tests.TypeTests.Outermost<bool>.Inner<Tests.TypeTests.Sample>.Innermost<System.TimeSpan>>.Innermost<Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<int>>)");
 
         Serialize(typeof(Tests.TypeTests.Outermost<>.InnerEnum))
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+InnerEnum[TOuter])");
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>.InnerEnum)");
         Serialize(typeof(Tests.TypeTests.Outermost<int>.InnerEnum))
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+InnerEnum[System.Int32])");
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<int>.InnerEnum)");
 
         Serialize(typeof(Tests.TypeTests.Outermost<>.InnerTwo<,>))
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+InnerTwo`2[TOuter,T1,T2])");
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>.InnerTwo<,>)");
         Serialize(typeof(Tests.TypeTests.Outermost<int>.InnerTwo<bool,string>))
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+InnerTwo`2[System.Int32,System.Boolean,System.String])");
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<int>.InnerTwo<bool,string>)");
+
+        Serialize(typeof(Tests.TypeTests.Outermost<>.Nongeneric))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>.Nongeneric)");
+        Serialize(typeof(Tests.TypeTests.Outermost<>.Nongeneric.MoreGeneric<>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>.Nongeneric.MoreGeneric<>)");
+        Serialize(typeof(Tests.TypeTests.Outermost<string>.Nongeneric.MoreGeneric<int>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<string>.Nongeneric.MoreGeneric<int>)");            
 
         // Somewhat surprising, but demonstrates we either have ALL generic
         // type parameters or else ALL specified with concrete types.
@@ -69,12 +74,12 @@ class TypeTests
         var innerTwoOpen = outerSpecified.GetNestedType("InnerTwo`2");
         innerTwoOpen.ShouldNotBeNull();
         Serialize(innerTwoOpen)
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+InnerTwo`2[TOuter,T1,T2])");
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>.InnerTwo<,>)");
 
         // MakeGenericType insists all three be provided.
         var innerTwoSpecified = innerTwoOpen.MakeGenericType(typeof(int), typeof(bool), typeof(string));
         Serialize(innerTwoSpecified)
-            .ShouldBe("typeof(Tests.TypeTests+Outermost`1+InnerTwo`2[System.Int32,System.Boolean,System.String])");
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<int>.InnerTwo<bool,string>)");
     }
 
     public void ShouldAssertTypeEquality()
@@ -158,7 +163,7 @@ class TypeTests
              
              but was
              
-                 Tests.TypeTests+Sample
+                 Tests.TypeTests.Sample
              """);
         Contradiction(true, x => x.ShouldBe<GeneralAssertionTests>(),
             $"""
@@ -241,6 +246,13 @@ class TypeTests
 
         public enum InnerEnum
         {
+        }
+
+        public class Nongeneric
+        {
+            public class MoreGeneric<TMore>
+            {
+            }
         }
     }
 }
