@@ -336,34 +336,17 @@ class KeyValueTests
         nullablePairs.ShouldMatch([]);
     }
 
+    interface ICustomDictionary : IDictionary<int, string>
+    {
+    }
+
     class CustomDictionary(byte size) : ICustomDictionary
     {
         public IEnumerator<KeyValuePair<int, string>> GetEnumerator()
-            => new Enumerator(size);
+            => new PairEnumerator(size);
 
         IEnumerator IEnumerable.GetEnumerator()
             => GetEnumerator();
-
-        class Enumerator(byte size) : IEnumerator<KeyValuePair<int, string>>
-        {
-            int count = 0;
-
-            public KeyValuePair<int, string> Current => new(count, new('*', count));
-
-            object IEnumerator.Current => Current;
-
-            public bool MoveNext()
-            {
-                count++;
-
-                return count <= size;
-            }
-
-            public void Reset()
-                => count = 0;
-
-            public void Dispose() { }
-        }
 
         #region Members Irrelevant to the Serializer
 
@@ -390,8 +373,25 @@ class KeyValueTests
         #endregion
     }
 
-    interface ICustomDictionary : IDictionary<int, string>
+    class PairEnumerator(byte size) : IEnumerator<KeyValuePair<int, string>>
     {
+        int count = 0;
+
+        public KeyValuePair<int, string> Current => new(count, new('*', count));
+
+        object IEnumerator.Current => Current;
+
+        public bool MoveNext()
+        {
+            count++;
+
+            return count <= size;
+        }
+
+        public void Reset()
+            => count = 0;
+
+        public void Dispose() { }
     }
 
     const string Dictionary123 =
