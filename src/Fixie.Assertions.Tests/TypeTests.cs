@@ -71,8 +71,7 @@ class TypeTests
         // Somewhat surprising, but demonstrates we either have ALL generic
         // type parameters or else ALL specified with concrete types.
         var outerSpecified = typeof(Tests.TypeTests.Outermost<int>);
-        var innerTwoOpen = outerSpecified.GetNestedType("InnerTwo`2");
-        innerTwoOpen.ShouldNotBeNull();
+        var innerTwoOpen = outerSpecified.GetNestedType("InnerTwo`2").ShouldNotBeNull();
         Serialize(innerTwoOpen)
             .ShouldBe("typeof(Tests.TypeTests.Outermost<>.InnerTwo<,>)");
 

@@ -4,16 +4,26 @@ class GeneralAssertionTests
 {
     public void ShouldAssertNullVsNotNull()
     {
-        object? o = null;
-        o.ShouldBe(null);
-        Contradiction(o, x => x.ShouldNotBeNull(),
-            """
-            x should not be null but was null.
-            """);
+        Sample? nullableReference = null;
+        char? nullableValue = null;
 
-        o = new object();
-        o.ShouldNotBeNull();
-        Contradiction(o, x => x.ShouldBe(null),
+        nullableReference.ShouldBe(null);
+        nullableValue.ShouldBe(null);
+
+        Contradiction(nullableReference, x => x.ShouldNotBeNull(), "x should not be null but was null.");
+        Contradiction(nullableValue, x => x.ShouldNotBeNull(), "x should not be null but was null.");
+
+        nullableReference = new(1);
+        nullableValue = 'A';
+
+        Sample nonNullReference = nullableReference.ShouldNotBeNull();
+        (nonNullReference != null).ShouldBe(true);
+        nullableReference.ShouldBe(nonNullReference);
+
+        char nonNullValue = nullableValue.ShouldNotBeNull();
+        nullableValue.ShouldBe(nonNullValue);
+
+        Contradiction(nullableReference, x => x.ShouldBe(null),
             """
             x should be
             
@@ -21,7 +31,20 @@ class GeneralAssertionTests
             
             but was
 
-                {}
+                {
+                  Value = 1
+                }
+            """);
+
+        Contradiction(nullableValue, x => x.ShouldBe(null),
+            """
+            x should be
+            
+                null
+            
+            but was
+
+                'A'
             """);
     }
 
@@ -102,4 +125,9 @@ class GeneralAssertionTests
                 null
             """);
     }
+
+    class Sample(int value)
+    {
+        public int Value => value;
+    };
 }

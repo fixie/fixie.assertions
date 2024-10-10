@@ -61,10 +61,20 @@ public static class AssertionExtensions
     /// Assert that this object is not null.
     /// </summary>
     /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
-    public static void ShouldNotBeNull([NotNull] this object? actual, [CallerArgumentExpression(nameof(actual))] string expression = default!)
+    public static T ShouldNotBeNull<T>([NotNull] this T? actual, [CallerArgumentExpression(nameof(actual))] string expression = default!)
+        where T : class
     {
-        if (actual == null)
-            throw new AssertException(expression, "not null", "null", $"{expression} should not be null but was null.", false);
+        return actual ?? throw new AssertException(expression, "not null", "null", $"{expression} should not be null but was null.", false);
+    }
+
+    /// <summary>
+    /// Assert that this object is not null.
+    /// </summary>
+    /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
+    public static T ShouldNotBeNull<T>([NotNull] this T? actual, [CallerArgumentExpression(nameof(actual))] string expression = default!)
+         where T : struct
+    {
+        return actual ?? throw new AssertException(expression, "not null", "null", $"{expression} should not be null but was null.", false);
     }
 
     /// <summary>

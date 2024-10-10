@@ -134,7 +134,7 @@ but was
 
 ## Nulls
 
-The `ShouldBeNull` assertion provides additional evidence to the compiler as it traces the flow of nullability through your test code. After calling it, the target object is understood to definitely not be null in subsequent statements.
+The `ShouldNotBeNull` assertion provides additional evidence to the compiler as it traces the flow of nullability through your test code. After calling it, the target object is understood to definitely not be null in subsequent statements.
 
 ```cs
 possiblyNull.Property.ShouldBe(7);
@@ -144,6 +144,12 @@ possiblyNull.Property.ShouldBe(7);
 ```cs
 possiblyNull.ShouldNotBeNull();
 possiblyNull.Property.ShouldBe(7); // No warning here.
+```
+
+Upon success, it returns the value unchanged with awareness that it is not null:
+
+```cs
+possiblyNull.ShouldNotBeNull().Property.ShouldBe(7); // No warning here.
 ```
 
 ## Expecting Exceptions
