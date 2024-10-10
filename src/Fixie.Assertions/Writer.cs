@@ -7,7 +7,6 @@ namespace Fixie.Assertions;
 
 class Writer(StringBuilder output)
 {
-    readonly StringBuilder output = output;
     int indentation = 0;
     int lengthAtLineStart = 0;
 
@@ -42,6 +41,13 @@ class Writer(StringBuilder output)
 
     public void WriteString(string value)
     {
+        bool IsMultiline(string value)
+        {
+            var lines = value.Split(Environment.NewLine);
+
+            return lines.Length > 1 && lines.All(line => !line.Contains('\r') && !line.Contains('\n'));
+        }
+
         if (IsMultiline(value))
         {
             var lengthAtOpenTerminalStart = output.Length;
@@ -72,22 +78,8 @@ class Writer(StringBuilder output)
 
     public void WriteType(Type value)
     {
-        bool nullable = false;
-        var underlyingType = Nullable.GetUnderlyingType(value);
-
         Append("typeof(");
-
-        if (underlyingType != null)
-        {
-            value = underlyingType;
-            nullable = true;
-        }
-
         Append(TypeName(value));
-
-        if (nullable)
-            Append('?');
-        
         Append(')');
     }
 
@@ -95,7 +87,7 @@ class Writer(StringBuilder output)
     {
         if (Enum.IsDefined(typeof(T), value))
         {
-            Append(typeof(T).FullName);
+            Append(TypeName(typeof(T)));
             Append('.');
             Append(value);
             return;
@@ -105,7 +97,7 @@ class Writer(StringBuilder output)
         bool negative = numeric.StartsWith('-');
 
         Append('(');
-        Append(typeof(T).FullName);
+        Append(TypeName(typeof(T)));
         Append(')');
 
         if (negative)

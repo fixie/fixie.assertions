@@ -25,7 +25,17 @@ class StackTraceTests
     {
         var exception = Catch(FailAssertion);
         
-        exception.Message.ShouldBe("1 should be 2 but was 1");
+        exception.Message
+            .ShouldBe(
+                """
+                1 should be
+                
+                    2
+                
+                but was
+                
+                    1
+                """);
 
         exception.StackTrace.ShouldNotBeNull();
         

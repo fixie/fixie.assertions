@@ -1,18 +1,13 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using static System.Environment;
+using static Fixie.Assertions.StringUtilities;
 
 namespace Tests;
 
 static class Utility
 {
     static readonly string Line = NewLine + NewLine;
-
-    public static string FullName<T>()
-    {
-        return typeof(T).FullName ??
-               throw new Exception($"Expected type {typeof(T).Name} to have a non-null FullName.");
-    }
 
     public static void Contradiction<T>(T actual, Action<T> shouldThrow, string expectedMessage, [CallerArgumentExpression(nameof(shouldThrow))] string assertion = default!)
     {
@@ -68,7 +63,7 @@ static class Utility
             $"\t{assertion}{Line}" +
             $"The actual value in question was:{Line}" +
             $"\t{actual}{Line}" +
-            $"The assertion threw {exception.GetType().FullName} with message:{Line}" +
+            $"The assertion threw {TypeName(exception.GetType())} with message:{Line}" +
             $"\t{exception.Message}");
     }
 

@@ -17,8 +17,8 @@ class BoolTests
         true.ShouldBe(true);
         false.ShouldBe(false);
 
-        Contradiction(true, x => x.ShouldBe(false), "x should be false but was true");
-        Contradiction(false, x => x.ShouldBe(true), "x should be true but was false");
+        Contradiction(true, x => x.ShouldBe(false), Inequality("false", "true"));
+        Contradiction(false, x => x.ShouldBe(true), Inequality("true", "false"));
     }
 
     public void ShouldAssertNullableBools()
@@ -26,19 +26,30 @@ class BoolTests
         bool? nullableBool = null;
 
         nullableBool.ShouldBe(null);
-        Contradiction(nullableBool, x => x.ShouldBe(false), "x should be false but was null");
-        Contradiction(nullableBool, x => x.ShouldBe(true), "x should be true but was null");
+        Contradiction(nullableBool, x => x.ShouldBe(false), Inequality("false", "null"));
+        Contradiction(nullableBool, x => x.ShouldBe(true), Inequality("true", "null"));
 
         nullableBool = false;
 
-        Contradiction(nullableBool, x => x.ShouldBe(null), "x should be null but was false");
+        Contradiction(nullableBool, x => x.ShouldBe(null), Inequality("null", "false"));
         nullableBool.ShouldBe(false);
-        Contradiction(nullableBool, x => x.ShouldBe(true), "x should be true but was false");
+        Contradiction(nullableBool, x => x.ShouldBe(true), Inequality("true", "false"));
 
         nullableBool = true;
 
-        Contradiction(nullableBool, x => x.ShouldBe(null), "x should be null but was true");
-        Contradiction(nullableBool, x => x.ShouldBe(false), "x should be false but was true");
+        Contradiction(nullableBool, x => x.ShouldBe(null), Inequality("null", "true"));
+        Contradiction(nullableBool, x => x.ShouldBe(false), Inequality("false", "true"));
         nullableBool.ShouldBe(true);
     }
+
+    static string Inequality(string expectedLiteral, string actualLiteral) =>
+        $"""
+         x should be
+
+             {expectedLiteral}
+
+         but was
+
+             {actualLiteral}
+         """;
 }

@@ -27,6 +27,59 @@ class TypeTests
 
         Serialize(typeof(Guid?)).ShouldBe("typeof(System.Guid?)");
         Serialize(typeof(int?)).ShouldBe("typeof(int?)");
+
+        Serialize(typeof(Sample)).ShouldBe("typeof(Tests.TypeTests.Sample)");
+        
+        Serialize(typeof(Tests.TypeTests.Outermost<>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>)");
+        Serialize(typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>)");
+        Serialize(typeof(Tests.TypeTests.Outermost<int>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<int>)");
+
+        Serialize(typeof(Tests.TypeTests.Outermost<>.Inner<>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>.Inner<>)");
+        Serialize(typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<int>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<int>)");
+        Serialize(typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<int>>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<int>>)");
+
+        Serialize(typeof(Tests.TypeTests.Outermost<>.Inner<>.Innermost<>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>.Inner<>.Innermost<>)");
+        Serialize(typeof(Tests.TypeTests.Outermost<bool>.Inner<Tests.TypeTests.Sample>.Innermost<string>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<bool>.Inner<Tests.TypeTests.Sample>.Innermost<string>)");
+        Serialize(typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Outermost<System.TimeSpan>.Inner<Tests.TypeTests.Sample>>.Inner<Tests.TypeTests.Outermost<bool>.Inner<Tests.TypeTests.Sample>.Innermost<TimeSpan>>.Innermost<Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<int>>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<Tests.TypeTests.Outermost<System.TimeSpan>.Inner<Tests.TypeTests.Sample>>.Inner<Tests.TypeTests.Outermost<bool>.Inner<Tests.TypeTests.Sample>.Innermost<System.TimeSpan>>.Innermost<Tests.TypeTests.Outermost<Tests.TypeTests.Sample>.Inner<int>>)");
+
+        Serialize(typeof(Tests.TypeTests.Outermost<>.InnerEnum))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>.InnerEnum)");
+        Serialize(typeof(Tests.TypeTests.Outermost<int>.InnerEnum))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<int>.InnerEnum)");
+
+        Serialize(typeof(Tests.TypeTests.Outermost<>.InnerTwo<,>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>.InnerTwo<,>)");
+        Serialize(typeof(Tests.TypeTests.Outermost<int>.InnerTwo<bool?,string>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<int>.InnerTwo<bool?, string>)");
+
+        Serialize(typeof(Tests.TypeTests.Outermost<>.Nongeneric))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>.Nongeneric)");
+        Serialize(typeof(Tests.TypeTests.Outermost<>.Nongeneric.MoreGeneric<>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>.Nongeneric.MoreGeneric<>)");
+        Serialize(typeof(Tests.TypeTests.Outermost<string>.Nongeneric.MoreGeneric<int?>))
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<string>.Nongeneric.MoreGeneric<int?>)");            
+
+        // Somewhat surprising, but demonstrates we either have ALL generic
+        // type parameters or else ALL specified with concrete types.
+        var outerSpecified = typeof(Tests.TypeTests.Outermost<int>);
+        var innerTwoOpen = outerSpecified.GetNestedType("InnerTwo`2");
+        innerTwoOpen.ShouldNotBeNull();
+        Serialize(innerTwoOpen)
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<>.InnerTwo<,>)");
+
+        // MakeGenericType insists all three be provided.
+        var innerTwoSpecified = innerTwoOpen.MakeGenericType(typeof(int), typeof(bool), typeof(string));
+        Serialize(innerTwoSpecified)
+            .ShouldBe("typeof(Tests.TypeTests.Outermost<int>.InnerTwo<bool, string>)");
     }
 
     public void ShouldAssertTypeEquality()
@@ -37,7 +90,7 @@ class TypeTests
             $"""
              x should be
 
-                 typeof({FullName<GeneralAssertionTests>()})
+                 typeof(Tests.GeneralAssertionTests)
              
              but was
              
@@ -47,7 +100,7 @@ class TypeTests
             $"""
              x should be
              
-                 typeof({FullName<GeneralAssertionTests>()})
+                 typeof(Tests.GeneralAssertionTests)
              
              but was
              
@@ -58,7 +111,7 @@ class TypeTests
             $"""
              x should be
              
-                 typeof({FullName<GeneralAssertionTests>()})
+                 typeof(Tests.GeneralAssertionTests)
              
              but was
              
@@ -72,7 +125,7 @@ class TypeTests
              
              but was
              
-                 typeof({FullName<GeneralAssertionTests>()})
+                 typeof(Tests.GeneralAssertionTests)
              """);
 
         Contradiction((Type?)null, x => x.ShouldBe(typeof(object)),
@@ -106,17 +159,17 @@ class TypeTests
             $"""
              x should match the type pattern
              
-                 is {FullName<GeneralAssertionTests>()}
+                 is Tests.GeneralAssertionTests
              
              but was
              
-                 {FullName<Sample>()}
+                 Tests.TypeTests.Sample
              """);
         Contradiction(true, x => x.ShouldBe<GeneralAssertionTests>(),
             $"""
              x should match the type pattern
              
-                 is {FullName<GeneralAssertionTests>()}
+                 is Tests.GeneralAssertionTests
              
              but was
              
@@ -127,7 +180,7 @@ class TypeTests
             $"""
              x should match the type pattern
              
-                 is {FullName<GeneralAssertionTests>()}
+                 is Tests.GeneralAssertionTests
              
              but was
              
@@ -140,7 +193,7 @@ class TypeTests
             $"""
              x should match the type pattern
              
-                 is {FullName<GeneralAssertionTests>()}
+                 is Tests.GeneralAssertionTests
              
              but was
              
@@ -150,7 +203,7 @@ class TypeTests
             $"""
              x should match the type pattern
 
-                 is {FullName<GeneralAssertionTests>()}
+                 is Tests.GeneralAssertionTests
              
              but was
 
@@ -160,7 +213,7 @@ class TypeTests
             $"""
              x should match the type pattern
 
-                 is {FullName<GeneralAssertionTests>()}
+                 is Tests.GeneralAssertionTests
 
              but was
 
@@ -175,4 +228,31 @@ class TypeTests
     }
 
     class Sample;
+
+    class Outermost<TOuter>
+    {
+        public class Inner<TInner>
+        {
+            // Deliberately confusing type parameter name to ensure it doesn't
+            // arrive in serialized output even while System.TimeSpan does.
+            public class Innermost<TimeSpan>
+            {
+            }
+        }
+
+        public class InnerTwo<T1, T2>
+        {
+        }
+
+        public enum InnerEnum
+        {
+        }
+
+        public class Nongeneric
+        {
+            public class MoreGeneric<TMore>
+            {
+            }
+        }
+    }
 }
