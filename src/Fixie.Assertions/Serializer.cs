@@ -131,7 +131,15 @@ class Serializer
         => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
 
     static bool IsDictionaryInterface(Type type)
-        => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IDictionary<,>);
+    {
+        if (!type.IsGenericType)
+            return false;
+
+        var definition = type.GetGenericTypeDefinition();
+
+        return definition == typeof(IDictionary<,>)
+            || definition == typeof(IReadOnlyDictionary<,>);
+    }
 
     static MethodInfo GetDynamicWriter(string method, params Type[] typeArguments)
     {

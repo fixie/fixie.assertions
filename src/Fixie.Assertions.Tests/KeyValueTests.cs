@@ -36,6 +36,20 @@ class KeyValueTests
         Serialize((IDictionary<int, string>)new CustomDictionary(3)).ShouldBe(Dictionary123);
     }
 
+    public void ShouldSerializeIReadOnlyDictionaryAndSubtypesUsingKeyValuePairSyntax()
+    {
+        Serialize(new CustomReadOnlyDictionary(0)).ShouldBe("{}");
+        Serialize(new CustomReadOnlyDictionary(1))
+            .ShouldBe("""
+                      {
+                        [1] = "*"
+                      }
+                      """);
+        Serialize(new CustomReadOnlyDictionary(3)).ShouldBe(Dictionary123);
+        Serialize((ICustomReadOnlyDictionary)new CustomReadOnlyDictionary(3)).ShouldBe(Dictionary123);
+        Serialize((IReadOnlyDictionary<int, string>)new CustomReadOnlyDictionary(3)).ShouldBe(Dictionary123);
+    }
+
     public void ShouldSerializeAmbiguousCollectionsOfKeyValuePairsAsLists()
     {
         // Once it is unclear whether or not we are interacting with dictionary semantics,
@@ -71,6 +85,7 @@ class KeyValueTests
                     """);
 
         Serialize((IEnumerable<KeyValuePair<int,string>>)new CustomDictionary(3)).ShouldBe(List123);
+        Serialize((IEnumerable<KeyValuePair<int,string>>)new CustomReadOnlyDictionary(3)).ShouldBe(List123);
     }
 
     public void ShouldSerializeNestedDictioniesRecursively()
@@ -123,6 +138,8 @@ class KeyValueTests
         Serialize((IDictionary<string, object>?)null).ShouldBe("null");
         Serialize((CustomDictionary?)null).ShouldBe("null");
         Serialize((ICustomDictionary?)null).ShouldBe("null");
+        Serialize((CustomReadOnlyDictionary?)null).ShouldBe("null");
+        Serialize((ICustomReadOnlyDictionary?)null).ShouldBe("null");
         Serialize((IEnumerable<KeyValuePair<int, string>>?)null).ShouldBe("null");
     }
 
@@ -345,10 +362,10 @@ class KeyValueTests
         public IEnumerator<KeyValuePair<int, string>> GetEnumerator()
             => new PairEnumerator(size);
 
+        #region Members Irrelevant to the Serializer
+
         IEnumerator IEnumerable.GetEnumerator()
             => GetEnumerator();
-
-        #region Members Irrelevant to the Serializer
 
         string IDictionary<int, string>.this[int key]
         {
@@ -370,6 +387,30 @@ class KeyValueTests
         public bool Remove(KeyValuePair<int, string> item) => throw new UnreachableException();
         public bool TryGetValue(int key, out string value) => throw new UnreachableException();
 
+        #endregion
+    }
+
+    interface ICustomReadOnlyDictionary : IReadOnlyDictionary<int, string>
+    {
+    }
+
+    class CustomReadOnlyDictionary(byte size) : ICustomReadOnlyDictionary
+    {
+        public IEnumerator<KeyValuePair<int, string>> GetEnumerator()
+            => new PairEnumerator(size);
+
+        #region Members Irrelevant to the Serializer
+
+        IEnumerator IEnumerable.GetEnumerator()
+            => GetEnumerator();
+
+        public string this[int key] => throw new UnreachableException();
+        public IEnumerable<int> Keys => throw new UnreachableException();
+        public IEnumerable<string> Values => throw new UnreachableException();
+        public int Count => throw new UnreachableException();
+        public bool ContainsKey(int key) => throw new UnreachableException();
+        public bool TryGetValue(int key, out string value) => throw new UnreachableException();
+        
         #endregion
     }
 
