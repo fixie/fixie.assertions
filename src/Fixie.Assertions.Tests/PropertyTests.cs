@@ -345,7 +345,7 @@ class PropertyTests
             """);
         emptyReference.ShouldMatch(new());
         
-        ((object)emptyValue).ShouldMatch(emptyReference);
+        emptyValue.ShouldMatch(emptyReference);
     }
 
     struct EmptyValue;

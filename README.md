@@ -113,6 +113,26 @@ but was
     ]
 ```
 
+`ShouldMatch` will perform a deep comparison of public object state, even against anonymous-typed expectations:
+
+```
+myComplexObject.ShouldMatch(new {
+    Property = "ABC",
+    Field = 123,
+    List = [1, 2, 3]
+    Dictionary = new Dictionary<string, int> {
+        ["A"] = 1,
+        ["B"] = 2
+    }
+    Nested = new {
+        Property = "DEF"
+    }
+});
+```
+
+> WARNING: Beware making `ShouldMatch` comparisons between types that have equivalent public structure but meaningfully-different state. You may fool yourself into thinking two objects are equivalent when you would in fact disagree. It is best to witness the textual representation of your type as seen when the assertion fails, as part of a typical "Red, Then Green" implementation of your test, when deciding whether structural comparison is appropriate for the types in question. As a reasonable heuristic, if you would feel unsafe serializing the two objects to JSON and asserting the resulting strings are equal, you should feel unsafe calling `ShouldMatch` for the same reason. As with JSON serialization, extremely nested objects or those with cycles are unsupported and will fail with an explanation.
+
+
 ## Type Pattern Assertions
 
 ```cs

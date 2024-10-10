@@ -126,6 +126,69 @@ class GeneralAssertionTests
             """);
     }
 
+    public void ShouldAssertStructuralEquality()
+    {
+        var one = new Sample(1);
+        var two = new Sample(2);
+
+        one.ShouldMatch(one);
+        one.ShouldMatch(new Sample(1));
+
+        two.ShouldMatch(two);
+        two.ShouldMatch(new Sample(2));
+
+        one.ShouldMatch(new
+        {
+            Value = 1
+        });
+
+        Contradiction(one, x => x.ShouldMatch(two),
+            """
+            x should match
+
+                {
+                  Value = 2
+                }
+
+            but was
+
+                {
+                  Value = 1
+                }
+            """);
+
+        Contradiction(one, x => x.ShouldMatch(new { Value = 2 }),
+            """
+            x should match
+
+                {
+                  Value = 2
+                }
+
+            but was
+
+                {
+                  Value = 1
+                }
+            """);
+
+        Contradiction(one, x => x.ShouldMatch(new { Value = 1, Extra = 'A' }),
+            """
+            x should match
+
+                {
+                  Value = 1,
+                  Extra = 'A'
+                }
+
+            but was
+
+                {
+                  Value = 1
+                }
+            """);
+    }
+
     class Sample(int value)
     {
         public int Value => value;

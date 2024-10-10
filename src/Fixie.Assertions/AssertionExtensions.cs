@@ -97,6 +97,29 @@ public static class AssertionExtensions
     }
 
     /// <summary>
+    /// Assert that this object is structurally equivalent to some expected object of a possibly-different type.
+    /// </summary>
+    /// <param name="expression">Leave this parameter at its default to enable automatically descriptive failure messages.</param>
+    public static void ShouldMatch(this object? actual, object? expected, [CallerArgumentExpression(nameof(actual))] string expression = default!)
+    {
+        // This overload allows for structural matching between different types,
+        // especially matching between a well know `actual` type and an anonymous
+        // `expected` type, while still allowing the strongly typed overload to
+        // win overload resolution in most cases.
+        //
+        // Without this seemingly-redundant pair of overloads, several natural
+        // and desirable use cases would fail to compile.
+        //
+        // Specifically, this pair of overloads allows for the strongly typed
+        // overload to win and disambiguate usages of "Target Typed new()" and
+        // "Collection Expressions" for the `expected` value while still allowing
+        // this overload to work when the `expected` value is an anonymous-typed
+        // object literal.
+
+        ShouldMatch<object?>(actual, expected, expression);
+    }
+
+    /// <summary>
     /// Assert that this operation throws an exception of the specified type with some expected message.
     /// </summary>
     /// <param name="expectedMessage">When provided, assert that the exception message matches the given string.</param>
