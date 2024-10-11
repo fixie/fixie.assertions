@@ -2,22 +2,8 @@
 
 namespace Fixie.Assertions;
 
-public class AssertException : Exception
+public class AssertException(string message) : Exception(message)
 {
-    public string Expression { get; }
-    public string Expected { get; }
-    public string Actual { get; }
-    public bool HasMultilineRepresentation { get; }
-
-    public AssertException(string expression, string expected, string actual, string message, bool hasMultilineRepresentation)
-        : base(message)
-    {
-        Expression = expression;
-        Expected = expected;
-        Actual = actual;
-        HasMultilineRepresentation = hasMultilineRepresentation;
-    }
-
     public override string? StackTrace => FilterStackTrace(base.StackTrace);
 
     static string FilterStackTraceAssemblyPrefix = typeof(AssertException).Namespace + ".";
@@ -38,4 +24,10 @@ public class AssertException : Exception
 
         return string.Join(NewLine, results.ToArray());
     }
+}
+
+public class ComparisonException(string expected, string actual, string message) : AssertException(message)
+{
+    public string Expected { get => expected; }
+    public string Actual { get => actual; }
 }
