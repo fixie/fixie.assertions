@@ -147,7 +147,7 @@ class Writer(StringBuilder output)
                 })
                 .Select(property => (property.Name, Value: property.GetValue(value)));
 
-        WriteItems('{', fields.Concat(properties), '}', property =>
+        WriteItems('{', fields.Concat(properties).OrderBy(x => x.Name), '}', property =>
         {
             Append(property.Name);
             Append(" = ");

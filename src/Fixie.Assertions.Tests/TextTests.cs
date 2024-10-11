@@ -377,23 +377,19 @@ class TextTests
             """"
             [
               {
-                Text = "ABC",
                 Inner = {
                   Text = "DEF"
-                },
-                Pairs = {
-                  ["ABC"] = "DEF"
                 },
                 List = [
                   "GHI",
                   "JKL"
-                ]
+                ],
+                Pairs = {
+                  ["ABC"] = "DEF"
+                },
+                Text = "ABC"
               },
               {
-                Text = """
-                       Line 1
-                       Line 2
-                       """,
                 Inner = {
                   Text = """
                          
@@ -401,6 +397,19 @@ class TextTests
                          Line 3
                          """
                 },
+                List = [
+                  """
+                  Line 1
+                  Line 2
+                  Line 3
+                  """,
+                  "ABC",
+                  """
+                  Line 1
+                  Line 2
+                  Line 3
+                  """
+                ],
                 Pairs = {
                   ["ABC"] = """
                             Line 1
@@ -420,19 +429,10 @@ class TextTests
                           
                           """
                 },
-                List = [
-                  """
-                  Line 1
-                  Line 2
-                  Line 3
-                  """,
-                  "ABC",
-                  """
-                  Line 1
-                  Line 2
-                  Line 3
-                  """
-                ]
+                Text = """
+                       Line 1
+                       Line 2
+                       """
               }
             ]
             """");

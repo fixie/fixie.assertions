@@ -177,8 +177,8 @@ class GeneralAssertionTests
             x should match
 
                 {
-                  Value = 1,
-                  Extra = 'A'
+                  Extra = 'A',
+                  Value = 1
                 }
 
             but was

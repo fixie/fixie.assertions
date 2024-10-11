@@ -61,16 +61,16 @@ class PropertyTests
             })
             .ShouldBe("""
                       {
-                        Name = "Anonymous",
-                        Age = 64
+                        Age = 64,
+                        Name = "Anonymous"
                       }
                       """);
 
         Serialize(new Person("Alex", 32))
             .ShouldBe("""
                       {
-                        Name = "Alex",
-                        Age = 32
+                        Age = 32,
+                        Name = "Alex"
                       }
                       """);
 
@@ -118,8 +118,8 @@ class PropertyTests
         Serialize(sampleWithIndexer)
             .ShouldBe("""
                       {
-                        Name = "Alex",
-                        Age = 32
+                        Age = 32,
+                        Name = "Alex"
                       }
                       """);
 
@@ -131,8 +131,8 @@ class PropertyTests
         string serialized = Serialize(dynamic);
         serialized.ShouldBe("""
                                {
-                                 Name = "Dynamic",
-                                 Age = -1
+                                 Age = -1,
+                                 Name = "Dynamic"
                                }
                                """);
     }
@@ -151,8 +151,8 @@ class PropertyTests
             .ShouldBe("""
                       {
                         ChildField = 'B',
-                        ParentField = 1,
                         ChildProperty = 2,
+                        ParentField = 1,
                         ParentProperty = 'A'
                       }
                       """);
@@ -186,15 +186,15 @@ class PropertyTests
             })
             .ShouldBe("""
                       {
-                        Name = "Anonymous",
                         Age = 64,
-                        NestedReference = {
-                          Name = "Alex",
-                          Age = 32
+                        Name = "Anonymous",
+                        NestedDictionary = {
+                          ["A"] = "1",
+                          ["B"] = "2"
                         },
-                        NestedValue = {
-                          X = 1,
-                          Y = 2
+                        NestedDynamic = {
+                          Age = -1,
+                          Name = "Dynamic"
                         },
                         NestedList = [
                           {
@@ -214,13 +214,13 @@ class PropertyTests
                             Value = "2"
                           }
                         ],
-                        NestedDictionary = {
-                          ["A"] = "1",
-                          ["B"] = "2"
+                        NestedReference = {
+                          Age = 32,
+                          Name = "Alex"
                         },
-                        NestedDynamic = {
-                          Name = "Dynamic",
-                          Age = -1
+                        NestedValue = {
+                          X = 1,
+                          Y = 2
                         }
                       }
                       """);
