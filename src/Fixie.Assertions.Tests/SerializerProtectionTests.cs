@@ -42,19 +42,19 @@ class SerializerProtectionTests
         Serializer.Serialize(founder)
             .ShouldBe("""
                       {
-                        Name = "Morgan",
-                        Manager = null
+                        Manager = null,
+                        Name = "Morgan"
                       }
                       """);
 
         Serializer.Serialize(supervisor)
             .ShouldBe("""
                       {
-                        Name = "Riley",
                         Manager = {
-                          Name = "Morgan",
-                          Manager = null
-                        }
+                          Manager = null,
+                          Name = "Morgan"
+                        },
+                        Name = "Riley"
                       }
                       """);
 
@@ -67,8 +67,8 @@ class SerializerProtectionTests
         Serializer.Serialize(ouroboros)
             .ShouldBe("""
                       {
-                        Name = "Ouroboros",
-                        Manager = null
+                        Manager = null,
+                        Name = "Ouroboros"
                       }
                       """);
 
@@ -103,14 +103,11 @@ class SerializerProtectionTests
         Serializer.Serialize(model)
             .ShouldBe("""
                       {
-                        JsonIgnored = "Property Value From JsonIgnored",
-                        JsonCustomizedName = "Property Value From JsonCustomizedName",
                         JsonCustomConverted = {
                           Key = "Key/Value Pair",
                           Value = "From JsonCustomConverted"
                         },
-                        JsonNotIgnoredBecauseNonNull = "Property Value From JsonNotIgnoredBecauseNonNull",
-                        JsonIgnoredBecauseNull = null,
+                        JsonCustomizedName = "Property Value From JsonCustomizedName",
                         JsonExtendedData = {
                           ["A"] = {
                             ValueKind = System.Text.Json.JsonValueKind.Number
@@ -118,7 +115,10 @@ class SerializerProtectionTests
                           ["B"] = {
                             ValueKind = System.Text.Json.JsonValueKind.Number
                           }
-                        }
+                        },
+                        JsonIgnored = "Property Value From JsonIgnored",
+                        JsonIgnoredBecauseNull = null,
+                        JsonNotIgnoredBecauseNonNull = "Property Value From JsonNotIgnoredBecauseNonNull"
                       }
                       """);
     }
@@ -234,67 +234,36 @@ class SerializerProtectionTests
         A value could not be serialized because its object graph is too deep. Below is the start of the message that was interrupted:
     
         {
-          Name = "Ouroboros",
           Manager = {
-            Name = "Ouroboros",
             Manager = {
-              Name = "Ouroboros",
               Manager = {
-                Name = "Ouroboros",
                 Manager = {
-                  Name = "Ouroboros",
                   Manager = {
-                    Name = "Ouroboros",
                     Manager = {
-                      Name = "Ouroboros",
                       Manager = {
-                        Name = "Ouroboros",
                         Manager = {
-                          Name = "Ouroboros",
                           Manager = {
-                            Name = "Ouroboros",
                             Manager = {
-                              Name = "Ouroboros",
                               Manager = {
-                                Name = "Ouroboros",
                                 Manager = {
-                                  Name = "Ouroboros",
                                   Manager = {
-                                    Name = "Ouroboros",
                                     Manager = {
-                                      Name = "Ouroboros",
                                       Manager = {
-                                        Name = "Ouroboros",
                                         Manager = {
-                                          Name = "Ouroboros",
                                           Manager = {
-                                            Name = "Ouroboros",
                                             Manager = {
-                                              Name = "Ouroboros",
                                               Manager = {
-                                                Name = "Ouroboros",
                                                 Manager = {
-                                                  Name = "Ouroboros",
                                                   Manager = {
-                                                    Name = "Ouroboros",
                                                     Manager = {
-                                                      Name = "Ouroboros",
                                                       Manager = {
-                                                        Name = "Ouroboros",
                                                         Manager = {
-                                                          Name = "Ouroboros",
                                                           Manager = {
-                                                            Name = "Ouroboros",
                                                             Manager = {
-                                                              Name = "Ouroboros",
                                                               Manager = {
-                                                                Name = "Ouroboros",
                                                                 Manager = {
-                                                                  Name = "Ouroboros",
                                                                   Manager = {
-                                                                    Name = "Ouroboros",
                                                                     Manager = {
-                                                                      Name = "Ouroboros",
                                                                       Manager = {
 
         """;
