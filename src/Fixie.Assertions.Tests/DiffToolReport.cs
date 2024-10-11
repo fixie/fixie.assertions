@@ -19,7 +19,7 @@ class DiffToolReport : IHandler<TestFailed>, IHandler<ExecutionCompleted>
 
     public async Task Handle(ExecutionCompleted message)
     {
-        if (singleFailure is AssertException failure)
+        if (singleFailure is ComparisonException failure)
         {
             if (failure.HasMultilineRepresentation)
                 await LaunchDiffTool(failure.Expected, failure.Actual);
