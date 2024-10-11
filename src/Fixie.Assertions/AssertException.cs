@@ -2,16 +2,8 @@
 
 namespace Fixie.Assertions;
 
-public class AssertException : Exception
+public class AssertException(string message) : Exception(message)
 {
-    public string Expression { get; }
-
-    public AssertException(string expression, string message)
-        : base(message)
-    {
-        Expression = expression;
-    }
-
     public override string? StackTrace => FilterStackTrace(base.StackTrace);
 
     static string FilterStackTraceAssemblyPrefix = typeof(AssertException).Namespace + ".";
@@ -34,15 +26,8 @@ public class AssertException : Exception
     }
 }
 
-public class ComparisonException : AssertException
+public class ComparisonException(string expected, string actual, string message) : AssertException(message)
 {
-    public string Expected { get; }
-    public string Actual { get; }
-
-    public ComparisonException(string expression, string expected, string actual, string message)
-        : base(expression, message)
-    {
-        Expected = expected;
-        Actual = actual;
-    }
+    public string Expected { get => expected; }
+    public string Actual { get => actual; }
 }
