@@ -7,13 +7,23 @@ class KeyValueTests
 {
     public void ShouldSerializeDictionaryUsingKeyValuePairSyntax()
     {
-        Serialize((Dictionary<string, string>)[]).ShouldBe("{}");
-        Serialize(new Dictionary<string, string>
+        Dictionary<string, string> unsorted = new Dictionary<string, string>
         {
+            ["Third Key"] = "Third Value",
             ["First Key"] = "First Value",
-            ["Second Key"] = "Second Value",
-            ["Third Key"] = "Third Value"
-        }).ShouldBe(FirstSecondThird);
+            ["Second Key"] = "Second Value"
+        };
+
+        // Although this assertion is technically brittle, dictionary behavior
+        // for small numbers of items that are not changing is predictable in
+        // practice. If this assertion begins to fail simply due to the chaotic
+        // nature of undefined behavior, it can be removed. Until then, it helps
+        // to prove that the serialization process is performing a stabilizing sort
+        // rather than a particularly lucky bogosort accomplishing it for us.
+        unsorted.Keys.ToArray().ShouldMatch(["Third Key", "First Key", "Second Key"]);
+
+        Serialize((Dictionary<string, string>)[]).ShouldBe("{}");
+        Serialize(unsorted).ShouldBe(FirstSecondThird);
     }
 
     public void ShouldSerializeIDictionaryAndSubtypesUsingKeyValuePairSyntax()
@@ -55,23 +65,29 @@ class KeyValueTests
 
     public void ShouldSerializeAmbiguousCollectionsOfKeyValuePairsAsLists()
     {
-        // Once it is unclear whether or not we are interacting with dictionary semantics,
-        // the collection must be presented as an ordered list of pair objects.
+        // Once it is unclear whether or not we are interacting with dictionary
+        // semantics, the collection must be presented as a meaningfully ordered
+        // list of pair objects.
         //
-        // The publicly declared structural surface of a type might include a property
-        // declared as IEnumerable<KeyValuePair<int, string>>, and for the purposes of
-        // structural presentation and structural equality, we do not want to inspect the
-        // runtime type for IDictionary<int, string>. That would leak hidden implementation
-        // details in a way that substantively breaks a structural comparison where the
-        // comparison object happens to use some other concrete type.
+        // The publicly declared structural surface of a type might include a
+        // property declared as IEnumerable<KeyValuePair<int, string>>, and for
+        // the purposes of structural presentation and structural equality, we
+        // do not want to inspect the runtime type for IDictionary<int, string>.
+        // That would leak hidden implementation details in a way that
+        // substantively breaks a structural comparison where the comparison
+        // object happens to use some other concrete type.
 
         Serialize((IEnumerable<KeyValuePair<string, string>>)new Dictionary<string, string>
         {
+            ["Third Key"] = "Third Value",
             ["First Key"] = "First Value",
-            ["Second Key"] = "Second Value",
-            ["Third Key"] = "Third Value"
+            ["Second Key"] = "Second Value"
         }).ShouldBe("""
                     [
+                      {
+                        Key = "Third Key",
+                        Value = "Third Value"
+                      },
                       {
                         Key = "First Key",
                         Value = "First Value"
@@ -79,57 +95,53 @@ class KeyValueTests
                       {
                         Key = "Second Key",
                         Value = "Second Value"
-                      },
-                      {
-                        Key = "Third Key",
-                        Value = "Third Value"
                       }
                     ]
                     """);
 
-        Serialize((IEnumerable<KeyValuePair<int,string>>)new CustomDictionary(3)).ShouldBe(List123);
-        Serialize((IEnumerable<KeyValuePair<int,string>>)new CustomReadOnlyDictionary(3)).ShouldBe(List123);
+        Serialize((IEnumerable<KeyValuePair<int,string>>)new CustomDictionary(3)).ShouldBe(List321);
+        Serialize((IEnumerable<KeyValuePair<int,string>>)new CustomReadOnlyDictionary(3)).ShouldBe(List321);
     }
 
     public void ShouldSerializeNestedDictioniesRecursively()
     {
-        Serialize((Dictionary<string, SortedDictionary<int, bool>>)[]).ShouldBe("{}");
-        Serialize(new Dictionary<string, SortedDictionary<int, bool>>
+        Serialize((Dictionary<string, Dictionary<int, char>>)[]).ShouldBe("{}");
+        Serialize(new Dictionary<string, Dictionary<int, char>>
         {
+            ["Third Key"] = new()
+            {
+                [1] = 'A',
+                [3] = 'B',
+                [2] = 'C'
+            },
             ["First Key"] = new()
             {
-                [3] = true,
-                [2] = false,
-                [1] = true
+                [3] = 'A',
+                [1] = 'B',
+                [2] = 'C'
             },
             ["Second Key"] = new()
             {
-                [2] = false,
-                [1] = true,
-                [3] = true
-            },
-            ["Third Key"] = new()
-            {
-                [1] = true,
-                [3] = true,
-                [2] = false
+                [2] = 'A',
+                [1] = 'B',
+                [3] = 'C'
             }
         }).ShouldBe("""
                     {
                       ["First Key"] = {
-                        [1] = true,
-                        [2] = false,
-                        [3] = true
+                        [1] = 'B',
+                        [2] = 'C',
+                        [3] = 'A'
                       },
                       ["Second Key"] = {
-                        [1] = true,
-                        [2] = false,
-                        [3] = true
+                        [1] = 'B',
+                        [2] = 'A',
+                        [3] = 'C'
                       },
                       ["Third Key"] = {
-                        [1] = true,
-                        [2] = false,
-                        [3] = true
+                        [1] = 'A',
+                        [2] = 'C',
+                        [3] = 'B'
                       }
                     }
                     """);
@@ -153,15 +165,15 @@ class KeyValueTests
         Dictionary<int, string> emptyNewlyAllocated = [];
         Dictionary<int, string> unsorted = new()
         {
-            [1] = "*",
             [2] = "**",
-            [3] = "***"
+            [3] = "***",
+            [1] = "*"
         };
         SortedDictionary<int, string> sorted = new()
         {
-            [1] = "*",
+            [3] = "***",
             [2] = "**",
-            [3] = "***"
+            [1] = "*"
         };;
         
         empty.ShouldBe(empty);
@@ -169,7 +181,7 @@ class KeyValueTests
         unsorted.ShouldBe(unsorted);
         sorted.ShouldBe(sorted);
 
-        Contradiction(empty, x => x.ShouldBe(new() { [1] = "*", [2] = "**", [3] = "***" }),
+        Contradiction(empty, x => x.ShouldBe(new() {[3] = "***", [1] = "*", [2] = "**" }),
             """
             x should be
             
@@ -198,7 +210,7 @@ class KeyValueTests
             """);
         empty.ShouldMatch(emptyNewlyAllocated);
 
-        Contradiction(unsorted, x => x.ShouldBe(new() { [1] = "*", [2] = "**", [3] = "***" }),
+        Contradiction(unsorted, x => x.ShouldBe(new() { [3] = "***", [1] = "*", [2] = "**" }),
             """
             x should be
             
@@ -218,9 +230,9 @@ class KeyValueTests
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
             """);
-        unsorted.ShouldMatch(new() { [1] = "*", [2] = "**", [3] = "***" });
+        unsorted.ShouldMatch(new() { [3] = "***", [1] = "*", [2] = "**" });
 
-        Contradiction(sorted, x => x.ShouldBe(new() { [1] = "*", [2] = "**", [3] = "***" }),
+        Contradiction(sorted, x => x.ShouldBe(new() { [3] = "***", [1] = "*", [2] = "**" }),
             """
             x should be
             
@@ -240,7 +252,7 @@ class KeyValueTests
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
             """);
-        sorted.ShouldMatch(new() { [1] = "*", [2] = "**", [3] = "***" });
+        sorted.ShouldMatch(new() { [3] = "***", [1] = "*", [2] = "**" });
         ((IDictionary<int, string>)sorted).ShouldMatch(unsorted);
         ((IDictionary<int, string>)unsorted).ShouldMatch(sorted);
 
@@ -264,15 +276,15 @@ class KeyValueTests
             x should be
 
                 {
-                  ["int"] = typeof(int),
-                  ["bool"] = typeof(bool)
+                  ["bool"] = typeof(bool),
+                  ["int"] = typeof(int)
                 }
             
             but was
 
                 {
-                  ["int"] = typeof(int),
-                  ["bool"] = typeof(bool)
+                  ["bool"] = typeof(bool),
+                  ["int"] = typeof(int)
                 }
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
@@ -284,16 +296,16 @@ class KeyValueTests
             x should match
 
                 {
-                  ["int"] = typeof(int),
                   ["bool"] = typeof(bool),
+                  ["int"] = typeof(int),
                   ["string"] = typeof(string)
                 }
             
             but was
 
                 {
-                  ["int"] = typeof(int),
-                  ["bool"] = typeof(bool)
+                  ["bool"] = typeof(bool),
+                  ["int"] = typeof(int)
                 }
             """);
 
@@ -366,6 +378,18 @@ class KeyValueTests
         public IEnumerator<KeyValuePair<int, string>> GetEnumerator()
             => new PairEnumerator(size);
 
+        #region Members Needed by the Serializer's Attempt to Sort.
+
+        public int Count => size;
+
+        public void CopyTo(KeyValuePair<int, string>[] array, int arrayIndex)
+        {
+            foreach (var entry in this)
+                array[arrayIndex++] = new KeyValuePair<int, string>(entry.Key, entry.Value);
+        }
+
+        #endregion
+
         #region Members Irrelevant to the Serializer
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -379,14 +403,12 @@ class KeyValueTests
 
         public ICollection<int> Keys => throw new UnreachableException();
         public ICollection<string> Values => throw new UnreachableException();
-        public int Count => throw new UnreachableException();
         public bool IsReadOnly => throw new UnreachableException();
         public void Add(int key, string value) => throw new UnreachableException();
         public void Add(KeyValuePair<int, string> item) => throw new UnreachableException();
         public void Clear() => throw new UnreachableException();
         public bool Contains(KeyValuePair<int, string> item) => throw new UnreachableException();
         public bool ContainsKey(int key) => throw new UnreachableException();
-        public void CopyTo(KeyValuePair<int, string>[] array, int arrayIndex) => throw new UnreachableException();
         public bool Remove(int key) => throw new UnreachableException();
         public bool Remove(KeyValuePair<int, string> item) => throw new UnreachableException();
         public bool TryGetValue(int key, out string value) => throw new UnreachableException();
@@ -420,21 +442,21 @@ class KeyValueTests
 
     class PairEnumerator(byte size) : IEnumerator<KeyValuePair<int, string>>
     {
-        int count = 0;
+        int countdown = size + 1; // MoveNext() will be called for the first time before Current.
 
-        public KeyValuePair<int, string> Current => new(count, new('*', count));
+        public KeyValuePair<int, string> Current => new(countdown, new('*', countdown));
 
         object IEnumerator.Current => Current;
 
         public bool MoveNext()
         {
-            count++;
+            countdown--;
 
-            return count <= size;
+            return countdown >= 1;
         }
 
         public void Reset()
-            => count = 0;
+            => countdown = size + 1;
 
         public void Dispose() { }
     }
@@ -457,20 +479,20 @@ class KeyValueTests
         }
         """;
 
-    const string List123 =
+    const string List321 =
         """
         [
           {
-            Key = 1,
-            Value = "*"
+            Key = 3,
+            Value = "***"
           },
           {
             Key = 2,
             Value = "**"
           },
           {
-            Key = 3,
-            Value = "***"
+            Key = 1,
+            Value = "*"
           }
         ]
         """;

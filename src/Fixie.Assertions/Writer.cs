@@ -116,7 +116,7 @@ class Writer(StringBuilder output)
 
     public void WriteDictionary<TKey, TValue>(IEnumerable<KeyValuePair<TKey, TValue>> pairs)
     {
-        WriteItems('{', pairs, '}', pair =>
+        WriteItems('{', pairs.OrderBy(x => x.Key), '}', pair =>
         {
             Append('[');
             WriteSerialized(pair.Key);
