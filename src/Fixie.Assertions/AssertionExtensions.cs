@@ -54,7 +54,7 @@ public static class AssertionExtensions
                 .Block(expectedPattern)
                 .Write("but was")
                 .Block(actualTypeName)
-                .ToString(), true);
+                .ToString());
     }
 
     /// <summary>
@@ -64,7 +64,7 @@ public static class AssertionExtensions
     public static T ShouldNotBeNull<T>([NotNull] this T? actual, [CallerArgumentExpression(nameof(actual))] string expression = default!)
         where T : class
     {
-        return actual ?? throw new AssertException(expression, "not null", "null", $"{expression} should not be null but was null.", false);
+        return actual ?? throw new AssertException(expression, "not null", "null", $"{expression} should not be null but was null.");
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public static class AssertionExtensions
     public static T ShouldNotBeNull<T>([NotNull] this T? actual, [CallerArgumentExpression(nameof(actual))] string expression = default!)
          where T : struct
     {
-        return actual ?? throw new AssertException(expression, "not null", "null", $"{expression} should not be null but was null.", false);
+        return actual ?? throw new AssertException(expression, "not null", "null", $"{expression} should not be null but was null.");
     }
 
     /// <summary>
@@ -244,7 +244,7 @@ public static class AssertionExtensions
 
              You may need to cast the target to either Action or Func<Task>,
              or wrap it in an equivalent lambda expression.
-             """, false);
+             """);
     }
 
     static string Signature(MethodInfo function)
@@ -274,7 +274,7 @@ public static class AssertionExtensions
                         .ShouldHaveThrown<TException>(expression, expectedMessage)
                         .Write("but instead the message was")
                         .Serialize(actual.Message)
-                        .ToString(), false);
+                        .ToString());
 
             return typed;
         }
@@ -289,9 +289,9 @@ public static class AssertionExtensions
                 .Serialize(actual.Message);
 
         if (expectedMessage == null)
-            throw new AssertException(expression, expectedType, actualType, failure.ToString(), false);
+            throw new AssertException(expression, expectedType, actualType, failure.ToString());
 
-        throw new AssertException(expression, expectedMessage, actual.Message, failure.ToString(), false);
+        throw new AssertException(expression, expectedMessage, actual.Message, failure.ToString());
     }
 
     static void ShouldHaveThrown<TException>(string expression, string? expectedMessage) where TException : Exception
@@ -302,7 +302,7 @@ public static class AssertionExtensions
             new Message()
                 .ShouldHaveThrown<TException>(expression, expectedMessage)
                 .Write("but no exception was thrown.")
-                .ToString(), false);
+                .ToString());
     }
 
     /// <summary>
@@ -323,7 +323,7 @@ public static class AssertionExtensions
                 .Write("but was")
                 .Block(actualStructure);
 
-            throw new AssertException(expression, expectationBody, actualStructure, failure.ToString(), true);
+            throw new AssertException(expression, expectationBody, actualStructure, failure.ToString());
         }
     }
 

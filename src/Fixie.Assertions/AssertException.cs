@@ -9,7 +9,7 @@ public class AssertException : Exception
     public string Actual { get; }
     public bool HasMultilineRepresentation { get; }
 
-    public AssertException(string expression, string expected, string actual, string message, bool hasMultilineRepresentation)
+    public AssertException(string expression, string expected, string actual, string message, bool hasMultilineRepresentation = false)
         : base(message)
     {
         Expression = expression;
