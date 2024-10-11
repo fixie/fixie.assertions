@@ -266,7 +266,7 @@ but was
 
 ## Integration with Fixie
 
-The properties on `AssertException` are a natural fit for display in your diff tool. When a single test fails, the following custom Fixie report will display the Expected/Actual values in your diff tool.
+The properties on `ComparisonException` are a natural fit for display in your diff tool. When a single test fails an assertion comparing two objects, the following custom Fixie report will display the Expected/Actual values in your diff tool.
 
 ```xml
 <ItemGroup>
@@ -314,12 +314,11 @@ class DiffToolReport : IHandler<TestFailed>, IHandler<ExecutionCompleted>
 
     public async Task Handle(ExecutionCompleted message)
     {
-        if (singleFailure is AssertException exception)
-            if (exception.HasMultilineRepresentation)
-                await LaunchDiffTool(exception);
+        if (singleFailure is ComparisonException exception)
+            await LaunchDiffTool(exception);
     }
 
-    static async Task LaunchDiffTool(AssertException exception)
+    static async Task LaunchDiffTool(ComparisonException exception)
     {
         var tempPath = Path.GetTempPath();
         var expectedPath = Path.Combine(tempPath, "expected.txt");
