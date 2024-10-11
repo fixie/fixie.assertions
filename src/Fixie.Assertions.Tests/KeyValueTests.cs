@@ -7,7 +7,7 @@ class KeyValueTests
 {
     public void ShouldSerializeDictionaryUsingKeyValuePairSyntax()
     {
-        Dictionary<string, string> unsorted = new Dictionary<string, string>
+        Dictionary<string, string> unsorted = new()
         {
             ["Third Key"] = "Third Value",
             ["First Key"] = "First Value",
@@ -369,6 +369,52 @@ class KeyValueTests
         nullablePairs.ShouldMatch([]);
     }
 
+    public void AllowsSerializationWithWarningCommentsForUnsortableKeyTypes()
+    {
+        Dictionary<UnsortableKey, string> empty = new();
+        Dictionary<UnsortableKey, string> single = new()
+        {
+            [new(1)] = "Single Value",
+        };
+        Dictionary<UnsortableKey, string> unsortable = new()
+        {
+            [new(3)] = "Third Value",
+            [new(1)] = "First Value",
+            [new(2)] = "Second Value"
+        };
+
+        // Although this assertion is technically brittle, dictionary behavior
+        // for small numbers of items that are not changing is predictable in
+        // practice. If this assertion begins to fail simply due to the chaotic
+        // nature of undefined behavior, it will need to be updated.
+
+        Serialize(empty).ShouldBe("{}");
+        Serialize(single).ShouldBe(
+            """
+            {
+              [{
+                Value = 1
+              }] = "Single Value"
+            }
+            """);
+        Serialize(unsortable).ShouldBe(
+            """
+            {
+              // Entries could not be sorted by key, so their order here may be unstable.
+              [{
+                Value = 3
+              }] = "Third Value",
+              [{
+                Value = 1
+              }] = "First Value",
+              [{
+                Value = 2
+              }] = "Second Value"
+            }
+            """
+            );
+    }
+
     interface ICustomDictionary : IDictionary<int, string>
     {
     }
@@ -459,6 +505,25 @@ class KeyValueTests
             => countdown = size + 1;
 
         public void Dispose() { }
+    }
+
+    // This class fulfills the necessary requirements for use as a dictionary key,
+    // but is not compatible with Comparer<>.Default used during the serializer's
+    // key sorting.
+    public class UnsortableKey(int value)
+    {
+        public int Value { get => value; }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is UnsortableKey other)
+                return Value == other.Value;
+
+            return false;
+        }
+
+        public override int GetHashCode()
+            => Value.GetHashCode();
     }
 
     const string FirstSecondThird =

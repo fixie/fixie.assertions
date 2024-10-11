@@ -116,13 +116,28 @@ class Writer(StringBuilder output)
 
     public void WriteDictionary<TKey, TValue>(IEnumerable<KeyValuePair<TKey, TValue>> pairs)
     {
-        WriteItems('{', pairs.OrderBy(x => x.Key), '}', pair =>
+        var comparer = Comparer<TKey>.Default;
+        
+        var items = pairs.ToList();
+
+        string? stabilityComment = null;
+
+        try
+        {
+            items.Sort((a, b) => comparer.Compare(a.Key, b.Key));
+        }
+        catch
+        {
+            stabilityComment = "Entries could not be sorted by key, so their order here may be unstable.";
+        }
+
+        WriteItems('{', items, '}', pair =>
         {
             Append('[');
             WriteSerialized(pair.Key);
             Append("] = ");
             WriteSerialized(pair.Value);
-        });
+        }, stabilityComment);
     }
 
     public void WriteProperties<T>(T value)
@@ -155,7 +170,7 @@ class Writer(StringBuilder output)
         });
     }
 
-    public void WriteItems<T>(char open, IEnumerable<T> items, char close, Action<T> writeItem)
+    public void WriteItems<T>(char open, IEnumerable<T> items, char close, Action<T> writeItem, string? comment = null)
     {
         Append(open);
 
@@ -166,6 +181,9 @@ class Writer(StringBuilder output)
             {
                 StartItems();
                 any = true;
+
+                if (comment != null)
+                    WriteItemsComment(comment);
             }
             else
                 WriteItemSeparator();
@@ -187,6 +205,14 @@ class Writer(StringBuilder output)
         if (indentation > 31)
             throw new SerializationDepthException(output.ToString());
 
+        AppendIndentation();
+    }
+
+    void WriteItemsComment(string comment)
+    {
+        Append("// ");
+        Append(comment);
+        AppendLine();
         AppendIndentation();
     }
 
