@@ -13,17 +13,19 @@ class KeyValueTests
             ["First Key"] = "First Value",
             ["Second Key"] = "Second Value",
             ["Third Key"] = "Third Value"
-        }).ShouldBe("""
-                    {
-                      ["First Key"] = "First Value",
-                      ["Second Key"] = "Second Value",
-                      ["Third Key"] = "Third Value"
-                    }
-                    """);
+        }).ShouldBe(FirstSecondThird);
     }
 
     public void ShouldSerializeIDictionaryAndSubtypesUsingKeyValuePairSyntax()
     {
+        Serialize((SortedDictionary<string, string>)[]).ShouldBe("{}");
+        Serialize(new SortedDictionary<string, string>
+        {
+            ["Third Key"] = "Third Value",
+            ["First Key"] = "First Value",
+            ["Second Key"] = "Second Value"
+        }).ShouldBe(FirstSecondThird);
+
         Serialize(new CustomDictionary(0)).ShouldBe("{}");
         Serialize(new CustomDictionary(1))
             .ShouldBe("""
@@ -32,6 +34,7 @@ class KeyValueTests
                       }
                       """);
         Serialize(new CustomDictionary(3)).ShouldBe(Dictionary123);
+
         Serialize((ICustomDictionary)new CustomDictionary(3)).ShouldBe(Dictionary123);
         Serialize((IDictionary<int, string>)new CustomDictionary(3)).ShouldBe(Dictionary123);
     }
@@ -136,6 +139,7 @@ class KeyValueTests
     {
         Serialize((Dictionary<string, object>?)null).ShouldBe("null");
         Serialize((IDictionary<string, object>?)null).ShouldBe("null");
+        Serialize((SortedDictionary<string, object>?)null).ShouldBe("null");
         Serialize((CustomDictionary?)null).ShouldBe("null");
         Serialize((ICustomDictionary?)null).ShouldBe("null");
         Serialize((CustomReadOnlyDictionary?)null).ShouldBe("null");
@@ -434,6 +438,15 @@ class KeyValueTests
 
         public void Dispose() { }
     }
+
+    const string FirstSecondThird =
+        """
+        {
+          ["First Key"] = "First Value",
+          ["Second Key"] = "Second Value",
+          ["Third Key"] = "Third Value"
+        }
+        """;
 
     const string Dictionary123 =
         """

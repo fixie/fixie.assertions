@@ -512,7 +512,7 @@ class PropertyTests
         These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
         """;
 
-        const string ShouldBe00ButWasNull =
+    const string ShouldBe00ButWasNull =
         """
         x should be
         
