@@ -39,3 +39,11 @@ public class AssertException : Exception
         return string.Join(NewLine, results.ToArray());
     }
 }
+
+public class ComparisonException : AssertException
+{
+    public ComparisonException(string expression, string expected, string actual, string message)
+        : base(expression, expected, actual, message, true)
+    {
+    }
+}

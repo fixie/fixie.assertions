@@ -32,7 +32,7 @@ public static class AssertionExtensions
                     "These serialized values are identical. Did you mean to perform " +
                     "a structural comparison with `ShouldMatch` instead?");
 
-            throw new AssertException(expression, expectedStructure, actualStructure, failure.ToString(), true);
+            throw new ComparisonException(expression, expectedStructure, actualStructure, failure.ToString());
         }
     }
 
@@ -87,13 +87,13 @@ public static class AssertionExtensions
         var expectedStructure = Serialize(expected);
 
         if (actualStructure != expectedStructure)
-            throw new AssertException(expression, expectedStructure, actualStructure,
+            throw new ComparisonException(expression, expectedStructure, actualStructure,
                 new Message()
                     .Write(expression, " should match")
                     .Block(expectedStructure)
                     .Write("but was")
                     .Block(actualStructure)
-                    .ToString(), true);
+                    .ToString());
     }
 
     /// <summary>
