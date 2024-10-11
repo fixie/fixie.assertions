@@ -7,15 +7,13 @@ public class AssertException : Exception
     public string Expression { get; }
     public string Expected { get; }
     public string Actual { get; }
-    public bool HasMultilineRepresentation { get; }
 
-    public AssertException(string expression, string expected, string actual, string message, bool hasMultilineRepresentation = false)
+    public AssertException(string expression, string expected, string actual, string message)
         : base(message)
     {
         Expression = expression;
         Expected = expected;
         Actual = actual;
-        HasMultilineRepresentation = hasMultilineRepresentation;
     }
 
     public override string? StackTrace => FilterStackTrace(base.StackTrace);
@@ -43,7 +41,7 @@ public class AssertException : Exception
 public class ComparisonException : AssertException
 {
     public ComparisonException(string expression, string expected, string actual, string message)
-        : base(expression, expected, actual, message, true)
+        : base(expression, expected, actual, message)
     {
     }
 }
