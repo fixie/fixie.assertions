@@ -232,7 +232,7 @@ class Writer(StringBuilder output)
 
     void AppendIndentation()
     {
-        Append(' ', indentation*2);
+        Append(' ', indentation*4);
     }
 
     static int RawStringTerminalLength(string x)

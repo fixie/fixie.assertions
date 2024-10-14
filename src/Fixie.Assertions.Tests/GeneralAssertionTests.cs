@@ -32,7 +32,7 @@ class GeneralAssertionTests
             but was
 
                 {
-                  Value = 1
+                    Value = 1
                 }
             """);
 
@@ -147,13 +147,13 @@ class GeneralAssertionTests
             x should match
 
                 {
-                  Value = 2
+                    Value = 2
                 }
 
             but was
 
                 {
-                  Value = 1
+                    Value = 1
                 }
             """);
 
@@ -162,13 +162,13 @@ class GeneralAssertionTests
             x should match
 
                 {
-                  Value = 2
+                    Value = 2
                 }
 
             but was
 
                 {
-                  Value = 1
+                    Value = 1
                 }
             """);
 
@@ -177,14 +177,14 @@ class GeneralAssertionTests
             x should match
 
                 {
-                  Extra = 'A',
-                  Value = 1
+                    Extra = 'A',
+                    Value = 1
                 }
 
             but was
 
                 {
-                  Value = 1
+                    Value = 1
                 }
             """);
     }

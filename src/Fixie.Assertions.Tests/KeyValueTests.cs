@@ -40,7 +40,7 @@ class KeyValueTests
         Serialize(new CustomDictionary(1))
             .ShouldBe("""
                       {
-                        [1] = "*"
+                          [1] = "*"
                       }
                       """);
         Serialize(new CustomDictionary(3)).ShouldBe(Dictionary123);
@@ -55,7 +55,7 @@ class KeyValueTests
         Serialize(new CustomReadOnlyDictionary(1))
             .ShouldBe("""
                       {
-                        [1] = "*"
+                          [1] = "*"
                       }
                       """);
         Serialize(new CustomReadOnlyDictionary(3)).ShouldBe(Dictionary123);
@@ -84,18 +84,18 @@ class KeyValueTests
             ["Second Key"] = "Second Value"
         }).ShouldBe("""
                     [
-                      {
-                        Key = "Third Key",
-                        Value = "Third Value"
-                      },
-                      {
-                        Key = "First Key",
-                        Value = "First Value"
-                      },
-                      {
-                        Key = "Second Key",
-                        Value = "Second Value"
-                      }
+                        {
+                            Key = "Third Key",
+                            Value = "Third Value"
+                        },
+                        {
+                            Key = "First Key",
+                            Value = "First Value"
+                        },
+                        {
+                            Key = "Second Key",
+                            Value = "Second Value"
+                        }
                     ]
                     """);
 
@@ -128,21 +128,21 @@ class KeyValueTests
             }
         }).ShouldBe("""
                     {
-                      ["First Key"] = {
-                        [1] = 'B',
-                        [2] = 'C',
-                        [3] = 'A'
-                      },
-                      ["Second Key"] = {
-                        [1] = 'B',
-                        [2] = 'A',
-                        [3] = 'C'
-                      },
-                      ["Third Key"] = {
-                        [1] = 'A',
-                        [2] = 'C',
-                        [3] = 'B'
-                      }
+                        ["First Key"] = {
+                            [1] = 'B',
+                            [2] = 'C',
+                            [3] = 'A'
+                        },
+                        ["Second Key"] = {
+                            [1] = 'B',
+                            [2] = 'A',
+                            [3] = 'C'
+                        },
+                        ["Third Key"] = {
+                            [1] = 'A',
+                            [2] = 'C',
+                            [3] = 'B'
+                        }
                     }
                     """);
     }
@@ -186,9 +186,9 @@ class KeyValueTests
             x should be
             
                 {
-                  [1] = "*",
-                  [2] = "**",
-                  [3] = "***"
+                    [1] = "*",
+                    [2] = "**",
+                    [3] = "***"
                 }
 
             but was
@@ -215,17 +215,17 @@ class KeyValueTests
             x should be
             
                 {
-                  [1] = "*",
-                  [2] = "**",
-                  [3] = "***"
+                    [1] = "*",
+                    [2] = "**",
+                    [3] = "***"
                 }
 
             but was
             
                 {
-                  [1] = "*",
-                  [2] = "**",
-                  [3] = "***"
+                    [1] = "*",
+                    [2] = "**",
+                    [3] = "***"
                 }
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
@@ -237,17 +237,17 @@ class KeyValueTests
             x should be
             
                 {
-                  [1] = "*",
-                  [2] = "**",
-                  [3] = "***"
+                    [1] = "*",
+                    [2] = "**",
+                    [3] = "***"
                 }
 
             but was
             
                 {
-                  [1] = "*",
-                  [2] = "**",
-                  [3] = "***"
+                    [1] = "*",
+                    [2] = "**",
+                    [3] = "***"
                 }
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
@@ -276,15 +276,15 @@ class KeyValueTests
             x should be
 
                 {
-                  ["bool"] = typeof(bool),
-                  ["int"] = typeof(int)
+                    ["bool"] = typeof(bool),
+                    ["int"] = typeof(int)
                 }
             
             but was
 
                 {
-                  ["bool"] = typeof(bool),
-                  ["int"] = typeof(int)
+                    ["bool"] = typeof(bool),
+                    ["int"] = typeof(int)
                 }
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
@@ -296,16 +296,16 @@ class KeyValueTests
             x should match
 
                 {
-                  ["bool"] = typeof(bool),
-                  ["int"] = typeof(int),
-                  ["string"] = typeof(string)
+                    ["bool"] = typeof(bool),
+                    ["int"] = typeof(int),
+                    ["string"] = typeof(string)
                 }
             
             but was
 
                 {
-                  ["bool"] = typeof(bool),
-                  ["int"] = typeof(int)
+                    ["bool"] = typeof(bool),
+                    ["int"] = typeof(int)
                 }
             """);
 
@@ -392,24 +392,24 @@ class KeyValueTests
         Serialize(single).ShouldBe(
             """
             {
-              [{
-                Value = 1
-              }] = "Single Value"
+                [{
+                    Value = 1
+                }] = "Single Value"
             }
             """);
         Serialize(unsortable).ShouldBe(
             """
             {
-              // Entries could not be sorted by key, so their order here may be unstable.
-              [{
-                Value = 3
-              }] = "Third Value",
-              [{
-                Value = 1
-              }] = "First Value",
-              [{
-                Value = 2
-              }] = "Second Value"
+                // Entries could not be sorted by key, so their order here may be unstable.
+                [{
+                    Value = 3
+                }] = "Third Value",
+                [{
+                    Value = 1
+                }] = "First Value",
+                [{
+                    Value = 2
+                }] = "Second Value"
             }
             """
             );
@@ -529,36 +529,36 @@ class KeyValueTests
     const string FirstSecondThird =
         """
         {
-          ["First Key"] = "First Value",
-          ["Second Key"] = "Second Value",
-          ["Third Key"] = "Third Value"
+            ["First Key"] = "First Value",
+            ["Second Key"] = "Second Value",
+            ["Third Key"] = "Third Value"
         }
         """;
 
     const string Dictionary123 =
         """
         {
-          [1] = "*",
-          [2] = "**",
-          [3] = "***"
+            [1] = "*",
+            [2] = "**",
+            [3] = "***"
         }
         """;
 
     const string List321 =
         """
         [
-          {
-            Key = 3,
-            Value = "***"
-          },
-          {
-            Key = 2,
-            Value = "**"
-          },
-          {
-            Key = 1,
-            Value = "*"
-          }
+            {
+                Key = 3,
+                Value = "***"
+            },
+            {
+                Key = 2,
+                Value = "**"
+            },
+            {
+                Key = 1,
+                Value = "*"
+            }
         ]
         """;
 }

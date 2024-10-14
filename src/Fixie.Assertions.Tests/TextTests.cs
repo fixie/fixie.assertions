@@ -376,64 +376,64 @@ class TextTests
             .ShouldBe(
             """"
             [
-              {
-                Inner = {
-                  Text = "DEF"
+                {
+                    Inner = {
+                        Text = "DEF"
+                    },
+                    List = [
+                        "GHI",
+                        "JKL"
+                    ],
+                    Pairs = {
+                        ["ABC"] = "DEF"
+                    },
+                    Text = "ABC"
                 },
-                List = [
-                  "GHI",
-                  "JKL"
-                ],
-                Pairs = {
-                  ["ABC"] = "DEF"
-                },
-                Text = "ABC"
-              },
-              {
-                Inner = {
-                  Text = """
-                         
+                {
+                    Inner = {
+                        Text = """
+                               
+                               Line 2
+                               Line 3
+                               """
+                    },
+                    List = [
+                        """
+                        Line 1
+                        Line 2
+                        Line 3
+                        """,
+                        "ABC",
+                        """
+                        Line 1
+                        Line 2
+                        Line 3
+                        """
+                    ],
+                    Pairs = {
+                        ["ABC"] = """
+                                  Line 1
+                                  Line 2
+                                  """,
+                        ["DEF"] = """
+                                  Line 1
+                                  
+                                  Line 3
+                                  """,
+                        ["""
+                         Line 1
                          Line 2
-                         Line 3
-                         """
-                },
-                List = [
-                  """
-                  Line 1
-                  Line 2
-                  Line 3
-                  """,
-                  "ABC",
-                  """
-                  Line 1
-                  Line 2
-                  Line 3
-                  """
-                ],
-                Pairs = {
-                  ["ABC"] = """
-                            Line 1
-                            Line 2
-                            """,
-                  ["DEF"] = """
-                            Line 1
-                            
-                            Line 3
-                            """,
-                  ["""
-                   Line 1
-                   Line 2
-                   """] = """
-                          Line 1
-                          Line 2
-                          
-                          """
-                },
-                Text = """
-                       Line 1
-                       Line 2
-                       """
-              }
+                         """] = """
+                                Line 1
+                                Line 2
+                                
+                                """
+                    },
+                    Text = """
+                           Line 1
+                           Line 2
+                           """
+                }
             ]
             """");
     }

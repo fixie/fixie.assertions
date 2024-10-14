@@ -8,9 +8,9 @@ class ListTests
     {
         var list123 = """
                       [
-                        1,
-                        2,
-                        3
+                          1,
+                          2,
+                          3
                       ]
                       """;
 
@@ -21,15 +21,15 @@ class ListTests
         Serialize((int[][])[[1 , 2], [3 , 4, 5]])
             .ShouldBe("""
                       [
-                        [
-                          1,
-                          2
-                        ],
-                        [
-                          3,
-                          4,
-                          5
-                        ]
+                          [
+                              1,
+                              2
+                          ],
+                          [
+                              3,
+                              4,
+                              5
+                          ]
                       ]
                       """);
 
@@ -37,7 +37,7 @@ class ListTests
         Serialize(new Custom(1))
             .ShouldBe("""
                       [
-                        1
+                          1
                       ]
                       """);
         Serialize(new Custom(3)).ShouldBe(list123);
@@ -49,14 +49,14 @@ class ListTests
         Serialize((List<string[]>)[["ABC", "123"], ["DEF", "456"]])
             .ShouldBe("""
                       [
-                        [
-                          "ABC",
-                          "123"
-                        ],
-                        [
-                          "DEF",
-                          "456"
-                        ]
+                          [
+                              "ABC",
+                              "123"
+                          ],
+                          [
+                              "DEF",
+                              "456"
+                          ]
                       ]
                       """);
 
@@ -85,9 +85,9 @@ class ListTests
             x should be
             
                 [
-                  1,
-                  2,
-                  3
+                    1,
+                    2,
+                    3
                 ]
 
             but was
@@ -114,17 +114,17 @@ class ListTests
             x should be
             
                 [
-                  1,
-                  2,
-                  3
+                    1,
+                    2,
+                    3
                 ]
 
             but was
             
                 [
-                  1,
-                  2,
-                  3
+                    1,
+                    2,
+                    3
                 ]
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
@@ -136,17 +136,17 @@ class ListTests
             x should be
             
                 [
-                  1,
-                  2,
-                  3
+                    1,
+                    2,
+                    3
                 ]
 
             but was
             
                 [
-                  1,
-                  2,
-                  3
+                    1,
+                    2,
+                    3
                 ]
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
@@ -164,15 +164,15 @@ class ListTests
             x should be
 
                 [
-                  typeof(int),
-                  typeof(bool)
+                    typeof(int),
+                    typeof(bool)
                 ]
             
             but was
 
                 [
-                  typeof(int),
-                  typeof(bool)
+                    typeof(int),
+                    typeof(bool)
                 ]
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
@@ -184,16 +184,16 @@ class ListTests
             x should match
 
                 [
-                  typeof(int),
-                  typeof(bool),
-                  typeof(string)
+                    typeof(int),
+                    typeof(bool),
+                    typeof(string)
                 ]
             
             but was
 
                 [
-                  typeof(int),
-                  typeof(bool)
+                    typeof(int),
+                    typeof(bool)
                 ]
             """);
 

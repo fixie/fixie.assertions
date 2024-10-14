@@ -30,7 +30,7 @@ class PropertyTests
         Serialize(new PublicStateSomeAccessorsPrivate())
             .ShouldBe("""
                       {
-                        StructuralProperty = 4
+                          StructuralProperty = 4
                       }
                       """);
     }
@@ -41,7 +41,7 @@ class PropertyTests
         Serialize(new PublicStateSomeAccessorsMissing())
             .ShouldBe("""
                       {
-                        StructuralProperty = 4
+                          StructuralProperty = 4
                       }
                       """);
     }
@@ -61,16 +61,16 @@ class PropertyTests
             })
             .ShouldBe("""
                       {
-                        Age = 64,
-                        Name = "Anonymous"
+                          Age = 64,
+                          Name = "Anonymous"
                       }
                       """);
 
         Serialize(new Person("Alex", 32))
             .ShouldBe("""
                       {
-                        Age = 32,
-                        Name = "Alex"
+                          Age = 32,
+                          Name = "Alex"
                       }
                       """);
 
@@ -83,8 +83,8 @@ class PropertyTests
         Serialize(pointFields)
             .ShouldBe(""""
                       {
-                        X = 1,
-                        Y = 2
+                          X = 1,
+                          Y = 2
                       }
                       """");
 
@@ -97,15 +97,15 @@ class PropertyTests
         Serialize(pointProperties)
             .ShouldBe("""
                       {
-                        X = 1,
-                        Y = 2
+                          X = 1,
+                          Y = 2
                       }
                       """);
 
         Serialize(HttpMethod.Post)
             .ShouldBe("""
                       {
-                        Method = "POST"
+                          Method = "POST"
                       }
                       """);
 
@@ -118,8 +118,8 @@ class PropertyTests
         Serialize(sampleWithIndexer)
             .ShouldBe("""
                       {
-                        Age = 32,
-                        Name = "Alex"
+                          Age = 32,
+                          Name = "Alex"
                       }
                       """);
 
@@ -131,8 +131,8 @@ class PropertyTests
         string serialized = Serialize(dynamic);
         serialized.ShouldBe("""
                                {
-                                 Age = -1,
-                                 Name = "Dynamic"
+                                   Age = -1,
+                                   Name = "Dynamic"
                                }
                                """);
     }
@@ -150,10 +150,10 @@ class PropertyTests
         Serialize(sampleInheritance)
             .ShouldBe("""
                       {
-                        ChildField = 'B',
-                        ChildProperty = 2,
-                        ParentField = 1,
-                        ParentProperty = 'A'
+                          ChildField = 'B',
+                          ChildProperty = 2,
+                          ParentField = 1,
+                          ParentProperty = 'A'
                       }
                       """);
     }
@@ -186,42 +186,42 @@ class PropertyTests
             })
             .ShouldBe("""
                       {
-                        Age = 64,
-                        Name = "Anonymous",
-                        NestedDictionary = {
-                          ["A"] = "1",
-                          ["B"] = "2"
-                        },
-                        NestedDynamic = {
-                          Age = -1,
-                          Name = "Dynamic"
-                        },
-                        NestedList = [
-                          {
-                            Method = "GET"
+                          Age = 64,
+                          Name = "Anonymous",
+                          NestedDictionary = {
+                              ["A"] = "1",
+                              ["B"] = "2"
                           },
-                          {
-                            Method = "POST"
-                          }
-                        ],
-                        NestedPairs = [
-                          {
-                            Key = "A",
-                            Value = "1"
+                          NestedDynamic = {
+                              Age = -1,
+                              Name = "Dynamic"
                           },
-                          {
-                            Key = "B",
-                            Value = "2"
+                          NestedList = [
+                              {
+                                  Method = "GET"
+                              },
+                              {
+                                  Method = "POST"
+                              }
+                          ],
+                          NestedPairs = [
+                              {
+                                  Key = "A",
+                                  Value = "1"
+                              },
+                              {
+                                  Key = "B",
+                                  Value = "2"
+                              }
+                          ],
+                          NestedReference = {
+                              Age = 32,
+                              Name = "Alex"
+                          },
+                          NestedValue = {
+                              X = 1,
+                              Y = 2
                           }
-                        ],
-                        NestedReference = {
-                          Age = 32,
-                          Name = "Alex"
-                        },
-                        NestedValue = {
-                          X = 1,
-                          Y = 2
-                        }
                       }
                       """);
     }
@@ -237,8 +237,8 @@ class PropertyTests
         var pointSerialized =
             """
             {
-              X = 1,
-              Y = 2
+                X = 1,
+                Y = 2
             }
             """;
 
@@ -481,15 +481,15 @@ class PropertyTests
         x should be
         
             {
-              X = 1,
-              Y = 2
+                X = 1,
+                Y = 2
             }
 
         but was
         
             {
-              X = 0,
-              Y = 0
+                X = 0,
+                Y = 0
             }
         """;
 
@@ -498,15 +498,15 @@ class PropertyTests
         x should be
         
             {
-              X = 1,
-              Y = 2
+                X = 1,
+                Y = 2
             }
         
         but was
         
             {
-              X = 1,
-              Y = 2
+                X = 1,
+                Y = 2
             }
         
         These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
@@ -517,8 +517,8 @@ class PropertyTests
         x should be
         
             {
-              X = 0,
-              Y = 0
+                X = 0,
+                Y = 0
             }
         
         but was
@@ -531,8 +531,8 @@ class PropertyTests
         x should match
         
             {
-              X = 0,
-              Y = 0
+                X = 0,
+                Y = 0
             }
         
         but was
@@ -549,8 +549,8 @@ class PropertyTests
         but was
         
             {
-              X = 0,
-              Y = 0
+                X = 0,
+                Y = 0
             }
         """;
 
@@ -563,8 +563,8 @@ class PropertyTests
         but was
         
             {
-              X = 0,
-              Y = 0
+                X = 0,
+                Y = 0
             }
         """;
 
@@ -573,15 +573,15 @@ class PropertyTests
         x should be
         
             {
-              X = 0,
-              Y = 0
+                X = 0,
+                Y = 0
             }
         
         but was
         
             {
-              X = 0,
-              Y = 0
+                X = 0,
+                Y = 0
             }
         
         These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?

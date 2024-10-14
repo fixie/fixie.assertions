@@ -42,19 +42,19 @@ class SerializerProtectionTests
         Serializer.Serialize(founder)
             .ShouldBe("""
                       {
-                        Manager = null,
-                        Name = "Morgan"
+                          Manager = null,
+                          Name = "Morgan"
                       }
                       """);
 
         Serializer.Serialize(supervisor)
             .ShouldBe("""
                       {
-                        Manager = {
-                          Manager = null,
-                          Name = "Morgan"
-                        },
-                        Name = "Riley"
+                          Manager = {
+                              Manager = null,
+                              Name = "Morgan"
+                          },
+                          Name = "Riley"
                       }
                       """);
 
@@ -67,8 +67,8 @@ class SerializerProtectionTests
         Serializer.Serialize(ouroboros)
             .ShouldBe("""
                       {
-                        Manager = null,
-                        Name = "Ouroboros"
+                          Manager = null,
+                          Name = "Ouroboros"
                       }
                       """);
 
@@ -103,22 +103,22 @@ class SerializerProtectionTests
         Serializer.Serialize(model)
             .ShouldBe("""
                       {
-                        JsonCustomConverted = {
-                          Key = "Key/Value Pair",
-                          Value = "From JsonCustomConverted"
-                        },
-                        JsonCustomizedName = "Property Value From JsonCustomizedName",
-                        JsonExtendedData = {
-                          ["A"] = {
-                            ValueKind = System.Text.Json.JsonValueKind.Number
+                          JsonCustomConverted = {
+                              Key = "Key/Value Pair",
+                              Value = "From JsonCustomConverted"
                           },
-                          ["B"] = {
-                            ValueKind = System.Text.Json.JsonValueKind.Number
-                          }
-                        },
-                        JsonIgnored = "Property Value From JsonIgnored",
-                        JsonIgnoredBecauseNull = null,
-                        JsonNotIgnoredBecauseNonNull = "Property Value From JsonNotIgnoredBecauseNonNull"
+                          JsonCustomizedName = "Property Value From JsonCustomizedName",
+                          JsonExtendedData = {
+                              ["A"] = {
+                                  ValueKind = System.Text.Json.JsonValueKind.Number
+                              },
+                              ["B"] = {
+                                  ValueKind = System.Text.Json.JsonValueKind.Number
+                              }
+                          },
+                          JsonIgnored = "Property Value From JsonIgnored",
+                          JsonIgnoredBecauseNull = null,
+                          JsonNotIgnoredBecauseNonNull = "Property Value From JsonNotIgnoredBecauseNonNull"
                       }
                       """);
     }
@@ -195,37 +195,37 @@ class SerializerProtectionTests
         A value could not be serialized because its object graph is too deep. Below is the start of the message that was interrupted:
 
         [
-          [
             [
-              [
                 [
-                  [
                     [
-                      [
                         [
-                          [
                             [
-                              [
                                 [
-                                  [
                                     [
-                                      [
                                         [
-                                          [
                                             [
-                                              [
                                                 [
-                                                  [
                                                     [
-                                                      [
                                                         [
-                                                          [
                                                             [
-                                                              [
                                                                 [
-                                                                  [
                                                                     [
-                                                                      [
+                                                                        [
+                                                                            [
+                                                                                [
+                                                                                    [
+                                                                                        [
+                                                                                            [
+                                                                                                [
+                                                                                                    [
+                                                                                                        [
+                                                                                                            [
+                                                                                                                [
+                                                                                                                    [
+                                                                                                                        [
+                                                                                                                            [
+                                                                                                                                [
+                                                                                                                                    [
 
         """;
 
@@ -234,37 +234,37 @@ class SerializerProtectionTests
         A value could not be serialized because its object graph is too deep. Below is the start of the message that was interrupted:
     
         {
-          Manager = {
             Manager = {
-              Manager = {
                 Manager = {
-                  Manager = {
                     Manager = {
-                      Manager = {
                         Manager = {
-                          Manager = {
                             Manager = {
-                              Manager = {
                                 Manager = {
-                                  Manager = {
                                     Manager = {
-                                      Manager = {
                                         Manager = {
-                                          Manager = {
                                             Manager = {
-                                              Manager = {
                                                 Manager = {
-                                                  Manager = {
                                                     Manager = {
-                                                      Manager = {
                                                         Manager = {
-                                                          Manager = {
                                                             Manager = {
-                                                              Manager = {
                                                                 Manager = {
-                                                                  Manager = {
                                                                     Manager = {
-                                                                      Manager = {
+                                                                        Manager = {
+                                                                            Manager = {
+                                                                                Manager = {
+                                                                                    Manager = {
+                                                                                        Manager = {
+                                                                                            Manager = {
+                                                                                                Manager = {
+                                                                                                    Manager = {
+                                                                                                        Manager = {
+                                                                                                            Manager = {
+                                                                                                                Manager = {
+                                                                                                                    Manager = {
+                                                                                                                        Manager = {
+                                                                                                                            Manager = {
+                                                                                                                                Manager = {
+                                                                                                                                    Manager = {
 
         """;
 }
