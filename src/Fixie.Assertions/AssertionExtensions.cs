@@ -268,7 +268,9 @@ public static class AssertionExtensions
         if (actual is TException typed)
         {
             if (expectedMessage != null && actual.Message != expectedMessage)
-                throw new AssertException(
+                throw new ComparisonException(
+                    expectedMessage,
+                    actual.Message,
                     new Message()
                         .ShouldHaveThrown<TException>(expression, expectedMessage)
                         .Write("but instead the message was")
