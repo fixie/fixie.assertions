@@ -6,7 +6,7 @@ namespace Tests;
 
 class SerializerProtectionTests
 {
-    public void ShouldProtectFromDeepRecursion()
+    public void ShouldProtectFromDeepListRecursion()
     {
         object[] nested = [];
 
@@ -22,7 +22,34 @@ class SerializerProtectionTests
         };
 
         exceedDepthLimit
-            .ShouldThrow<SerializationDepthException>(ExpectedDeepRecursionExceptionMessage);
+            .ShouldThrow<SerializationDepthException>(ExpectedDeepListRecursionExceptionMessage);
+    }
+
+    public void ShouldProtectFromDeepDictionaryRecursion()
+    {
+        Dictionary<int, object> nested = [];
+
+        for (int i = 31; i >= 1; i--)
+        {
+            nested = new Dictionary<int, object>
+            {
+                { i, nested }
+            };
+        }
+
+        Serializer.Serialize(nested).StartsWith('{').ShouldBe(true);
+
+        var exceedDepthLimit = () => {
+            nested = new Dictionary<int, object>
+            {
+                { 0, nested }
+            };
+ 
+            Serializer.Serialize(nested);
+        };
+
+        exceedDepthLimit
+            .ShouldThrow<SerializationDepthException>(ExpectedDeepDictionaryRecursionExceptionMessage);
     }
 
     public void ShouldProtectFromCycles()
@@ -190,7 +217,7 @@ class SerializerProtectionTests
             => writer.WriteStringValue("A Key/Value pair was obfuscated during JSON serialization.");
     }
 
-    const string ExpectedDeepRecursionExceptionMessage =
+    const string ExpectedDeepListRecursionExceptionMessage =
         """
         A value could not be serialized because its object graph is too deep. Below is the start of the message that was interrupted:
 
@@ -226,6 +253,45 @@ class SerializerProtectionTests
                                                                                                                             [
                                                                                                                                 [
                                                                                                                                     [
+
+        """;
+
+    const string ExpectedDeepDictionaryRecursionExceptionMessage =
+        """
+        A value could not be serialized because its object graph is too deep. Below is the start of the message that was interrupted:
+        
+        {
+            [0] = {
+                [1] = {
+                    [2] = {
+                        [3] = {
+                            [4] = {
+                                [5] = {
+                                    [6] = {
+                                        [7] = {
+                                            [8] = {
+                                                [9] = {
+                                                    [10] = {
+                                                        [11] = {
+                                                            [12] = {
+                                                                [13] = {
+                                                                    [14] = {
+                                                                        [15] = {
+                                                                            [16] = {
+                                                                                [17] = {
+                                                                                    [18] = {
+                                                                                        [19] = {
+                                                                                            [20] = {
+                                                                                                [21] = {
+                                                                                                    [22] = {
+                                                                                                        [23] = {
+                                                                                                            [24] = {
+                                                                                                                [25] = {
+                                                                                                                    [26] = {
+                                                                                                                        [27] = {
+                                                                                                                            [28] = {
+                                                                                                                                [29] = {
+                                                                                                                                    [30] = {
 
         """;
 
