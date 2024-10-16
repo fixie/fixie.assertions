@@ -1,4 +1,4 @@
-﻿using static System.Environment;
+using static System.Environment;
 
 namespace Fixie.Assertions;
 
@@ -28,6 +28,6 @@ public class AssertException(string message) : Exception(message)
 
 public class ComparisonException(string expected, string actual, string message) : AssertException(message)
 {
-    public string Expected { get => expected; }
-    public string Actual { get => actual; }
+    public string Expected => expected;
+    public string Actual => actual;
 }

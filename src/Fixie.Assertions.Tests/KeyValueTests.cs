@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Diagnostics;
 
 namespace Tests;
@@ -512,7 +512,7 @@ class KeyValueTests
     // key sorting.
     public class UnsortableKey(int value)
     {
-        public int Value { get => value; }
+        public int Value => value;
 
         public override bool Equals(object? obj)
         {

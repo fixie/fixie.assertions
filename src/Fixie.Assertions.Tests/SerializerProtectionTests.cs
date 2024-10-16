@@ -159,50 +159,30 @@ class SerializerProtectionTests
     class JsonCustomizedModel
     {
         [JsonIgnore]
-        public string JsonIgnored
-        {
-            get => "Property Value From JsonIgnored";
-        }
+        public string JsonIgnored => "Property Value From JsonIgnored";
 
         [JsonPropertyName("custom_name")]
-        public string JsonCustomizedName
-        {
-            get => "Property Value From JsonCustomizedName";
-        }
+        public string JsonCustomizedName => "Property Value From JsonCustomizedName";
 
         [JsonInclude]
-        private string JsonPrivateIncluded
-        {
-            get => "Property Value From JsonPrivateIncluded";
-        }
+        private string JsonPrivateIncluded => "Property Value From JsonPrivateIncluded";
 
         [JsonConverter(typeof(MyCustomConverter))]
-        public KeyValuePair<string, string> JsonCustomConverted
-        {
-            get => new("Key/Value Pair", "From JsonCustomConverted");
-        }
+        public KeyValuePair<string, string> JsonCustomConverted => new("Key/Value Pair", "From JsonCustomConverted");
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string? JsonNotIgnoredBecauseNonNull
-        {
-            get => "Property Value From JsonNotIgnoredBecauseNonNull";
-        }
+        public string? JsonNotIgnoredBecauseNonNull => "Property Value From JsonNotIgnoredBecauseNonNull";
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string? JsonIgnoredBecauseNull
-        {
-            get => null;
-        }
+        public string? JsonIgnoredBecauseNull => null;
 
         [JsonExtensionData]
-        public SortedDictionary<string, JsonElement> JsonExtendedData
-        {
-            get => new()
+        public SortedDictionary<string, JsonElement> JsonExtendedData =>
+            new()
             {
                 { "A", ToElement(1) },
                 { "B", ToElement(2) }
             };
-        }
 
         static JsonElement ToElement(int value)
             => JsonDocument.Parse(value.ToString()).RootElement;
