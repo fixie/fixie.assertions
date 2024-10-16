@@ -72,19 +72,8 @@ class StackTraceTests
         => 1.ShouldBe(2);
 
     static string At<T>(string method, [CallerFilePath] string path = default!)
-        => At(typeof(T), method, path);
-
-    static string At(Type type, string method, string[] relativePathFromCallingCodeFile, [CallerFilePath] string path = default!)
     {
-        var absolutePath = Path.GetFullPath(
-            path: Path.Join(relativePathFromCallingCodeFile),
-            basePath: Path.GetDirectoryName(path)!);
-
-        return At(type, method, absolutePath);
-    }
-
-    static string At(Type type, string method, string path)
-    {
+        var type = typeof(T);
         var typeFullName = type.FullName ??
                            throw new Exception($"Expected type {type.Name} to have a non-null FullName.");
 
