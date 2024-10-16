@@ -86,7 +86,7 @@ class TypeTests
         typeof(int).ShouldBe(typeof(int));
         
         Contradiction(typeof(Utility), x => x.ShouldBe(typeof(GeneralAssertionTests)),
-            $"""
+             """
              x should be
 
                  typeof(Tests.GeneralAssertionTests)
@@ -96,7 +96,7 @@ class TypeTests
                  typeof(Tests.Utility)
              """);
         Contradiction(typeof(bool?), x => x.ShouldBe(typeof(GeneralAssertionTests)),
-            $"""
+             """
              x should be
              
                  typeof(Tests.GeneralAssertionTests)
@@ -107,7 +107,7 @@ class TypeTests
              """);
         
         Contradiction(typeof(object), x => x.ShouldBe(typeof(GeneralAssertionTests)),
-            $"""
+             """
              x should be
              
                  typeof(Tests.GeneralAssertionTests)
@@ -117,7 +117,7 @@ class TypeTests
                  typeof(object)
              """);
         Contradiction(typeof(GeneralAssertionTests), x => x.ShouldBe(typeof(object)),
-            $"""
+             """
              x should be
              
                  typeof(object)
@@ -128,7 +128,7 @@ class TypeTests
              """);
 
         Contradiction((Type?)null, x => x.ShouldBe(typeof(object)),
-            $"""
+             """
              x should be
              
                  typeof(object)
@@ -138,7 +138,7 @@ class TypeTests
                  null
              """);
         Contradiction((Type?)null, x => x.ShouldBe(typeof(Type)),
-            $"""
+             """
              x should be
              
                  typeof(System.Type)
@@ -155,7 +155,7 @@ class TypeTests
         1.ShouldBe<int>();
 
         Contradiction(new Sample(), x => x.ShouldBe<GeneralAssertionTests>(),
-            $"""
+             """
              x should match the type pattern
              
                  is Tests.GeneralAssertionTests
@@ -165,7 +165,7 @@ class TypeTests
                  Tests.TypeTests.Sample
              """);
         Contradiction(true, x => x.ShouldBe<GeneralAssertionTests>(),
-            $"""
+             """
              x should match the type pattern
              
                  is Tests.GeneralAssertionTests
@@ -176,7 +176,7 @@ class TypeTests
              """);
         
         Contradiction(new object(), x => x.ShouldBe<GeneralAssertionTests>(),
-            $"""
+             """
              x should match the type pattern
              
                  is Tests.GeneralAssertionTests
@@ -189,7 +189,7 @@ class TypeTests
 
         // Just like with the `is` keyword, although expressions may have some known compile time type, null values do not have a type.
         Contradiction((int?)null, x => x.ShouldBe<GeneralAssertionTests>(),
-            $"""
+             """
              x should match the type pattern
              
                  is Tests.GeneralAssertionTests
@@ -199,7 +199,7 @@ class TypeTests
                  null
              """);
         Contradiction((Exception?)null, x => x.ShouldBe<GeneralAssertionTests>(),
-            $"""
+             """
              x should match the type pattern
 
                  is Tests.GeneralAssertionTests
@@ -209,7 +209,7 @@ class TypeTests
                  null
              """);
         Contradiction((GeneralAssertionTests?)null, x => x.ShouldBe<GeneralAssertionTests>(),
-            $"""
+             """
              x should match the type pattern
 
                  is Tests.GeneralAssertionTests
