@@ -1,4 +1,4 @@
-using static System.Environment;
+﻿using static System.Environment;
 
 namespace Fixie.Assertions;
 
@@ -6,7 +6,7 @@ public class AssertException(string message) : Exception(message)
 {
     public override string? StackTrace => FilterStackTrace(base.StackTrace);
 
-    static string FilterStackTraceAssemblyPrefix = typeof(AssertException).Namespace + ".";
+    static readonly string FilterStackTraceAssemblyPrefix = typeof(AssertException).Namespace + ".";
 
     static string? FilterStackTrace(string? stackTrace)
     {
@@ -22,7 +22,7 @@ public class AssertException(string message) : Exception(message)
                 results.Add(line);
         }
 
-        return string.Join(NewLine, results.ToArray());
+        return string.Join(NewLine, results);
     }
 }
 

@@ -8,7 +8,7 @@ namespace Fixie.Assertions;
 
 class Serializer
 {
-    static MethodInfo SerializeInternalDefinition = typeof(Serializer).GetMethod("SerializeInternal")!;
+    static readonly MethodInfo SerializeInternalDefinition = typeof(Serializer).GetMethod("SerializeInternal")!;
 
     public static string Serialize<TValue>(TValue value)
     {
@@ -57,7 +57,7 @@ class Serializer
             case string v: writer.WriteString(v); return;
             case Guid v: writer.WriteGuid(v); return;
             case Type v: writer.WriteType(v); return;
-        };
+        }
 
         var type = typeof(TValue);
         

@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Reflection;
@@ -18,8 +18,8 @@ public static class AssertionExtensions
     {
         if (!EqualityComparer<T>.Default.Equals(actual, expected))
         {
-            string expectedStructure = Serialize(expected);
-            string actualStructure = Serialize(actual);
+            var expectedStructure = Serialize(expected);
+            var actualStructure = Serialize(actual);
 
             var failure = new Message()
                 .Write(expression, " should be")

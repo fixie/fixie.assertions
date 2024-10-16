@@ -1,6 +1,4 @@
-using static System.Environment;
-
-namespace Tests;
+﻿namespace Tests;
 
 class TextTests
 {
