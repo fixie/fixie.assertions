@@ -290,8 +290,6 @@ public static class AssertionExtensions
 
     static void ShouldHaveThrown<TException>(string expression, string? expectedMessage) where TException : Exception
     {
-        var expectedType = TypeName(typeof(TException));
-
         var failure = new Message()
             .ShouldHaveThrown<TException>(expression, expectedMessage)
             .Write("but no exception was thrown.");

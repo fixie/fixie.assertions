@@ -1,4 +1,4 @@
-﻿using static System.Environment;
+using static System.Environment;
 
 namespace Tests;
 
@@ -197,8 +197,6 @@ class TextTests
 
     public void ShouldSerializeMultilineStrings()
     {
-        var newLineEscaped = NewLine.Replace("\r", "\\r").Replace("\n", "\\n");
-
         var simple =
             """
             Line 1
