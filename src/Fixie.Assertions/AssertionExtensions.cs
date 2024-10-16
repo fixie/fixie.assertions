@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Reflection;
@@ -102,7 +102,7 @@ public static class AssertionExtensions
     public static void ShouldMatch(this object? actual, object? expected, [CallerArgumentExpression(nameof(actual))] string expression = default!)
     {
         // This overload allows for structural matching between different types,
-        // especially matching between a well know `actual` type and an anonymous
+        // especially matching between a well-known `actual` type and an anonymous
         // `expected` type, while still allowing the strongly typed overload to
         // win overload resolution in most cases.
         //
@@ -198,7 +198,7 @@ public static class AssertionExtensions
         // Although it is tempting to honor these via DynamicInvoke of the
         // Delegate, doing so exposes us to severe risk around Func<T> for
         // unanticipated types T, such as when T is a Task, ValueTask or
-        // similar. The underlying code might never be exected, leaving the
+        // similar. The underlying code might never be executed, leaving the
         // user confused about why their test is failing or why their
         // breakpoint isn't reachable.
         //
