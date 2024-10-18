@@ -28,15 +28,15 @@ class Writer(StringBuilder output)
     public void WriteChar(char value)
     {
         Append('\'');
-        Append(Escape(value));
+        Append(Escape(value, Literal.Character));
         Append('\'');
     }
 
     public void WriteGuid(Guid value)
     {
-        Append('\"');
+        Append('"');
         Append(value.ToString());
-        Append('\"');
+        Append('"');
     }
 
     public void WriteString(string value)
@@ -54,7 +54,7 @@ class Writer(StringBuilder output)
             var indentationLength = lengthAtOpenTerminalStart-lengthAtLineStart;
             var terminalLength = RawStringTerminalLength(value);
 
-            Append('\"', terminalLength);
+            Append('"', terminalLength);
             AppendLine();
 
             foreach (var content in value.Split(Environment.NewLine))
@@ -65,14 +65,14 @@ class Writer(StringBuilder output)
             }
 
             Append(' ', indentationLength);
-            Append('\"', terminalLength);
+            Append('"', terminalLength);
         }
         else
         {
-            Append('\"');
+            Append('"');
             foreach (var c in value)
-                Append(Escape(c));
-            Append('\"');
+                Append(Escape(c, Literal.String));
+            Append('"');
         }
     }
 
@@ -242,7 +242,7 @@ class Writer(StringBuilder output)
 
         foreach (var c in x)
         {
-            if (c != '\"')
+            if (c != '"')
             {
                 currentDoubleQuoteSequence = 0;
                 continue;
@@ -259,8 +259,8 @@ class Writer(StringBuilder output)
         return longestDoubleQuoteSequence + 1;
     }
 
-    static string Escape(char x) =>
-        x switch
+    static string Escape(char ch, Literal literal) =>
+        ch switch
         {
             '\0' => @"\0",
             '\a' => @"\a",
@@ -272,12 +272,14 @@ class Writer(StringBuilder output)
             '\r' => @"\r",
             //'\e' => @"\e", TODO: Applicable in C# 13
             ' ' => " ",
-            '"' => @"\""",
-            '\'' => @"\'",
+            '"' => literal == Literal.String ? @"\""" : char.ToString(ch),
+            '\'' => literal == Literal.Character ? @"\'" : char.ToString(ch),
             '\\' => @"\\",
-            _ when (char.IsControl(x) || char.IsWhiteSpace(x)) => $"\\u{(int)x:X4}",
-            _ => x.ToString()
+            _ when (char.IsControl(ch) || char.IsWhiteSpace(ch)) => $"\\u{(int)ch:X4}",
+            _ => char.ToString(ch)
         };
+
+    enum Literal { Character, String }
 
     void WriteSerialized<T>(T value)
         => Serializer.SerializeInternal(this, value);

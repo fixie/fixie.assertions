@@ -118,11 +118,11 @@ class TextTests
         // Escape Sequence: Double quote
         Serialize('\u0022')
             .ShouldBe("""
-                      '\"'
+                      '"'
                       """);
-        Serialize('\"')
+        Serialize('"')
             .ShouldBe("""
-                      '\"'
+                      '"'
                       """);
 
         // Escape Sequence: Single quote
@@ -183,7 +183,7 @@ class TextTests
         // TODO: In C# 13, include \u001B\e becoming \e\e
         Serialize("\u000C\f \u000B\v \u0022\" \u0027\' \u005C\\")
             .ShouldBe("""
-                      "\f\f \v\v \"\" \'\' \\\\"
+                      "\f\f \v\v \"\" '' \\\\"
                       """);
 
         foreach (var c in UnicodeEscapedCharacters())
