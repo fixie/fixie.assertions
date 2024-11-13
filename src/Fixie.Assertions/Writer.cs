@@ -270,7 +270,7 @@ class Writer(StringBuilder output)
             '\v' => @"\v",
             '\f' => @"\f",
             '\r' => @"\r",
-            //'\e' => @"\e", TODO: Applicable in C# 13
+            '\e' => @"\e",
             ' ' => " ",
             '"' => literal == Literal.String ? @"\""" : char.ToString(ch),
             '\'' => literal == Literal.Character ? @"\'" : char.ToString(ch),

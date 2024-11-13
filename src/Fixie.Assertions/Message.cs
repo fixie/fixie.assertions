@@ -9,7 +9,7 @@ class Message
 
     bool endsWithBlock = false;
 
-    public Message Write(params string[] parts)
+    public Message Write(params ReadOnlySpan<string> parts)
     {
         if (endsWithBlock)
             Blank();
