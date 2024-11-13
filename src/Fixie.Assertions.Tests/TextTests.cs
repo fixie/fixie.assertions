@@ -94,16 +94,15 @@ class TextTests
                       '\r'
                       """);
 
-        // TODO: Applicable in C# 13
         // Escape Sequence: Escape
-        // Serialize('\u001B')
-        //     .ShouldBe("""
-        //               '\e'
-        //               """);
-        // Serialize('\e')
-        //     .ShouldBe("""
-        //               '\e'
-        //               """);
+        Serialize('\u001B')
+            .ShouldBe("""
+                      '\e'
+                      """);
+        Serialize('\e')
+            .ShouldBe("""
+                      '\e'
+                      """);
 
         // Literal Space
         Serialize('\u0020')
@@ -180,10 +179,9 @@ class TextTests
                       "\0\0 \a\a \b\b \t\t \n\n \r\r"
                       """);
 
-        // TODO: In C# 13, include \u001B\e becoming \e\e
-        Serialize("\u000C\f \u000B\v \u0022\" \u0027\' \u005C\\")
+        Serialize("\u000C\f \u000B\v \u001B\e \u0022\" \u0027\' \u005C\\")
             .ShouldBe("""
-                      "\f\f \v\v \"\" '' \\\\"
+                      "\f\f \v\v \e\e \"\" '' \\\\"
                       """);
 
         foreach (var c in UnicodeEscapedCharacters())
@@ -576,7 +574,8 @@ class TextTests
         // '\uHHHH' hex escape sequences.
 
         for (char c = '\u0001'; c <= '\u0006'; c++) yield return c;
-        for (char c = '\u000E'; c <= '\u001F'; c++) yield return c;
+        for (char c = '\u000E'; c <= '\u001A'; c++) yield return c;
+        for (char c = '\u001C'; c <= '\u001F'; c++) yield return c;
         yield return '\u007F';
         for (char c = '\u0080'; c <= '\u009F'; c++) yield return c;
 
