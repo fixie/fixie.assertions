@@ -37,7 +37,7 @@ class SerializerProtectionTests
             };
         }
 
-        Serializer.Serialize(nested).StartsWith('{').ShouldBe(true);
+        Serializer.Serialize(nested).StartsWith('[').ShouldBe(true);
 
         var exceedDepthLimit = () => {
             nested = new Dictionary<int, object>
@@ -135,14 +135,14 @@ class SerializerProtectionTests
                               Value = "From JsonCustomConverted"
                           },
                           JsonCustomizedName = "Property Value From JsonCustomizedName",
-                          JsonExtendedData = {
-                              ["A"] = {
+                          JsonExtendedData = [
+                              "A": {
                                   ValueKind = System.Text.Json.JsonValueKind.Number
                               },
-                              ["B"] = {
+                              "B": {
                                   ValueKind = System.Text.Json.JsonValueKind.Number
                               }
-                          },
+                          ],
                           JsonIgnored = "Property Value From JsonIgnored",
                           JsonIgnoredBecauseNull = null,
                           JsonNotIgnoredBecauseNonNull = "Property Value From JsonNotIgnoredBecauseNonNull"
@@ -240,38 +240,38 @@ class SerializerProtectionTests
         """
         A value could not be serialized because its object graph is too deep. Below is the start of the message that was interrupted:
         
-        {
-            [0] = {
-                [1] = {
-                    [2] = {
-                        [3] = {
-                            [4] = {
-                                [5] = {
-                                    [6] = {
-                                        [7] = {
-                                            [8] = {
-                                                [9] = {
-                                                    [10] = {
-                                                        [11] = {
-                                                            [12] = {
-                                                                [13] = {
-                                                                    [14] = {
-                                                                        [15] = {
-                                                                            [16] = {
-                                                                                [17] = {
-                                                                                    [18] = {
-                                                                                        [19] = {
-                                                                                            [20] = {
-                                                                                                [21] = {
-                                                                                                    [22] = {
-                                                                                                        [23] = {
-                                                                                                            [24] = {
-                                                                                                                [25] = {
-                                                                                                                    [26] = {
-                                                                                                                        [27] = {
-                                                                                                                            [28] = {
-                                                                                                                                [29] = {
-                                                                                                                                    [30] = {
+        [
+            0: [
+                1: [
+                    2: [
+                        3: [
+                            4: [
+                                5: [
+                                    6: [
+                                        7: [
+                                            8: [
+                                                9: [
+                                                    10: [
+                                                        11: [
+                                                            12: [
+                                                                13: [
+                                                                    14: [
+                                                                        15: [
+                                                                            16: [
+                                                                                17: [
+                                                                                    18: [
+                                                                                        19: [
+                                                                                            20: [
+                                                                                                21: [
+                                                                                                    22: [
+                                                                                                        23: [
+                                                                                                            24: [
+                                                                                                                25: [
+                                                                                                                    26: [
+                                                                                                                        27: [
+                                                                                                                            28: [
+                                                                                                                                29: [
+                                                                                                                                    30: [
 
         """;
 

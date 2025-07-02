@@ -22,13 +22,13 @@ class KeyValueTests
         // rather than a particularly lucky bogosort accomplishing it for us.
         unsorted.Keys.ToArray().ShouldMatch(["Third Key", "First Key", "Second Key"]);
 
-        Serialize((Dictionary<string, string>)[]).ShouldBe("{}");
+        Serialize((Dictionary<string, string>)[]).ShouldBe("[]");
         Serialize(unsorted).ShouldBe(FirstSecondThird);
     }
 
     public void ShouldSerializeIDictionaryAndSubtypesUsingKeyValuePairSyntax()
     {
-        Serialize((SortedDictionary<string, string>)[]).ShouldBe("{}");
+        Serialize((SortedDictionary<string, string>)[]).ShouldBe("[]");
         Serialize(new SortedDictionary<string, string>
         {
             ["Third Key"] = "Third Value",
@@ -36,12 +36,12 @@ class KeyValueTests
             ["Second Key"] = "Second Value"
         }).ShouldBe(FirstSecondThird);
 
-        Serialize(new CustomDictionary(0)).ShouldBe("{}");
+        Serialize(new CustomDictionary(0)).ShouldBe("[]");
         Serialize(new CustomDictionary(1))
             .ShouldBe("""
-                      {
-                          [1] = "*"
-                      }
+                      [
+                          1: "*"
+                      ]
                       """);
         Serialize(new CustomDictionary(3)).ShouldBe(Dictionary123);
 
@@ -51,12 +51,12 @@ class KeyValueTests
 
     public void ShouldSerializeIReadOnlyDictionaryAndSubtypesUsingKeyValuePairSyntax()
     {
-        Serialize(new CustomReadOnlyDictionary(0)).ShouldBe("{}");
+        Serialize(new CustomReadOnlyDictionary(0)).ShouldBe("[]");
         Serialize(new CustomReadOnlyDictionary(1))
             .ShouldBe("""
-                      {
-                          [1] = "*"
-                      }
+                      [
+                          1: "*"
+                      ]
                       """);
         Serialize(new CustomReadOnlyDictionary(3)).ShouldBe(Dictionary123);
         Serialize((ICustomReadOnlyDictionary)new CustomReadOnlyDictionary(3)).ShouldBe(Dictionary123);
@@ -105,7 +105,7 @@ class KeyValueTests
 
     public void ShouldSerializeNestedDictioniesRecursively()
     {
-        Serialize((Dictionary<string, Dictionary<int, char>>)[]).ShouldBe("{}");
+        Serialize((Dictionary<string, Dictionary<int, char>>)[]).ShouldBe("[]");
         Serialize(new Dictionary<string, Dictionary<int, char>>
         {
             ["Third Key"] = new()
@@ -127,23 +127,23 @@ class KeyValueTests
                 [3] = 'C'
             }
         }).ShouldBe("""
-                    {
-                        ["First Key"] = {
-                            [1] = 'B',
-                            [2] = 'C',
-                            [3] = 'A'
-                        },
-                        ["Second Key"] = {
-                            [1] = 'B',
-                            [2] = 'A',
-                            [3] = 'C'
-                        },
-                        ["Third Key"] = {
-                            [1] = 'A',
-                            [2] = 'C',
-                            [3] = 'B'
-                        }
-                    }
+                    [
+                        "First Key": [
+                            1: 'B',
+                            2: 'C',
+                            3: 'A'
+                        ],
+                        "Second Key": [
+                            1: 'B',
+                            2: 'A',
+                            3: 'C'
+                        ],
+                        "Third Key": [
+                            1: 'A',
+                            2: 'C',
+                            3: 'B'
+                        ]
+                    ]
                     """);
     }
 
@@ -185,26 +185,26 @@ class KeyValueTests
             """
             x should be
             
-                {
-                    [1] = "*",
-                    [2] = "**",
-                    [3] = "***"
-                }
+                [
+                    1: "*",
+                    2: "**",
+                    3: "***"
+                ]
 
             but was
             
-                {}
+                []
             """);
 
         Contradiction(empty, x => x.ShouldBe(emptyNewlyAllocated),
             """
             x should be
             
-                {}
+                []
 
             but was
             
-                {}
+                []
             
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
             """);
@@ -214,19 +214,19 @@ class KeyValueTests
             """
             x should be
             
-                {
-                    [1] = "*",
-                    [2] = "**",
-                    [3] = "***"
-                }
+                [
+                    1: "*",
+                    2: "**",
+                    3: "***"
+                ]
 
             but was
             
-                {
-                    [1] = "*",
-                    [2] = "**",
-                    [3] = "***"
-                }
+                [
+                    1: "*",
+                    2: "**",
+                    3: "***"
+                ]
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
             """);
@@ -236,19 +236,19 @@ class KeyValueTests
             """
             x should be
             
-                {
-                    [1] = "*",
-                    [2] = "**",
-                    [3] = "***"
-                }
+                [
+                    1: "*",
+                    2: "**",
+                    3: "***"
+                ]
 
             but was
             
-                {
-                    [1] = "*",
-                    [2] = "**",
-                    [3] = "***"
-                }
+                [
+                    1: "*",
+                    2: "**",
+                    3: "***"
+                ]
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
             """);
@@ -275,17 +275,17 @@ class KeyValueTests
             """
             x should be
 
-                {
-                    ["bool"] = typeof(bool),
-                    ["int"] = typeof(int)
-                }
+                [
+                    "bool": typeof(bool),
+                    "int": typeof(int)
+                ]
             
             but was
 
-                {
-                    ["bool"] = typeof(bool),
-                    ["int"] = typeof(int)
-                }
+                [
+                    "bool": typeof(bool),
+                    "int": typeof(int)
+                ]
 
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
             """);
@@ -295,18 +295,18 @@ class KeyValueTests
             """
             x should match
 
-                {
-                    ["bool"] = typeof(bool),
-                    ["int"] = typeof(int),
-                    ["string"] = typeof(string)
-                }
+                [
+                    "bool": typeof(bool),
+                    "int": typeof(int),
+                    "string": typeof(string)
+                ]
             
             but was
 
-                {
-                    ["bool"] = typeof(bool),
-                    ["int"] = typeof(int)
-                }
+                [
+                    "bool": typeof(bool),
+                    "int": typeof(int)
+                ]
             """);
 
         Dictionary<int, string>? nullablePairs = null;
@@ -316,7 +316,7 @@ class KeyValueTests
             """
             x should be
             
-                {}
+                []
             
             but was
             
@@ -326,7 +326,7 @@ class KeyValueTests
             """
             x should match
             
-                {}
+                []
             
             but was
             
@@ -342,7 +342,7 @@ class KeyValueTests
             
             but was
             
-                {}
+                []
             """);
         Contradiction(nullablePairs, x => x.ShouldMatch(null),
             """
@@ -352,17 +352,17 @@ class KeyValueTests
             
             but was
             
-                {}
+                []
             """);
         Contradiction(nullablePairs, x => x.ShouldBe([]),
             """
             x should be
             
-                {}
+                []
             
             but was
             
-                {}
+                []
             
             These serialized values are identical. Did you mean to perform a structural comparison with `ShouldMatch` instead?
             """);
@@ -388,29 +388,29 @@ class KeyValueTests
         // practice. If this assertion begins to fail simply due to the chaotic
         // nature of undefined behavior, it will need to be updated.
 
-        Serialize(empty).ShouldBe("{}");
+        Serialize(empty).ShouldBe("[]");
         Serialize(single).ShouldBe(
             """
-            {
-                [{
+            [
+                {
                     Value = 1
-                }] = "Single Value"
-            }
+                }: "Single Value"
+            ]
             """);
         Serialize(unsortable).ShouldBe(
             """
-            {
+            [
                 // Entries could not be sorted by key, so their order here may be unstable.
-                [{
+                {
                     Value = 3
-                }] = "Third Value",
-                [{
+                }: "Third Value",
+                {
                     Value = 1
-                }] = "First Value",
-                [{
+                }: "First Value",
+                {
                     Value = 2
-                }] = "Second Value"
-            }
+                }: "Second Value"
+            ]
             """
             );
     }
@@ -528,20 +528,20 @@ class KeyValueTests
 
     const string FirstSecondThird =
         """
-        {
-            ["First Key"] = "First Value",
-            ["Second Key"] = "Second Value",
-            ["Third Key"] = "Third Value"
-        }
+        [
+            "First Key": "First Value",
+            "Second Key": "Second Value",
+            "Third Key": "Third Value"
+        ]
         """;
 
     const string Dictionary123 =
         """
-        {
-            [1] = "*",
-            [2] = "**",
-            [3] = "***"
-        }
+        [
+            1: "*",
+            2: "**",
+            3: "***"
+        ]
         """;
 
     const string List321 =

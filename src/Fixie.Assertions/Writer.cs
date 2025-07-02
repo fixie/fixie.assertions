@@ -131,11 +131,10 @@ class Writer(StringBuilder output)
             stabilityComment = "Entries could not be sorted by key, so their order here may be unstable.";
         }
 
-        WriteItems('{', items, '}', pair =>
+        WriteItems('[', items, ']', pair =>
         {
-            Append('[');
             WriteSerialized(pair.Key);
-            Append("] = ");
+            Append(": ");
             WriteSerialized(pair.Value);
         }, stabilityComment);
     }

@@ -188,10 +188,10 @@ class PropertyTests
                       {
                           Age = 64,
                           Name = "Anonymous",
-                          NestedDictionary = {
-                              ["A"] = "1",
-                              ["B"] = "2"
-                          },
+                          NestedDictionary = [
+                              "A": "1",
+                              "B": "2"
+                          ],
                           NestedDynamic = {
                               Age = -1,
                               Name = "Dynamic"

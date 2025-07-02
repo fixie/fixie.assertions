@@ -378,9 +378,9 @@ class TextTests
                         "GHI",
                         "JKL"
                     ],
-                    Pairs = {
-                        ["ABC"] = "DEF"
-                    },
+                    Pairs = [
+                        "ABC": "DEF"
+                    ],
                     Text = "ABC"
                 },
                 {
@@ -404,25 +404,25 @@ class TextTests
                         Line 3
                         """
                     ],
-                    Pairs = {
-                        ["ABC"] = """
-                                  Line 1
-                                  Line 2
-                                  """,
-                        ["DEF"] = """
-                                  Line 1
-                                  
-                                  Line 3
-                                  """,
-                        ["""
-                         Line 1
-                         Line 2
-                         """] = """
-                                Line 1
-                                Line 2
-                                
-                                """
-                    },
+                    Pairs = [
+                        "ABC": """
+                               Line 1
+                               Line 2
+                               """,
+                        "DEF": """
+                               Line 1
+                               
+                               Line 3
+                               """,
+                        """
+                        Line 1
+                        Line 2
+                        """: """
+                             Line 1
+                             Line 2
+                             
+                             """
+                    ],
                     Text = """
                            Line 1
                            Line 2
